@@ -20,31 +20,43 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
         ]);
 
-        // Create a super admin user
-        $superAdmin = User::factory()->create([
-            'name' => 'Super Admin',
-            'email' => 'superadmin@khezana.com',
-            'password' => bcrypt('password'),
-            'status' => 'active',
-        ]);
-        $superAdmin->assignRole('super_admin');
+        // Create a super admin user (if not exists)
+        $superAdmin = User::firstOrCreate(
+            ['email' => 'superadmin@khezana.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => bcrypt('password'),
+                'status' => 'active',
+            ]
+        );
+        if (!$superAdmin->hasRole('super_admin')) {
+            $superAdmin->assignRole('super_admin');
+        }
 
-        // Create an admin user
-        $admin = User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@khezana.com',
-            'password' => bcrypt('password'),
-            'status' => 'active',
-        ]);
-        $admin->assignRole('admin');
+        // Create an admin user (if not exists)
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@khezana.com'],
+            [
+                'name' => 'Admin User',
+                'password' => bcrypt('password'),
+                'status' => 'active',
+            ]
+        );
+        if (!$admin->hasRole('admin')) {
+            $admin->assignRole('admin');
+        }
 
-        // Create a regular user
-        $user = User::factory()->create([
-            'name' => 'Regular User',
-            'email' => 'user@khezana.com',
-            'password' => bcrypt('password'),
-            'status' => 'active',
-        ]);
-        $user->assignRole('user');
+        // Create a regular user (if not exists)
+        $user = User::firstOrCreate(
+            ['email' => 'user@khezana.com'],
+            [
+                'name' => 'Regular User',
+                'password' => bcrypt('password'),
+                'status' => 'active',
+            ]
+        );
+        if (!$user->hasRole('user')) {
+            $user->assignRole('user');
+        }
     }
 }

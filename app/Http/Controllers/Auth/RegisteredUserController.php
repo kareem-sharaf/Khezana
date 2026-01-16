@@ -34,15 +34,14 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'phone' => ['nullable', 'string', 'max:20', 'unique:'.User::class],
+            'phone' => ['required', 'string', 'max:20', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         // Create user using UserService
         $userDTO = UserDTO::fromArray([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => $request->phone . '@khezana.local', // Temporary email for compatibility
             'phone' => $request->phone,
             'password' => $request->password,
             'status' => 'active',

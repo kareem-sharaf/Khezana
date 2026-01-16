@@ -7,8 +7,9 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use App\Services\AdminActionLogService;
 use App\Services\UserService;
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -20,15 +21,24 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
-
-    protected static ?string $navigationGroup = 'User Management';
-
-    protected static ?int $navigationSort = 1;
-
-    public static function form(Form $form): Form
+    public static function getNavigationIcon(): ?string
     {
-        return $form
+        return 'heroicon-o-users';
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'User Management';
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 1;
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
             ->schema([
                 Forms\Components\Section::make('User Information')
                     ->schema([
@@ -109,12 +119,14 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'success' => 'active',
-                        'danger' => 'suspended',
-                        'warning' => 'inactive',
-                    ])
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'active' => 'success',
+                        'suspended' => 'danger',
+                        'inactive' => 'warning',
+                        default => 'gray',
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->badge()
@@ -150,9 +162,9 @@ class UserResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                Actions\ViewAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make()
                     ->before(function (User $record) {
                         if ($record->isSuperAdmin()) {
                             throw new \Exception('Cannot delete super admin user');
@@ -160,8 +172,8 @@ class UserResource extends Resource
                     }),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make()
                         ->before(function ($records) {
                             foreach ($records as $record) {
                                 if ($record->isSuperAdmin()) {
