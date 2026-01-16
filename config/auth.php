@@ -1,5 +1,6 @@
 <?php
 
+// Khezana Project - Authentication Configuration
 return [
 
     /*

@@ -1,5 +1,6 @@
 <?php
 
+// Khezana Project - Database Configuration
 use Illuminate\Support\Str;
 
 return [

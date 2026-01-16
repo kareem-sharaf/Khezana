@@ -1,5 +1,6 @@
 <?php
 
+// Khezana Project - Application Service Provider
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;

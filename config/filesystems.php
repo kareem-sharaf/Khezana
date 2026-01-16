@@ -1,5 +1,6 @@
 <?php
 
+// Khezana Project - Filesystems Configuration
 return [
 
     /*

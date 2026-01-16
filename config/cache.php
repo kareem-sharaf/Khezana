@@ -1,5 +1,6 @@
 <?php
 
+// Khezana Project - Cache Configuration
 use Illuminate\Support\Str;
 
 return [

@@ -1,5 +1,6 @@
 <?php
 
+// Khezana Project - Queue Configuration
 return [
 
     /*

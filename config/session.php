@@ -1,5 +1,6 @@
 <?php
 
+// Khezana Project - Session Configuration
 use Illuminate\Support\Str;
 
 return [
