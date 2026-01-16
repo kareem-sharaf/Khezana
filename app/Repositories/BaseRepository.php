@@ -29,9 +29,14 @@ abstract class BaseRepository
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data): bool
+    public function update(int $id, array $data): ?Model
     {
-        return $this->model->where('id', $id)->update($data);
+        $model = $this->model->find($id);
+        if ($model) {
+            $model->update($data);
+            return $model->fresh();
+        }
+        return null;
     }
 
     public function delete(int $id): bool
