@@ -2,6 +2,8 @@
 
 Laravel 12 project with professional architecture and best practices.
 
+> Project developed by kareem-sharaf | Custom Laravel application
+
 ## 🚀 Features
 
 - **Framework**: Laravel 12.47.0
