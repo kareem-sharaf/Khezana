@@ -2,15 +2,16 @@
 
 namespace App\Filament\Resources;
 
-use App\DTOs\UserDTO;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
-use App\Services\AdminActionLogService;
-use App\Services\UserService;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,21 +41,21 @@ class UserResource extends Resource
     {
         return $schema
             ->schema([
-                Forms\Components\Section::make('User Information')
+                Section::make('User Information')
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('email')
+                        TextInput::make('email')
                             ->email()
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
-                        Forms\Components\TextInput::make('phone')
+                        TextInput::make('phone')
                             ->tel()
                             ->maxLength(20)
                             ->unique(ignoreRecord: true),
-                        Forms\Components\Select::make('status')
+                        Select::make('status')
                             ->options([
                                 'active' => 'Active',
                                 'inactive' => 'Inactive',
@@ -62,40 +63,41 @@ class UserResource extends Resource
                             ])
                             ->default('active')
                             ->required(),
-                        Forms\Components\TextInput::make('password')
+                        TextInput::make('password')
                             ->password()
-                            ->required(fn ($livewire) => $livewire instanceof Pages\CreateUser)
+                            ->required(fn($livewire) => $livewire instanceof Pages\CreateUser)
                             ->minLength(8)
-                            ->dehydrated(fn ($state) => filled($state))
-                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                            ->visible(fn ($livewire) => $livewire instanceof Pages\CreateUser),
-                        Forms\Components\TextInput::make('password_confirmation')
+                            ->dehydrated(fn($state) => filled($state))
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                            ->visible(fn($livewire) => $livewire instanceof Pages\CreateUser),
+                        TextInput::make('password_confirmation')
                             ->password()
-                            ->required(fn ($livewire) => $livewire instanceof Pages\CreateUser)
+                            ->required(fn($livewire) => $livewire instanceof Pages\CreateUser)
                             ->same('password')
-                            ->visible(fn ($livewire) => $livewire instanceof Pages\CreateUser),
+                            ->visible(fn($livewire) => $livewire instanceof Pages\CreateUser),
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Roles & Permissions')
+                Section::make('Roles & Permissions')
                     ->schema([
-                        Forms\Components\Select::make('roles')
+                        Select::make('roles')
                             ->label('Roles')
                             ->multiple()
                             ->relationship('roles', 'name')
                             ->preload()
                             ->options(Role::pluck('name', 'name'))
-                            ->searchable(),
+                            ->searchable()
+                            ->required(false),
                     ])
-                    ->visible(fn () => auth()->user()?->can('manageRoles', User::class)),
+                    ->visible(fn() => auth()->user()?->can('manageRoles', User::class)),
 
-                Forms\Components\Section::make('Profile Information')
+                Section::make('Profile Information')
                     ->schema([
-                        Forms\Components\TextInput::make('profile.city')
+                        TextInput::make('profile.city')
                             ->maxLength(255),
-                        Forms\Components\Textarea::make('profile.address')
+                        Textarea::make('profile.address')
                             ->rows(3),
-                        Forms\Components\TextInput::make('profile.avatar')
+                        TextInput::make('profile.avatar')
                             ->maxLength(255),
                     ])
                     ->relationship('profile')
@@ -121,7 +123,7 @@ class UserResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'active' => 'success',
                         'suspended' => 'danger',
                         'inactive' => 'warning',
@@ -157,7 +159,7 @@ class UserResource extends Resource
                         return $query
                             ->when(
                                 $data['role'],
-                                fn (Builder $query, $role): Builder => $query->whereHas('roles', fn ($q) => $q->where('name', $role)),
+                                fn(Builder $query, $role): Builder => $query->whereHas('roles', fn($q) => $q->where('name', $role)),
                             );
                     }),
             ])
@@ -165,6 +167,7 @@ class UserResource extends Resource
                 Actions\ViewAction::make(),
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make()
+                    ->requiresConfirmation()
                     ->before(function (User $record) {
                         if ($record->isSuperAdmin()) {
                             throw new \Exception('Cannot delete super admin user');
@@ -174,6 +177,7 @@ class UserResource extends Resource
             ->bulkActions([
                 Actions\BulkActionGroup::make([
                     Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation()
                         ->before(function ($records) {
                             foreach ($records as $record) {
                                 if ($record->isSuperAdmin()) {
@@ -182,6 +186,9 @@ class UserResource extends Resource
                             }
                         }),
                 ]),
+            ])
+            ->emptyStateActions([
+                Actions\CreateAction::make(),
             ]);
     }
 
@@ -206,5 +213,23 @@ class UserResource extends Resource
     {
         return parent::getEloquentQuery()
             ->with(['roles', 'profile']);
+    }
+
+    /**
+     * Check if user can view any models.
+     * Uses UserPolicy::viewAny() automatically.
+     */
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->can('viewAny', User::class) ?? false;
+    }
+
+    /**
+     * Check if user can create models.
+     * Uses UserPolicy::create() automatically.
+     */
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->can('create', User::class) ?? false;
     }
 }
