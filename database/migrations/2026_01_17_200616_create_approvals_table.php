@@ -1,0 +1,49 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('approvals', function (Blueprint $table) {
+            $table->id();
+            
+            // Polymorphic relationship to approvable entities (products, requests, etc.)
+            $table->string('approvable_type');
+            $table->unsignedBigInteger('approvable_id');
+            $table->index(['approvable_type', 'approvable_id']);
+
+            // Status: pending, approved, rejected, archived
+            $table->string('status')->default('pending');
+            $table->index('status');
+
+            // User who submitted the content
+            $table->foreignId('submitted_by')->constrained('users')->onDelete('cascade');
+
+            // Admin who reviewed the content (nullable)
+            $table->foreignId('reviewed_by')->nullable()->constrained('users')->onDelete('set null');
+
+            // Timestamp when reviewed
+            $table->timestamp('reviewed_at')->nullable();
+
+            // Reason for rejection (nullable)
+            $table->text('rejection_reason')->nullable();
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('approvals');
+    }
+};
