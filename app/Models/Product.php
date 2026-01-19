@@ -5,28 +5,39 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Contracts\Approvable;
+use App\Enums\OperationType;
 use App\Traits\HasApproval;
+use App\Traits\HasAttributes;
+use App\Traits\HasCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Product Model (Example - Sell/Rent/Donate Clothes)
+ * Product Model (Sell/Rent/Donate Clothes)
  * 
- * This is an example model showing how to use the Approval module
+ * This model uses:
+ * - HasCategory trait for category relationship
+ * - HasAttributes trait for dynamic attributes
+ * - HasApproval trait for content moderation
  */
 class Product extends Model implements Approvable
 {
-    use HasFactory, HasApproval;
+    use HasFactory, HasApproval, HasCategory, HasAttributes;
 
     protected $fillable = [
         'user_id',
+        'category_id',
         'title',
         'description',
-        'type', // sell, rent, donate
+        'type', // sell, rent, donate (OperationType enum)
         'price',
         'status',
-        // ... other fields
+    ];
+
+    protected $casts = [
+        'type' => OperationType::class,
+        'price' => 'decimal:2',
     ];
 
     /**
@@ -73,10 +84,38 @@ class Product extends Model implements Approvable
     }
 
     /**
-     * Scope to get products by type
+     * Scope to get products by operation type
      */
-    public function scopeByType($query, string $type)
+    public function scopeByType($query, OperationType $type)
     {
         return $query->where('type', $type);
+    }
+
+    /**
+     * Scope to get products by category
+     */
+    public function scopeByCategory($query, Category|int $category)
+    {
+        $categoryId = $category instanceof Category ? $category->id : $category;
+        return $query->where('category_id', $categoryId);
+    }
+
+    /**
+     * Scope to get products by category or its descendants
+     */
+    public function scopeByCategoryOrDescendants($query, Category|int $category)
+    {
+        $categoryId = $category instanceof Category ? $category->id : $category;
+        $category = $category instanceof Category ? $category : Category::find($categoryId);
+        
+        if (!$category) {
+            return $query;
+        }
+
+        $categoryIds = [$categoryId];
+        $descendants = $category->descendants;
+        $categoryIds = array_merge($categoryIds, $descendants->pluck('id')->toArray());
+
+        return $query->whereIn('category_id', $categoryIds);
     }
 }

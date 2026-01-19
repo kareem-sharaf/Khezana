@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
         // Seed roles and permissions first
         $this->call([
             RolesAndPermissionsSeeder::class,
+            CategoriesSeeder::class,
+            AttributesSeeder::class,
         ]);
 
         // Create a super admin user (if not exists)

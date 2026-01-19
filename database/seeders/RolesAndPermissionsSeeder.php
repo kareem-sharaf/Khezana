@@ -43,6 +43,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage_roles',
             'manage_permissions',
             'manage_settings',
+
+            // Categories & Attributes
+            'manage_categories',
+            'manage_attributes',
         ];
 
         foreach ($permissions as $permission) {
@@ -73,6 +77,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'view_requests',
             'view_reports',
             'export_reports',
+            'manage_categories',
+            'manage_attributes',
         ]);
 
         // Assign permissions to delivery_agent
