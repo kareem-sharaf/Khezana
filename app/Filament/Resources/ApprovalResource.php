@@ -241,15 +241,21 @@ class ApprovalResource extends Resource
                     })
                     ->visible(fn (Approval $record) => $record->isPending() && auth()->user()?->can('reject', $record)),
 
-                Actions\Action::make('archive')
-                    ->label(__('filament-dashboard.Archive'))
-                    ->icon('heroicon-o-archive-box')
-                    ->color('gray')
-                    ->requiresConfirmation()
-                    ->action(function (Approval $record) {
-                        app(ArchiveAction::class)->execute($record, auth()->user());
-                    })
-                    ->visible(fn (Approval $record) => !$record->isArchived() && auth()->user()?->can('archive', $record)),
+            Actions\Action::make('archive')
+                ->label(__('filament-dashboard.Archive'))
+                ->icon('heroicon-o-archive-box')
+                ->color('gray')
+                ->form([
+                    \Filament\Forms\Components\Textarea::make('reason')
+                        ->label(__('filament-dashboard.Archive Reason'))
+                        ->required()
+                        ->rows(3)
+                        ->placeholder(__('filament-dashboard.Enter the reason for archiving...')),
+                ])
+                ->action(function (Approval $record, array $data) {
+                    app(ArchiveAction::class)->execute($record, auth()->user(), $data['reason']);
+                })
+                ->visible(fn (Approval $record) => !$record->isArchived() && auth()->user()?->can('archive', $record)),
             ])
             ->bulkActions([
                 Actions\BulkActionGroup::make([

@@ -26,7 +26,7 @@ class ArchiveRequestAction
      * @return Request
      * @throws \Exception If request cannot be archived
      */
-    public function execute(Request $request, User $reviewedBy): Request
+    public function execute(Request $request, User $reviewedBy, string $reason): Request
     {
         $approval = $request->approval();
 
@@ -34,7 +34,7 @@ class ArchiveRequestAction
             throw new \Exception('Request does not have an approval record.');
         }
 
-        $this->archiveAction->execute($approval, $reviewedBy);
+        $this->archiveAction->execute($approval, $reviewedBy, $reason);
 
         return $request->fresh();
     }

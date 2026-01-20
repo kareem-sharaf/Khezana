@@ -99,4 +99,52 @@ class AdminActionLogService extends BaseService
     {
         return $this->logRepository->getByTarget($targetType, $targetId, $perPage);
     }
+
+    public function logApprove(Model $approvable, int $adminId, ?string $notes = null): void
+    {
+        $this->log(
+            adminId: $adminId,
+            actionType: 'approved',
+            targetType: get_class($approvable),
+            targetId: $approvable->id,
+            notes: $notes,
+            newValues: ['status' => 'approved'],
+        );
+    }
+
+    public function logReject(Model $approvable, int $adminId, ?string $reason = null): void
+    {
+        $this->log(
+            adminId: $adminId,
+            actionType: 'rejected',
+            targetType: get_class($approvable),
+            targetId: $approvable->id,
+            notes: $reason,
+            newValues: ['status' => 'rejected', 'rejection_reason' => $reason],
+        );
+    }
+
+    public function logArchive(Model $approvable, int $adminId, ?string $reason = null): void
+    {
+        $this->log(
+            adminId: $adminId,
+            actionType: 'archived',
+            targetType: get_class($approvable),
+            targetId: $approvable->id,
+            notes: $reason,
+            newValues: ['status' => 'archived', 'archive_reason' => $reason],
+        );
+    }
+
+    public function logHardDelete(Model $model, int $adminId, ?string $notes = null): void
+    {
+        $this->log(
+            adminId: $adminId,
+            actionType: 'hard_deleted',
+            targetType: get_class($model),
+            targetId: $model->id,
+            notes: $notes,
+            oldValues: $model->toArray(),
+        );
+    }
 }

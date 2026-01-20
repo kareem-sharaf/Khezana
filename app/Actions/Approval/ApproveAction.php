@@ -10,12 +10,18 @@ use App\Events\Approval\ContentApproved;
 use App\Models\Approval;
 use App\Models\Request;
 use App\Models\User;
+use App\Services\AdminActionLogService;
 
 /**
  * Action to approve content
  */
 class ApproveAction
 {
+    public function __construct(
+        private readonly AdminActionLogService $logService
+    ) {
+    }
+
     /**
      * Approve content
      *
@@ -26,7 +32,6 @@ class ApproveAction
      */
     public function execute(Approval $approval, User $reviewedBy): Approval
     {
-        // Validate state transition
         if ($approval->status !== ApprovalStatus::PENDING) {
             throw new \Exception(
                 sprintf('Cannot approve content with status: %s. Only pending content can be approved.', $approval->status->value)
@@ -41,11 +46,12 @@ class ApproveAction
             'rejection_reason' => null,
         ]);
 
-        // Side effects: Request becomes OPEN after approval
         $approvable = $approval->approvable;
         if ($approvable instanceof Request) {
             $approvable->update(['status' => RequestStatus::OPEN]);
         }
+
+        $this->logService->logApprove($approvable, $reviewedBy->id);
 
         event(new ContentApproved($approval));
 

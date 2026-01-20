@@ -53,9 +53,15 @@ class ViewRequest extends ViewRecord
                 ->label(__('filament-dashboard.Archive'))
                 ->icon('heroicon-o-archive-box')
                 ->color('gray')
-                ->requiresConfirmation()
-                ->action(function (Request $record) {
-                    app(ArchiveRequestAction::class)->execute($record, Auth::user());
+                ->form([
+                    Textarea::make('reason')
+                        ->label(__('filament-dashboard.Archive Reason'))
+                        ->required()
+                        ->rows(3)
+                        ->placeholder(__('filament-dashboard.Enter the reason for archiving...')),
+                ])
+                ->action(function (Request $record, array $data) {
+                    app(ArchiveRequestAction::class)->execute($record, Auth::user(), $data['reason']);
                     $this->redirect($this->getResource()::getUrl('index'));
                 })
                 ->visible(fn(Request $record) => $record->approval()?->status->isArchived() === false && Auth::user()?->can('archive', $record->approval())),

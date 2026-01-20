@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Item Model
@@ -26,7 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Item extends Model implements Approvable
 {
-    use HasFactory, HasApproval, HasCategory, HasAttributes;
+    use HasFactory, HasApproval, HasCategory, HasAttributes, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -38,6 +39,7 @@ class Item extends Model implements Approvable
         'deposit_amount',
         'is_available',
         'availability_status',
+        'archived_at',
     ];
 
     protected $casts = [
@@ -46,6 +48,8 @@ class Item extends Model implements Approvable
         'deposit_amount' => 'decimal:2',
         'is_available' => 'boolean',
         'availability_status' => ItemAvailability::class,
+        'archived_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -165,5 +169,18 @@ class Item extends Model implements Approvable
         if (!$isAvailable) {
             throw new \Exception('Item must be available to receive offers.');
         }
+    }
+
+    public function ensureCanBeModified(): void
+    {
+        if ($this->isPending()) {
+            throw new \Exception('Cannot modify item while it is pending approval.');
+        }
+    }
+
+    public function archive(): void
+    {
+        $this->update(['archived_at' => now()]);
+        $this->delete();
     }
 }

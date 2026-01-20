@@ -67,13 +67,16 @@ class ItemPolicy
      */
     public function delete(User $user, Item $item): bool
     {
-        // User can delete their own items
+        return $user->hasRole('super_admin');
+    }
+
+    public function archive(User $user, Item $item): bool
+    {
         if ($user->id === $item->user_id) {
             return true;
         }
 
-        // Super admin can delete any item
-        return $user->hasRole('super_admin');
+        return $user->hasAnyRole(['admin', 'super_admin']);
     }
 
     /**

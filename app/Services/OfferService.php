@@ -126,14 +126,12 @@ class OfferService
      */
     public function acceptOffer(Offer $offer): Offer
     {
-        // Validate offer can be accepted
         if (!$offer->isPending()) {
             throw new \Exception(__('offers.validation.cannot_accept_non_pending'));
         }
 
         $request = $offer->request;
-
-        // Ensure request can still receive offers
+        $request->ensureCanAcceptOffers();
         $this->ensureRequestCanReceiveOffers($request);
 
         // Validate item if offer is linked to an item (BR-024)

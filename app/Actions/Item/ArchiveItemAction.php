@@ -26,13 +26,13 @@ class ArchiveItemAction
      * @return Item
      * @throws \Exception If item cannot be archived
      */
-    public function execute(Item $item, User $reviewedBy): Item
+    public function execute(Item $item, User $reviewedBy, string $reason): Item
     {
         if (!$item->approval) {
             throw new \Exception('Item does not have an approval record.');
         }
 
-        $this->archiveAction->execute($item->approval, $reviewedBy);
+        $this->archiveAction->execute($item->approval, $reviewedBy, $reason);
 
         return $item->fresh();
     }

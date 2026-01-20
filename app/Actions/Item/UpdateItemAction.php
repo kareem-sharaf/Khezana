@@ -42,6 +42,8 @@ class UpdateItemAction
 
         return DB::transaction(function () use ($item, $data, $attributes, $images) {
             $item->refresh();
+            $item->ensureCanBeModified();
+            
             $wasApproved = $item->isApproved();
             $hasSensitiveChanges = false;
             $hasAttributeChanges = $attributes !== null;

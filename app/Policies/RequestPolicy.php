@@ -57,8 +57,16 @@ class RequestPolicy
      */
     public function delete(User $user, Request $request): bool
     {
-        // Only request owner can delete, or super admin
-        return $user->id === $request->user_id || $user->hasRole('super_admin');
+        return $user->hasRole('super_admin');
+    }
+
+    public function archive(User $user, Request $request): bool
+    {
+        if ($user->id === $request->user_id) {
+            return true;
+        }
+
+        return $user->hasAnyRole(['admin', 'super_admin']);
     }
 
     /**

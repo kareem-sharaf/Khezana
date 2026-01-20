@@ -54,9 +54,15 @@ class ViewItem extends ViewRecord
                 ->label(__('filament-dashboard.Archive'))
                 ->icon('heroicon-o-archive-box')
                 ->color('gray')
-                ->requiresConfirmation()
-                ->action(function (Item $record) {
-                    app(ArchiveItemAction::class)->execute($record, Auth::user());
+                ->form([
+                    Textarea::make('reason')
+                        ->label(__('filament-dashboard.Archive Reason'))
+                        ->required()
+                        ->rows(3)
+                        ->placeholder(__('filament-dashboard.Enter the reason for archiving...')),
+                ])
+                ->action(function (Item $record, array $data) {
+                    app(ArchiveItemAction::class)->execute($record, Auth::user(), $data['reason']);
                     $this->redirect($this->getResource()::getUrl('index'));
                 })
                 ->visible(fn (Item $record) => !$record->isArchived() && Auth::user()?->can('archive', $record->approval)),

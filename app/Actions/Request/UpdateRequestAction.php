@@ -29,10 +29,7 @@ class UpdateRequestAction
      */
     public function execute(Request $request, array $data, ?array $attributes = null): Request
     {
-        // Cannot update closed or fulfilled requests
-        if ($request->isClosed() || $request->isFulfilled()) {
-            throw new \Exception('Cannot update a closed or fulfilled request');
-        }
+        $request->ensureCanBeModified();
 
         // Validate request data
         $this->requestService->validateRequestData($data);

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Request Model
@@ -27,7 +28,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Request extends Model implements Approvable
 {
-    use HasFactory, HasApproval, HasCategory, HasAttributes;
+    use HasFactory, HasApproval, HasCategory, HasAttributes, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -35,10 +36,13 @@ class Request extends Model implements Approvable
         'title',
         'description',
         'status',
+        'archived_at',
     ];
 
     protected $casts = [
         'status' => RequestStatus::class,
+        'archived_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -146,5 +150,25 @@ class Request extends Model implements Approvable
     public function getApprovalType(): string
     {
         return 'request';
+    }
+
+    public function ensureCanBeModified(): void
+    {
+        if ($this->isClosed() || $this->isFulfilled()) {
+            throw new \Exception('Cannot modify request that is closed or fulfilled.');
+        }
+    }
+
+    public function ensureCanAcceptOffers(): void
+    {
+        if (!$this->isOpen()) {
+            throw new \Exception('Request must be open to accept offers.');
+        }
+    }
+
+    public function archive(): void
+    {
+        $this->update(['archived_at' => now()]);
+        $this->delete();
     }
 }
