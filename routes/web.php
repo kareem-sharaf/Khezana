@@ -16,6 +16,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Items routes
+    Route::resource('items', \App\Http\Controllers\ItemController::class);
+    Route::post('items/{item}/submit-for-approval', [\App\Http\Controllers\ItemController::class, 'submitForApproval'])
+        ->name('items.submit-for-approval');
 });
 
 require __DIR__.'/auth.php';

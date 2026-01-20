@@ -1,0 +1,215 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\ItemResource\Pages;
+use App\Enums\OperationType;
+use App\Models\Item;
+use Filament\Actions;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Item Resource for Filament Admin Panel
+ */
+class ItemResource extends Resource
+{
+    protected static ?string $model = Item::class;
+
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-shopping-bag';
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament-dashboard.Content Management');
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 4;
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament-dashboard.Items');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament-dashboard.Item');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-dashboard.Items');
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                Section::make(__('filament-dashboard.Item Information'))
+                    ->schema([
+                        TextInput::make('title')
+                            ->label(__('filament-dashboard.Title'))
+                            ->required()
+                            ->maxLength(255),
+                        Textarea::make('description')
+                            ->label(__('filament-dashboard.Description'))
+                            ->rows(3),
+                        Select::make('user_id')
+                            ->label(__('filament-dashboard.Owner'))
+                            ->relationship('user', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->disabled()
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->user->name ?? ''),
+                        Select::make('category_id')
+                            ->label(__('filament-dashboard.Category'))
+                            ->relationship('category', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->disabled(),
+                        Select::make('operation_type')
+                            ->label(__('filament-dashboard.Operation Type'))
+                            ->options(OperationType::getOptions())
+                            ->required()
+                            ->disabled(),
+                        TextInput::make('price')
+                            ->label(__('filament-dashboard.Price'))
+                            ->numeric()
+                            ->disabled(),
+                        TextInput::make('deposit_amount')
+                            ->label(__('filament-dashboard.Deposit Amount'))
+                            ->numeric()
+                            ->disabled(),
+                        Toggle::make('is_available')
+                            ->label(__('filament-dashboard.Is Available'))
+                            ->default(true),
+                    ])
+                    ->columns(2),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label(__('filament-dashboard.ID'))
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('title')
+                    ->label(__('filament-dashboard.Title'))
+                    ->searchable()
+                    ->sortable()
+                    ->limit(50),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label(__('filament-dashboard.Owner'))
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label(__('filament-dashboard.Category'))
+                    ->searchable()
+                    ->sortable()
+                    ->badge()
+                    ->color('info'),
+                Tables\Columns\TextColumn::make('operation_type')
+                    ->label(__('filament-dashboard.Operation Type'))
+                    ->badge()
+                    ->color(fn (OperationType $state): string => $state->getColor())
+                    ->formatStateUsing(fn (OperationType $state): string => $state->getLabel())
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->label(__('filament-dashboard.Price'))
+                    ->money('SYP')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\IconColumn::make('is_available')
+                    ->label(__('filament-dashboard.Available'))
+                    ->boolean()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('approvalRelation.status')
+                    ->label(__('filament-dashboard.Approval Status'))
+                    ->badge()
+                    ->color(fn ($state) => $state?->color())
+                    ->formatStateUsing(fn ($state) => $state?->label())
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('filament-dashboard.Created At'))
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('operation_type')
+                    ->label(__('filament-dashboard.Operation Type'))
+                    ->options(OperationType::getOptions()),
+                Tables\Filters\SelectFilter::make('category_id')
+                    ->label(__('filament-dashboard.Category'))
+                    ->relationship('category', 'name')
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\TernaryFilter::make('is_available')
+                    ->label(__('filament-dashboard.Available'))
+                    ->placeholder(__('filament-dashboard.All'))
+                    ->trueLabel(__('filament-dashboard.Available Only'))
+                    ->falseLabel(__('filament-dashboard.Unavailable Only')),
+                Tables\Filters\SelectFilter::make('approvalRelation.status')
+                    ->label(__('filament-dashboard.Approval Status'))
+                    ->relationship('approvalRelation', 'status')
+                    ->options(\App\Enums\ApprovalStatus::class),
+            ])
+            ->actions([
+                Actions\ViewAction::make(),
+            ])
+            ->bulkActions([
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make()
+                        ->visible(fn () => auth()->user()?->hasRole('super_admin')),
+                ]),
+            ])
+            ->defaultSort('created_at', 'desc');
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListItems::route('/'),
+            'view' => Pages\ViewItem::route('/{record}'),
+        ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with(['user', 'category', 'images', 'approvalRelation']);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasAnyRole(['admin', 'super_admin']) ?? false;
+    }
+}

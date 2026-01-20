@@ -17,9 +17,10 @@ trait HasAttributes
     }
 
     /**
-     * Get attribute value by attribute slug.
+     * Get custom attribute value by attribute slug.
+     * Note: Named getCustomAttributeValue to avoid conflict with Eloquent's getAttributeValue()
      */
-    public function getAttributeValue(string $attributeSlug): ?string
+    public function getCustomAttributeValue(string $attributeSlug): ?string
     {
         $attribute = Attribute::where('slug', $attributeSlug)->first();
 

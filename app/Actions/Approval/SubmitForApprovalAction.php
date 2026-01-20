@@ -28,8 +28,8 @@ class SubmitForApprovalAction
         // Check if already has an approval record
         $existingApproval = $approvable->approval();
 
-        if ($existingApproval && $existingApproval->exists()) {
-            $approval = $existingApproval->first();
+        if ($existingApproval) {
+            $approval = $existingApproval;
 
             // Allow resubmission if previously rejected or archived
             if ($approval->status === ApprovalStatus::REJECTED || $approval->status === ApprovalStatus::ARCHIVED) {

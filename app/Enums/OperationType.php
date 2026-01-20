@@ -34,8 +34,20 @@ enum OperationType: string
     public static function labels(): array
     {
         return array_map(
-            fn (self $case) => $case->getLabel(),
+            fn(self $case) => $case->getLabel(),
             self::cases()
         );
+    }
+
+    /**
+     * Get options array for Filament select fields
+     */
+    public static function getOptions(): array
+    {
+        return [
+            self::SELL->value => self::SELL->getLabel(),
+            self::RENT->value => self::RENT->getLabel(),
+            self::DONATE->value => self::DONATE->getLabel(),
+        ];
     }
 }

@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->foreignId('category_id')->nullable()->after('user_id')->constrained()->onDelete('set null');
-            $table->index('category_id');
-        });
+        if (Schema::hasTable('products')) {
+            Schema::table('products', function (Blueprint $table) {
+                if (!Schema::hasColumn('products', 'category_id')) {
+                    $table->foreignId('category_id')->nullable()->after('user_id')->constrained()->onDelete('set null');
+                    $table->index('category_id');
+                }
+            });
+        }
     }
 
     /**
@@ -22,9 +26,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropForeign(['category_id']);
-            $table->dropColumn('category_id');
-        });
+        if (Schema::hasTable('products') && Schema::hasColumn('products', 'category_id')) {
+            Schema::table('products', function (Blueprint $table) {
+                $table->dropForeign(['category_id']);
+                $table->dropColumn('category_id');
+            });
+        }
     }
 };

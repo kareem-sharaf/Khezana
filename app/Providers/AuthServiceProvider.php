@@ -18,6 +18,7 @@ class AuthServiceProvider extends ServiceProvider
         \App\Models\Approval::class => \App\Policies\ApprovalPolicy::class,
         \App\Models\Category::class => \App\Policies\CategoryPolicy::class,
         \App\Models\Attribute::class => \App\Policies\AttributePolicy::class,
+        \App\Models\Item::class => \App\Policies\ItemPolicy::class,
     ];
 
     /**

@@ -16,10 +16,25 @@ trait HasApproval
 {
     /**
      * Get the approval relationship
+     * Note: Named approvalRelation to avoid conflict with interface method
      */
-    public function approval(): MorphOne
+    public function approvalRelation(): MorphOne
     {
         return $this->morphOne(Approval::class, 'approvable');
+    }
+
+    /**
+     * Get the approval record for this model
+     * Required by Approvable interface
+     */
+    public function approval(): ?Approval
+    {
+        // Check if relationship is already loaded
+        if ($this->relationLoaded('approvalRelation')) {
+            return $this->getRelation('approvalRelation');
+        }
+        
+        return $this->approvalRelation()->first();
     }
 
     /**
@@ -27,7 +42,7 @@ trait HasApproval
      */
     public function isApproved(): bool
     {
-        return $this->approval?->status === ApprovalStatus::APPROVED;
+        return $this->approval()?->status === ApprovalStatus::APPROVED;
     }
 
     /**
@@ -35,7 +50,7 @@ trait HasApproval
      */
     public function isPending(): bool
     {
-        return $this->approval?->status === ApprovalStatus::PENDING;
+        return $this->approval()?->status === ApprovalStatus::PENDING;
     }
 
     /**
@@ -43,7 +58,7 @@ trait HasApproval
      */
     public function isRejected(): bool
     {
-        return $this->approval?->status === ApprovalStatus::REJECTED;
+        return $this->approval()?->status === ApprovalStatus::REJECTED;
     }
 
     /**
@@ -59,7 +74,7 @@ trait HasApproval
      */
     public function getApprovalStatus(): ?ApprovalStatus
     {
-        return $this->approval?->status;
+        return $this->approval()?->status;
     }
 
     /**
@@ -67,7 +82,7 @@ trait HasApproval
      */
     public function scopeApproved($query)
     {
-        return $query->whereHas('approval', function ($q) {
+        return $query->whereHas('approvalRelation', function ($q) {
             $q->where('status', ApprovalStatus::APPROVED->value);
         });
     }
@@ -77,7 +92,7 @@ trait HasApproval
      */
     public function scopePending($query)
     {
-        return $query->whereHas('approval', function ($q) {
+        return $query->whereHas('approvalRelation', function ($q) {
             $q->where('status', ApprovalStatus::PENDING->value);
         });
     }
@@ -87,7 +102,7 @@ trait HasApproval
      */
     public function scopeRejected($query)
     {
-        return $query->whereHas('approval', function ($q) {
+        return $query->whereHas('approvalRelation', function ($q) {
             $q->where('status', ApprovalStatus::REJECTED->value);
         });
     }

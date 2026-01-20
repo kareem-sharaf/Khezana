@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('item_attributes', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('attributable'); // attributable_type, attributable_id
-            $table->foreignId('attribute_id')->constrained()->onDelete('cascade');
-            $table->string('value');
-            $table->timestamps();
+        if (!Schema::hasTable('item_attributes')) {
+            Schema::create('item_attributes', function (Blueprint $table) {
+                $table->id();
+                $table->morphs('attributable'); // attributable_type, attributable_id
+                $table->foreignId('attribute_id')->constrained()->onDelete('cascade');
+                $table->string('value');
+                $table->timestamps();
 
-            $table->index(['attributable_type', 'attributable_id']);
-            $table->index('attribute_id');
-        });
+                $table->index(['attributable_type', 'attributable_id']);
+                $table->index('attribute_id');
+            });
+        }
     }
 
     /**
