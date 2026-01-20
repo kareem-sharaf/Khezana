@@ -21,6 +21,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('items', \App\Http\Controllers\ItemController::class);
     Route::post('items/{item}/submit-for-approval', [\App\Http\Controllers\ItemController::class, 'submitForApproval'])
         ->name('items.submit-for-approval');
+    
+    // Requests routes
+    Route::resource('requests', \App\Http\Controllers\RequestController::class);
+    Route::post('requests/{request}/submit-for-approval', [\App\Http\Controllers\RequestController::class, 'submitForApproval'])
+        ->name('requests.submit-for-approval');
+    Route::post('requests/{request}/close', [\App\Http\Controllers\RequestController::class, 'close'])
+        ->name('requests.close');
 });
 
 require __DIR__.'/auth.php';

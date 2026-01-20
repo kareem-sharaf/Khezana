@@ -24,6 +24,8 @@ return [
     'Products' => 'Products',
     'Item' => 'Item',
     'Items' => 'Items',
+    'Request' => 'Request',
+    'Requests' => 'Requests',
     'Operation Type' => 'Operation Type',
     'Deposit Amount' => 'Deposit Amount',
     'Is Available' => 'Is Available',

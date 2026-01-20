@@ -24,6 +24,8 @@ return [
     'Products' => 'المنتجات',
     'Item' => 'العنصر',
     'Items' => 'العناصر',
+    'Request' => 'الطلب',
+    'Requests' => 'الطلبات',
     'Operation Type' => 'نوع العملية',
     'Deposit Amount' => 'مبلغ التأمين',
     'Is Available' => 'متاح',
