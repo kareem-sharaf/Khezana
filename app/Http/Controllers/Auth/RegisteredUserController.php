@@ -20,9 +20,13 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.register');
+        $redirectUrl = $request->input('redirect');
+        
+        return view('auth.register', [
+            'redirect' => $redirectUrl,
+        ]);
     }
 
     /**
@@ -54,6 +58,14 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        $redirectUrl = $request->input('redirect');
+        
+        if ($redirectUrl && filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+            return redirect($redirectUrl)
+                ->with('success', 'مرحباً بك! تم إنشاء حسابك بنجاح. يمكنك الآن إتمام العملية.');
+        }
+
+        return redirect(route('dashboard', absolute: false))
+            ->with('success', 'مرحباً بك! تم إنشاء حسابك بنجاح.');
     }
 }

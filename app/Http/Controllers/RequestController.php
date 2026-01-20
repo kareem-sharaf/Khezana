@@ -65,6 +65,8 @@ class RequestController extends Controller
      */
     public function store(HttpRequest $request): RedirectResponse
     {
+        $this->authorize('create', RequestModel::class);
+
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'title' => 'required|string|max:255',

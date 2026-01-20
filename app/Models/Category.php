@@ -134,6 +134,16 @@ class Category extends Model
     }
 
     /**
+     * Get all required attributes including from parent categories.
+     */
+    public function getAllRequiredAttributes()
+    {
+        return $this->getAllAttributes()->filter(function($attribute) {
+            return $attribute->is_required === true;
+        });
+    }
+
+    /**
      * Check if category has children.
      */
     public function hasChildren(): bool

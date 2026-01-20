@@ -1560,3 +1560,286 @@ img[loading="lazy"].loaded {
         width: 100%;
     }
 }
+
+/* ============================================
+   Login Page - Simple & Clean Design
+   ============================================ */
+
+/* Auth Layout */
+.khezana-auth-header {
+    padding: var(--khezana-spacing-md) 0;
+    text-align: center;
+    background: var(--khezana-white);
+    border-bottom: 1px solid var(--khezana-border);
+}
+
+.khezana-auth-logo {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.khezana-auth-main {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--khezana-bg);
+    padding: var(--khezana-spacing-lg) 0;
+}
+
+/* Login Page */
+.khezana-login-page {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 0 var(--khezana-spacing-md);
+}
+
+.khezana-login-container {
+    width: 100%;
+}
+
+.khezana-login-header {
+    text-align: center;
+    margin-bottom: var(--khezana-spacing-xl);
+}
+
+.khezana-login-title {
+    font-size: var(--khezana-font-size-3xl);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin-bottom: var(--khezana-spacing-sm);
+    line-height: 1.2;
+}
+
+.khezana-login-subtitle {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text-light);
+    margin: 0;
+}
+
+/* Login Card */
+.khezana-login-card {
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    padding: var(--khezana-spacing-xl);
+    box-shadow: var(--khezana-shadow);
+    border: 1px solid var(--khezana-border);
+}
+
+/* Form Elements */
+.khezana-login-form {
+    margin-bottom: var(--khezana-spacing-lg);
+}
+
+.khezana-form-group {
+    margin-bottom: var(--khezana-spacing-md);
+}
+
+.khezana-form-label {
+    display: block;
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 500;
+    color: var(--khezana-text);
+    margin-bottom: var(--khezana-spacing-xs);
+}
+
+.khezana-form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: var(--khezana-font-size-base);
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    background: var(--khezana-white);
+    color: var(--khezana-text);
+    transition: var(--khezana-transition);
+    font-family: inherit;
+}
+
+.khezana-form-input:focus {
+    outline: none;
+    border-color: var(--khezana-primary);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.khezana-form-input::placeholder {
+    color: var(--khezana-text-light);
+}
+
+.khezana-input-error {
+    border-color: var(--khezana-danger);
+}
+
+.khezana-input-error:focus {
+    border-color: var(--khezana-danger);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.khezana-form-error {
+    display: block;
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-danger);
+    margin-top: var(--khezana-spacing-xs);
+}
+
+/* OTP Input */
+.khezana-otp-container {
+    position: relative;
+}
+
+.khezana-otp-input {
+    text-align: center;
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 600;
+    letter-spacing: 0.5rem;
+    padding: 0.875rem 1rem;
+}
+
+.khezana-otp-hint {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    margin-top: var(--khezana-spacing-xs);
+    text-align: center;
+}
+
+.khezana-link-button {
+    background: none;
+    border: none;
+    color: var(--khezana-primary);
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: inherit;
+    padding: 0;
+    font-family: inherit;
+}
+
+.khezana-link-button:hover {
+    color: var(--khezana-primary-dark);
+}
+
+/* Form Actions */
+.khezana-form-actions {
+    margin-top: var(--khezana-spacing-lg);
+}
+
+.khezana-btn-block {
+    width: 100%;
+    display: block;
+}
+
+.khezana-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Trust Messages */
+.khezana-trust-messages {
+    margin-top: var(--khezana-spacing-lg);
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid var(--khezana-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-sm);
+}
+
+.khezana-trust-item {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-sm);
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+}
+
+.khezana-trust-icon {
+    font-size: var(--khezana-font-size-base);
+    flex-shrink: 0;
+}
+
+.khezana-trust-text {
+    line-height: 1.5;
+}
+
+/* Auth Footer */
+.khezana-auth-footer {
+    margin-top: var(--khezana-spacing-lg);
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid var(--khezana-border);
+    text-align: center;
+}
+
+.khezana-auth-footer-text {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    margin: 0;
+}
+
+.khezana-link {
+    color: var(--khezana-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.khezana-link:hover {
+    color: var(--khezana-primary-dark);
+    text-decoration: underline;
+}
+
+/* Auth Message */
+.khezana-auth-message {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid var(--khezana-primary-light);
+    border-radius: var(--khezana-radius);
+    padding: var(--khezana-spacing-md);
+    margin-top: var(--khezana-spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-sm);
+}
+
+.khezana-auth-message-icon {
+    font-size: var(--khezana-font-size-xl);
+    flex-shrink: 0;
+}
+
+.khezana-auth-message-text {
+    margin: 0;
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text);
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.khezana-auth-footer-hint {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    margin-top: var(--khezana-spacing-sm);
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .khezana-login-page {
+        padding: 0 var(--khezana-spacing-sm);
+    }
+
+    .khezana-login-card {
+        padding: var(--khezana-spacing-lg);
+    }
+
+    .khezana-login-title {
+        font-size: var(--khezana-font-size-2xl);
+    }
+
+    .khezana-otp-input {
+        font-size: var(--khezana-font-size-lg);
+        letter-spacing: 0.25rem;
+    }
+
+    .khezana-auth-message {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--khezana-spacing-xs);
+    }
+}

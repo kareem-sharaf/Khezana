@@ -14,9 +14,17 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.login');
+        $redirectUrl = $request->input('redirect');
+        $action = $request->input('action');
+        $message = session('message') ?? ($redirectUrl ? 'يجب تسجيل الدخول لإتمام هذه العملية' : null);
+        
+        return view('auth.login', [
+            'redirect' => $redirectUrl,
+            'action' => $action,
+            'message' => $message,
+        ]);
     }
 
     /**

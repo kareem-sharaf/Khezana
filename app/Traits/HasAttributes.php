@@ -38,11 +38,19 @@ trait HasAttributes
     /**
      * Set attribute value.
      */
-    public function setAttributeValue(string $attributeSlug, string $value): void
+    public function setAttributeValue(string $attributeSlug, ?string $value): void
     {
         $attribute = Attribute::where('slug', $attributeSlug)->first();
 
         if (!$attribute) {
+            return;
+        }
+
+        // If value is null or empty, remove the attribute
+        if (empty($value)) {
+            $this->itemAttributes()
+                ->where('attribute_id', $attribute->id)
+                ->delete();
             return;
         }
 
@@ -58,7 +66,9 @@ trait HasAttributes
     public function setAttributeValues(array $attributes): void
     {
         foreach ($attributes as $attributeSlug => $value) {
-            $this->setAttributeValue($attributeSlug, $value);
+            // Convert value to string if it's not null, otherwise pass null
+            $stringValue = $value !== null ? (string) $value : null;
+            $this->setAttributeValue($attributeSlug, $stringValue);
         }
     }
 
