@@ -35,7 +35,7 @@ class ApprovalResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Content Management';
+        return __('filament-dashboard.Content Management');
     }
 
     public static function getNavigationSort(): ?int
@@ -45,27 +45,27 @@ class ApprovalResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Approvals';
+        return __('filament-dashboard.Approvals');
     }
 
     public static function getModelLabel(): string
     {
-        return 'Approval';
+        return __('filament-dashboard.Approval');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Approvals';
+        return __('filament-dashboard.Approvals');
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make('Approval Information')
+                Section::make(__('filament-dashboard.Approval Information'))
                     ->schema([
                         Select::make('status')
-                            ->label('Status')
+                            ->label(__('filament-dashboard.Status'))
                             ->options([
                                 ApprovalStatus::PENDING->value => ApprovalStatus::PENDING->label(),
                                 ApprovalStatus::APPROVED->value => ApprovalStatus::APPROVED->label(),
@@ -77,10 +77,10 @@ class ApprovalResource extends Resource
                     ])
                     ->columns(1),
 
-                Section::make('Content Information')
+                Section::make(__('filament-dashboard.Content Information'))
                     ->schema([
                         Textarea::make('approvable_title')
-                            ->label('Content Title')
+                            ->label(__('filament-dashboard.Content Title'))
                             ->disabled()
                             ->dehydrated(false)
                             ->formatStateUsing(fn ($record) => $record?->approvable?->getApprovalTitle() ?? 'N/A'),
@@ -88,12 +88,12 @@ class ApprovalResource extends Resource
                     ->columns(1)
                     ->visible(fn ($record) => $record !== null),
 
-                Section::make('Rejection Reason')
+                Section::make(__('filament-dashboard.Rejection Reason'))
                     ->schema([
                         Textarea::make('rejection_reason')
-                            ->label('Rejection Reason')
+                            ->label(__('filament-dashboard.Rejection Reason'))
                             ->rows(3)
-                            ->placeholder('Enter the reason for rejection...')
+                            ->placeholder(__('filament-dashboard.Enter the reason for rejection...'))
                             ->visible(fn ($record) => $record?->status === ApprovalStatus::REJECTED),
                     ])
                     ->columns(1)
@@ -106,12 +106,12 @@ class ApprovalResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
+                    ->label(__('filament-dashboard.ID'))
                     ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('approvable_type')
-                    ->label('Content Type')
+                    ->label(__('filament-dashboard.Content Type'))
                     ->badge()
                     ->color('info')
                     ->formatStateUsing(fn (string $state): string => class_basename($state))
@@ -119,13 +119,13 @@ class ApprovalResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('approvable.title')
-                    ->label('Content Title')
+                    ->label(__('filament-dashboard.Content Title'))
                     ->limit(50)
                     ->formatStateUsing(fn ($record) => $record->approvable?->getApprovalTitle() ?? 'N/A')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
+                    ->label(__('filament-dashboard.Status'))
                     ->badge()
                     ->color(fn (ApprovalStatus $state): string => $state->color())
                     ->formatStateUsing(fn (ApprovalStatus $state): string => $state->label())
@@ -133,24 +133,24 @@ class ApprovalResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('submitter.name')
-                    ->label('Submitted By')
+                    ->label(__('filament-dashboard.Submitted By'))
                     ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('reviewer.name')
-                    ->label('Reviewed By')
+                    ->label(__('filament-dashboard.Reviewed By'))
                     ->sortable()
                     ->searchable()
                     ->placeholder('—'),
 
                 Tables\Columns\TextColumn::make('reviewed_at')
-                    ->label('Reviewed At')
+                    ->label(__('filament-dashboard.Reviewed At'))
                     ->dateTime()
                     ->sortable()
                     ->placeholder('—'),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Submitted At')
+                    ->label(__('filament-dashboard.Submitted At'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -162,7 +162,7 @@ class ApprovalResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('Status')
+                    ->label(__('filament-dashboard.Status'))
                     ->options([
                         ApprovalStatus::PENDING->value => ApprovalStatus::PENDING->label(),
                         ApprovalStatus::APPROVED->value => ApprovalStatus::APPROVED->label(),
@@ -171,7 +171,7 @@ class ApprovalResource extends Resource
                     ]),
 
                 Tables\Filters\SelectFilter::make('approvable_type')
-                    ->label('Content Type')
+                    ->label(__('filament-dashboard.Content Type'))
                     ->options(function () {
                         // Get unique approvable types from database
                         return Approval::query()
@@ -184,9 +184,9 @@ class ApprovalResource extends Resource
                 Tables\Filters\Filter::make('created_at')
                     ->form([
                         DatePicker::make('created_from')
-                            ->label('Submitted From'),
+                            ->label(__('filament-dashboard.Submitted From')),
                         DatePicker::make('created_until')
-                            ->label('Submitted Until'),
+                            ->label(__('filament-dashboard.Submitted Until')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -204,7 +204,7 @@ class ApprovalResource extends Resource
             ->actions([
                 Actions\ViewAction::make(),
                 Actions\Action::make('approve')
-                    ->label('Approve')
+                    ->label(__('filament-dashboard.Approve'))
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
@@ -214,15 +214,15 @@ class ApprovalResource extends Resource
                     ->visible(fn (Approval $record) => $record->isPending() && auth()->user()?->can('approve', $record)),
 
                 Actions\Action::make('reject')
-                    ->label('Reject')
+                    ->label(__('filament-dashboard.Reject'))
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->form([
                         Textarea::make('rejection_reason')
-                            ->label('Rejection Reason')
+                            ->label(__('filament-dashboard.Rejection Reason'))
                             ->required()
                             ->rows(3)
-                            ->placeholder('Enter the reason for rejection...'),
+                            ->placeholder(__('filament-dashboard.Enter the reason for rejection...')),
                     ])
                     ->action(function (Approval $record, array $data) {
                         app(RejectAction::class)->execute($record, auth()->user(), $data['rejection_reason']);
@@ -230,7 +230,7 @@ class ApprovalResource extends Resource
                     ->visible(fn (Approval $record) => $record->isPending() && auth()->user()?->can('reject', $record)),
 
                 Actions\Action::make('archive')
-                    ->label('Archive')
+                    ->label(__('filament-dashboard.Archive'))
                     ->icon('heroicon-o-archive-box')
                     ->color('gray')
                     ->requiresConfirmation()

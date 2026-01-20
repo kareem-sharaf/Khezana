@@ -25,7 +25,7 @@ class PermissionResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'User Management';
+        return __('filament-dashboard.User Management');
     }
 
     public static function getNavigationSort(): ?int
@@ -35,45 +35,45 @@ class PermissionResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Permissions';
+        return __('filament-dashboard.Permissions');
     }
 
     public static function getModelLabel(): string
     {
-        return 'Permission';
+        return __('filament-dashboard.Permission');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Permissions';
+        return __('filament-dashboard.Permissions');
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make('Permission Information')
+                Section::make(__('filament-dashboard.Permission Information'))
                     ->schema([
                         TextInput::make('name')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
-                            ->label('Permission Name')
+                            ->label(__('filament-dashboard.Permission Name'))
                             ->placeholder('e.g., manage_users, view_products')
-                            ->helperText('Use snake_case format (e.g., manage_users)'),
+                            ->helperText(__('filament-dashboard.Use snake_case format (e.g., manage_users)')),
                     ])
                     ->columns(1),
 
-                Section::make('Roles')
+                Section::make(__('filament-dashboard.Roles'))
                     ->schema([
                         Select::make('roles')
-                            ->label('Roles')
+                            ->label(__('filament-dashboard.Roles'))
                             ->multiple()
                             ->relationship('roles', 'name')
                             ->preload()
                             ->searchable()
                             ->options(Role::pluck('name', 'name'))
-                            ->helperText('Select roles that have this permission')
+                            ->helperText(__('filament-dashboard.Select roles that have this permission'))
                             ->required(false),
                     ])
                     ->columns(1),
@@ -85,22 +85,22 @@ class PermissionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
+                    ->label(__('filament-dashboard.ID'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Permission Name')
+                    ->label(__('filament-dashboard.Permission Name'))
                     ->searchable()
                     ->sortable()
                     ->badge()
                     ->color('success'),
                 Tables\Columns\TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->label(__('filament-dashboard.Roles'))
                     ->badge()
                     ->color('primary')
                     ->separator(',')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('guard_name')
-                    ->label('Guard')
+                    ->label(__('filament-dashboard.Guard'))
                     ->badge()
                     ->color('gray')
                     ->sortable(),

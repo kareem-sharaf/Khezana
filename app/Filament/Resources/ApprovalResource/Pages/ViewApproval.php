@@ -25,7 +25,7 @@ class ViewApproval extends ViewRecord
     {
         return [
             Actions\Action::make('approve')
-                ->label('Approve')
+                ->label(__('filament-dashboard.Approve'))
                 ->icon('heroicon-o-check-circle')
                 ->color('success')
                 ->requiresConfirmation()
@@ -36,15 +36,15 @@ class ViewApproval extends ViewRecord
                 ->visible(fn (Approval $record) => $record->isPending() && auth()->user()?->can('approve', $record)),
 
             Actions\Action::make('reject')
-                ->label('Reject')
+                ->label(__('filament-dashboard.Reject'))
                 ->icon('heroicon-o-x-circle')
                 ->color('danger')
                 ->form([
                     Textarea::make('rejection_reason')
-                        ->label('Rejection Reason')
+                        ->label(__('filament-dashboard.Rejection Reason'))
                         ->required()
                         ->rows(3)
-                        ->placeholder('Enter the reason for rejection...'),
+                        ->placeholder(__('filament-dashboard.Enter the reason for rejection...')),
                 ])
                 ->action(function (Approval $record, array $data) {
                     app(RejectAction::class)->execute($record, auth()->user(), $data['rejection_reason']);
@@ -53,7 +53,7 @@ class ViewApproval extends ViewRecord
                 ->visible(fn (Approval $record) => $record->isPending() && auth()->user()?->can('reject', $record)),
 
             Actions\Action::make('archive')
-                ->label('Archive')
+                ->label(__('filament-dashboard.Archive'))
                 ->icon('heroicon-o-archive-box')
                 ->color('gray')
                 ->requiresConfirmation()

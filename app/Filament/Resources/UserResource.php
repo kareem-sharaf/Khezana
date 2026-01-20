@@ -29,7 +29,22 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'User Management';
+        return __('filament-dashboard.User Management');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament-dashboard.Users');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('filament-dashboard.User');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament-dashboard.Users');
     }
 
     public static function getNavigationSort(): ?int
@@ -41,7 +56,7 @@ class UserResource extends Resource
     {
         return $schema
             ->schema([
-                Section::make('User Information')
+                Section::make(__('filament-dashboard.User Information'))
                     ->schema([
                         TextInput::make('name')
                             ->required()
@@ -57,9 +72,9 @@ class UserResource extends Resource
                             ->unique(ignoreRecord: true),
                         Select::make('status')
                             ->options([
-                                'active' => 'Active',
-                                'inactive' => 'Inactive',
-                                'suspended' => 'Suspended',
+                                'active' => __('filament-dashboard.Active'),
+                                'inactive' => __('filament-dashboard.Inactive'),
+                                'suspended' => __('filament-dashboard.Suspended'),
                             ])
                             ->default('active')
                             ->required(),
@@ -78,10 +93,10 @@ class UserResource extends Resource
                     ])
                     ->columns(2),
 
-                Section::make('Roles & Permissions')
+                Section::make(__('filament-dashboard.Roles & Permissions'))
                     ->schema([
                         Select::make('roles')
-                            ->label('Roles')
+                            ->label(__('filament-dashboard.Roles'))
                             ->multiple()
                             ->relationship('roles', 'name')
                             ->preload()
@@ -91,7 +106,7 @@ class UserResource extends Resource
                     ])
                     ->visible(fn() => auth()->user()?->can('manageRoles', User::class)),
 
-                Section::make('Profile Information')
+                Section::make(__('filament-dashboard.Profile Information'))
                     ->schema([
                         TextInput::make('profile.city')
                             ->maxLength(255),
@@ -110,18 +125,22 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
+                    ->label(__('filament-dashboard.ID'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('filament-dashboard.Name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('filament-dashboard.Email'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label(__('filament-dashboard.Phone'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label(__('filament-dashboard.Status'))
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'active' => 'success',
@@ -131,6 +150,7 @@ class UserResource extends Resource
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('roles.name')
+                    ->label(__('filament-dashboard.Roles'))
                     ->badge()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -145,9 +165,9 @@ class UserResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'active' => 'Active',
-                        'inactive' => 'Inactive',
-                        'suspended' => 'Suspended',
+                        'active' => __('filament-dashboard.Active'),
+                        'inactive' => __('filament-dashboard.Inactive'),
+                        'suspended' => __('filament-dashboard.Suspended'),
                     ]),
                 Tables\Filters\Filter::make('roles')
                     ->form([

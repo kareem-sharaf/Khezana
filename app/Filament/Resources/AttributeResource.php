@@ -27,7 +27,7 @@ class AttributeResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Content Management';
+        return __('common.navigation.content_management');
     }
 
     public static function getNavigationSort(): ?int
@@ -37,24 +37,24 @@ class AttributeResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Attributes';
+        return __('attributes.title');
     }
 
     public static function getModelLabel(): string
     {
-        return 'Attribute';
+        return __('attributes.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Attributes';
+        return __('attributes.plural');
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make('Attribute Information')
+                Section::make(__('filament-dashboard.Attribute Information'))
                     ->schema([
                         TextInput::make('name')
                             ->required()
@@ -69,17 +69,17 @@ class AttributeResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
-                            ->helperText('Auto-generated from name if left empty'),
+                            ->helperText(__('filament-dashboard.Auto-generated from name if left empty')),
                         Select::make('type')
                             ->required()
                             ->options(AttributeType::class)
                             ->native(false)
-                            ->helperText('Select: predefined values, Text: free text, Number: numeric value'),
+                            ->helperText(__('filament-dashboard.Select: predefined values, Text: free text, Number: numeric value')),
                         Checkbox::make('is_required')
-                            ->label('Required')
-                            ->helperText('This attribute must be filled when creating items'),
+                            ->label(__('filament-dashboard.Required'))
+                            ->helperText(__('filament-dashboard.This attribute must be filled when creating items')),
                     ])->columns(2),
-                Section::make('Predefined Values')
+                Section::make(__('filament-dashboard.Predefined Values'))
                     ->schema([
                         Repeater::make('values')
                             ->relationship('values')
@@ -87,14 +87,14 @@ class AttributeResource extends Resource
                                 TextInput::make('value')
                                     ->required()
                                     ->maxLength(255)
-                                    ->label('Value'),
+                                    ->label(__('filament-dashboard.Value')),
                             ])
                             ->itemLabel(fn (array $state): ?string => $state['value'] ?? null)
                             ->addActionLabel('Add Value')
                             ->reorderable()
                             ->collapsible()
                             ->visible(fn ($get) => $get('type') === AttributeType::SELECT->value)
-                            ->helperText('Add predefined values for select type attributes'),
+                            ->helperText(__('filament-dashboard.Add predefined values for select type attributes')),
                     ])
                     ->collapsible()
                     ->visible(fn ($get) => $get('type') === AttributeType::SELECT->value),
@@ -106,9 +106,10 @@ class AttributeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
+                    ->label(__('filament-dashboard.ID'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('filament-dashboard.Name'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
@@ -117,6 +118,7 @@ class AttributeResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('type')
+                    ->label(__('filament-dashboard.Type'))
                     ->badge()
                     ->color(fn (AttributeType $state): string => match ($state) {
                         AttributeType::SELECT => 'success',
@@ -125,16 +127,16 @@ class AttributeResource extends Resource
                     })
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_required')
-                    ->label('Required')
+                    ->label(__('filament-dashboard.Required'))
                     ->boolean()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('values_count')
-                    ->label('Values')
+                    ->label(__('filament-dashboard.Values'))
                     ->counts('values')
                     ->sortable()
                     ->visible(fn (?Attribute $record) => $record?->isSelectType() ?? false),
                 Tables\Columns\TextColumn::make('categories_count')
-                    ->label('Categories')
+                    ->label(__('filament-dashboard.Categories'))
                     ->counts('categories')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -151,8 +153,8 @@ class AttributeResource extends Resource
                     ->options(AttributeType::class)
                     ->native(false),
                 Tables\Filters\TernaryFilter::make('is_required')
-                    ->label('Required')
-                    ->placeholder('All')
+                    ->label(__('filament-dashboard.Required'))
+                    ->placeholder(__('filament-dashboard.All'))
                     ->trueLabel('Required only')
                     ->falseLabel('Optional only'),
             ])

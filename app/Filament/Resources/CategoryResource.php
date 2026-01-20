@@ -27,7 +27,7 @@ class CategoryResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Content Management';
+        return __('common.navigation.content_management');
     }
 
     public static function getNavigationSort(): ?int
@@ -37,28 +37,30 @@ class CategoryResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Categories';
+        return __('categories.title');
     }
 
     public static function getModelLabel(): string
     {
-        return 'Category';
+        return __('categories.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Categories';
+        return __('categories.plural');
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make('Category Information')
+                Section::make(__('categories.fields.name'))
                     ->schema([
                         TextInput::make('name')
+                            ->label(__('categories.fields.name'))
                             ->required()
                             ->maxLength(255)
+                            ->placeholder(__('categories.placeholders.name'))
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (empty($set('slug'))) {
@@ -66,23 +68,28 @@ class CategoryResource extends Resource
                                 }
                             }),
                         TextInput::make('slug')
+                            ->label(__('categories.fields.slug'))
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
-                            ->helperText('Auto-generated from name if left empty'),
+                            ->placeholder(__('categories.placeholders.slug'))
+                            ->helperText(__('categories.placeholders.slug')),
                         Select::make('parent_id')
-                            ->label('Parent Category')
+                            ->label(__('categories.fields.parent_id'))
                             ->relationship('parent', 'name')
                             ->searchable()
                             ->preload()
                             ->nullable()
-                            ->helperText('Leave empty for root category'),
+                            ->placeholder(__('categories.placeholders.parent_id'))
+                            ->helperText(__('categories.placeholders.parent_id')),
                         Textarea::make('description')
+                            ->label(__('categories.fields.description'))
                             ->rows(3)
                             ->maxLength(65535)
-                            ->nullable(),
+                            ->nullable()
+                            ->placeholder(__('categories.placeholders.description')),
                         Checkbox::make('is_active')
-                            ->label('Active')
+                            ->label(__('categories.fields.is_active'))
                             ->default(true),
                     ])->columns(2),
             ]);
@@ -93,14 +100,15 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
+                    ->label(__('filament-dashboard.ID'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('filament-dashboard.Name'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
                 Tables\Columns\TextColumn::make('parent.name')
-                    ->label('Parent')
+                    ->label(__('filament-dashboard.Parent'))
                     ->searchable()
                     ->sortable()
                     ->badge()
@@ -111,11 +119,11 @@ class CategoryResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('is_active')
-                    ->label('Active')
+                    ->label(__('filament-dashboard.Active'))
                     ->boolean()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('children_count')
-                    ->label('Children')
+                    ->label(__('filament-dashboard.Children'))
                     ->counts('children')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -129,17 +137,17 @@ class CategoryResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('parent_id')
-                    ->label('Parent Category')
+                    ->label(__('filament-dashboard.Parent Category'))
                     ->relationship('parent', 'name')
                     ->searchable()
                     ->preload(),
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Active')
-                    ->placeholder('All')
-                    ->trueLabel('Active only')
-                    ->falseLabel('Inactive only'),
+                    ->label(__('filament-dashboard.Active'))
+                    ->placeholder(__('filament-dashboard.All'))
+                    ->trueLabel(__('filament-dashboard.Active Only'))
+                    ->falseLabel(__('filament-dashboard.Inactive Only')),
                 Tables\Filters\Filter::make('roots')
-                    ->label('Root Categories Only')
+                    ->label(__('filament-dashboard.Root Categories Only'))
                     ->query(fn (Builder $query): Builder => $query->whereNull('parent_id')),
             ])
             ->actions([

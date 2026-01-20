@@ -25,7 +25,7 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'User Management';
+        return __('filament-dashboard.User Management');
     }
 
     public static function getNavigationSort(): ?int
@@ -35,44 +35,44 @@ class RoleResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Roles';
+        return __('filament-dashboard.Roles');
     }
 
     public static function getModelLabel(): string
     {
-        return 'Role';
+        return __('filament-dashboard.Role');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Roles';
+        return __('filament-dashboard.Roles');
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make('Role Information')
+                Section::make(__('filament-dashboard.Role Information'))
                     ->schema([
                         TextInput::make('name')
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
-                            ->label('Role Name')
+                            ->label(__('filament-dashboard.Role Name'))
                             ->placeholder('e.g., admin, manager'),
                     ])
                     ->columns(1),
 
-                Section::make('Permissions')
+                Section::make(__('filament-dashboard.Permissions'))
                     ->schema([
                         Select::make('permissions')
-                            ->label('Permissions')
+                            ->label(__('filament-dashboard.Permissions'))
                             ->multiple()
                             ->relationship('permissions', 'name')
                             ->preload()
                             ->searchable()
                             ->options(Permission::pluck('name', 'name'))
-                            ->helperText('Select permissions for this role')
+                            ->helperText(__('filament-dashboard.Select permissions for this role'))
                             ->required(false),
                     ])
                     ->columns(1),
@@ -84,22 +84,22 @@ class RoleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
+                    ->label(__('filament-dashboard.ID'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Role Name')
+                    ->label(__('filament-dashboard.Role Name'))
                     ->searchable()
                     ->sortable()
                     ->badge()
                     ->color('primary'),
                 Tables\Columns\TextColumn::make('permissions.name')
-                    ->label('Permissions')
+                    ->label(__('filament-dashboard.Permissions'))
                     ->badge()
                     ->color('success')
                     ->separator(',')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('guard_name')
-                    ->label('Guard')
+                    ->label(__('filament-dashboard.Guard'))
                     ->badge()
                     ->color('gray')
                     ->sortable(),
