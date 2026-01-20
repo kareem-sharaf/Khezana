@@ -1,0 +1,514 @@
+/**
+ * Khezana Home Page Design System
+ * Modern, Clean, Fast - Design System Ready
+ */
+
+:root {
+    /* Colors */
+    --khezana-primary: #f59e0b; /* Amber */
+    --khezana-primary-dark: #d97706;
+    --khezana-primary-light: #fbbf24;
+    --khezana-secondary: #6b7280;
+    --khezana-success: #10b981;
+    --khezana-danger: #ef4444;
+    --khezana-text: #1f2937;
+    --khezana-text-light: #6b7280;
+    --khezana-bg: #f9fafb;
+    --khezana-white: #ffffff;
+    --khezana-border: #e5e7eb;
+    
+    /* Spacing */
+    --khezana-spacing-xs: 0.5rem;
+    --khezana-spacing-sm: 1rem;
+    --khezana-spacing-md: 1.5rem;
+    --khezana-spacing-lg: 2rem;
+    --khezana-spacing-xl: 3rem;
+    --khezana-spacing-2xl: 4rem;
+    
+    /* Typography */
+    --khezana-font-size-base: 1rem;
+    --khezana-font-size-sm: 0.875rem;
+    --khezana-font-size-lg: 1.125rem;
+    --khezana-font-size-xl: 1.25rem;
+    --khezana-font-size-2xl: 1.5rem;
+    --khezana-font-size-3xl: 1.875rem;
+    --khezana-font-size-4xl: 2.25rem;
+    
+    /* Shadows */
+    --khezana-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --khezana-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --khezana-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --khezana-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    
+    /* Border Radius */
+    --khezana-radius: 0.5rem;
+    --khezana-radius-lg: 0.75rem;
+    --khezana-radius-xl: 1rem;
+    
+    /* Transitions */
+    --khezana-transition: all 0.2s ease;
+}
+
+/* Reset & Base */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--khezana-text);
+    line-height: 1.6;
+}
+
+/* Container */
+.khezana-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--khezana-spacing-md);
+}
+
+@media (min-width: 768px) {
+    .khezana-container {
+        padding: 0 var(--khezana-spacing-lg);
+    }
+}
+
+/* Header */
+.khezana-header {
+    background: var(--khezana-white);
+    border-bottom: 1px solid var(--khezana-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--khezana-shadow-sm);
+}
+
+.khezana-nav {
+    padding: var(--khezana-spacing-sm) 0;
+}
+
+.khezana-nav-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--khezana-spacing-md);
+    flex-wrap: wrap;
+}
+
+.khezana-logo {
+    text-decoration: none;
+    font-size: var(--khezana-font-size-2xl);
+    font-weight: 700;
+    color: var(--khezana-primary);
+    display: flex;
+    align-items: center;
+}
+
+.khezana-logo-text {
+    background: linear-gradient(135deg, var(--khezana-primary), var(--khezana-primary-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.khezana-nav-links {
+    display: flex;
+    gap: var(--khezana-spacing-md);
+    flex-wrap: wrap;
+}
+
+.khezana-nav-link {
+    text-decoration: none;
+    color: var(--khezana-text);
+    font-weight: 500;
+    padding: var(--khezana-spacing-xs) var(--khezana-spacing-sm);
+    border-radius: var(--khezana-radius);
+    transition: var(--khezana-transition);
+}
+
+.khezana-nav-link:hover {
+    color: var(--khezana-primary);
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.khezana-nav-actions {
+    display: flex;
+    gap: var(--khezana-spacing-sm);
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.khezana-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    font-size: var(--khezana-font-size-base);
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--khezana-radius);
+    border: none;
+    cursor: pointer;
+    transition: var(--khezana-transition);
+    white-space: nowrap;
+}
+
+.khezana-btn-primary {
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+}
+
+.khezana-btn-primary:hover {
+    background: var(--khezana-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--khezana-shadow-md);
+}
+
+.khezana-btn-secondary {
+    background: var(--khezana-white);
+    color: var(--khezana-text);
+    border: 1px solid var(--khezana-border);
+}
+
+.khezana-btn-secondary:hover {
+    background: var(--khezana-bg);
+    border-color: var(--khezana-primary);
+    color: var(--khezana-primary);
+}
+
+.khezana-btn-large {
+    padding: 0.875rem 2rem;
+    font-size: var(--khezana-font-size-lg);
+}
+
+/* Hero Section */
+.khezana-hero {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    padding: var(--khezana-spacing-2xl) 0;
+    text-align: center;
+}
+
+.khezana-hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.khezana-hero-title {
+    font-size: var(--khezana-font-size-4xl);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin-bottom: var(--khezana-spacing-md);
+    line-height: 1.2;
+}
+
+.khezana-hero-subtitle {
+    font-size: var(--khezana-font-size-xl);
+    color: var(--khezana-text-light);
+    margin-bottom: var(--khezana-spacing-xl);
+    line-height: 1.6;
+}
+
+/* Service Cards */
+.khezana-services {
+    padding: var(--khezana-spacing-2xl) 0;
+    background: var(--khezana-white);
+}
+
+.khezana-services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--khezana-spacing-lg);
+    margin-top: var(--khezana-spacing-xl);
+}
+
+.khezana-service-card {
+    background: var(--khezana-white);
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius-lg);
+    padding: var(--khezana-spacing-lg);
+    text-align: center;
+    transition: var(--khezana-transition);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.khezana-service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--khezana-shadow-lg);
+    border-color: var(--khezana-primary);
+}
+
+.khezana-service-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto var(--khezana-spacing-md);
+    background: linear-gradient(135deg, var(--khezana-primary-light), var(--khezana-primary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--khezana-font-size-2xl);
+}
+
+.khezana-service-title {
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 600;
+    margin-bottom: var(--khezana-spacing-sm);
+    color: var(--khezana-text);
+}
+
+.khezana-service-description {
+    color: var(--khezana-text-light);
+    font-size: var(--khezana-font-size-base);
+    line-height: 1.6;
+}
+
+/* How It Works */
+.khezana-how-it-works {
+    padding: var(--khezana-spacing-2xl) 0;
+    background: var(--khezana-bg);
+}
+
+.khezana-section-title {
+    font-size: var(--khezana-font-size-3xl);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: var(--khezana-spacing-md);
+    color: var(--khezana-text);
+}
+
+.khezana-section-subtitle {
+    text-align: center;
+    color: var(--khezana-text-light);
+    font-size: var(--khezana-font-size-lg);
+    margin-bottom: var(--khezana-spacing-xl);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.khezana-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--khezana-spacing-lg);
+    margin-top: var(--khezana-spacing-xl);
+}
+
+.khezana-step {
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    padding: var(--khezana-spacing-lg);
+    text-align: center;
+    position: relative;
+}
+
+.khezana-step-number {
+    width: 48px;
+    height: 48px;
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 700;
+    margin: 0 auto var(--khezana-spacing-md);
+}
+
+.khezana-step-title {
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 600;
+    margin-bottom: var(--khezana-spacing-sm);
+    color: var(--khezana-text);
+}
+
+.khezana-step-description {
+    color: var(--khezana-text-light);
+    line-height: 1.6;
+}
+
+/* Featured Sections */
+.khezana-featured {
+    padding: var(--khezana-spacing-2xl) 0;
+    background: var(--khezana-white);
+}
+
+.khezana-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--khezana-spacing-lg);
+    margin-top: var(--khezana-spacing-xl);
+}
+
+.khezana-item-card {
+    background: var(--khezana-white);
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius-lg);
+    overflow: hidden;
+    transition: var(--khezana-transition);
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.khezana-item-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--khezana-shadow-lg);
+}
+
+.khezana-item-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: var(--khezana-bg);
+    display: block;
+}
+
+.khezana-item-content {
+    padding: var(--khezana-spacing-md);
+}
+
+.khezana-item-title {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 600;
+    margin-bottom: var(--khezana-spacing-xs);
+    color: var(--khezana-text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.khezana-item-price {
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 700;
+    color: var(--khezana-primary);
+    margin-top: var(--khezana-spacing-sm);
+}
+
+.khezana-item-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--khezana-primary-light);
+    color: var(--khezana-text);
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 500;
+    margin-top: var(--khezana-spacing-xs);
+}
+
+.khezana-view-all {
+    text-align: center;
+    margin-top: var(--khezana-spacing-xl);
+}
+
+/* Footer */
+.khezana-footer {
+    background: var(--khezana-text);
+    color: var(--khezana-white);
+    padding: var(--khezana-spacing-2xl) 0 var(--khezana-spacing-lg);
+    margin-top: var(--khezana-spacing-2xl);
+}
+
+.khezana-footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--khezana-spacing-xl);
+    margin-bottom: var(--khezana-spacing-xl);
+}
+
+.khezana-footer-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.khezana-footer-title {
+    font-size: var(--khezana-font-size-2xl);
+    font-weight: 700;
+    margin-bottom: var(--khezana-spacing-md);
+    color: var(--khezana-primary-light);
+}
+
+.khezana-footer-heading {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 600;
+    margin-bottom: var(--khezana-spacing-sm);
+}
+
+.khezana-footer-text {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+}
+
+.khezana-footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.khezana-footer-links li {
+    margin-bottom: var(--khezana-spacing-xs);
+}
+
+.khezana-footer-links a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: var(--khezana-transition);
+}
+
+.khezana-footer-links a:hover {
+    color: var(--khezana-primary-light);
+}
+
+.khezana-footer-bottom {
+    text-align: center;
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .khezana-hero-title {
+        font-size: var(--khezana-font-size-3xl);
+    }
+    
+    .khezana-hero-subtitle {
+        font-size: var(--khezana-font-size-lg);
+    }
+    
+    .khezana-nav-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .khezana-nav-links {
+        justify-content: center;
+    }
+    
+    .khezana-nav-actions {
+        justify-content: center;
+    }
+    
+    .khezana-services-grid,
+    .khezana-steps,
+    .khezana-items-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Lazy Loading */
+img[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+img[loading="lazy"].loaded {
+    opacity: 1;
+}

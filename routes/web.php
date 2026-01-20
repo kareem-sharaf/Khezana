@@ -13,9 +13,7 @@ Route::middleware(['cache.headers:300', 'throttle:60,1'])->group(function () {
     Route::get('/requests/{id}/{slug?}', [\App\Http\Controllers\Public\RequestController::class, 'show'])->name('public.requests.show');
 });
 
-Route::get('/', function () {
-    return redirect()->route('public.items.index');
-})->name('home');
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
