@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Item;
 
+use App\Actions\Approval\SubmitForApprovalAction;
+use App\Enums\ApprovalStatus;
 use App\Enums\OperationType;
 use App\Models\Item;
 use App\Services\ItemService;
@@ -14,8 +16,11 @@ use Illuminate\Support\Facades\DB;
  */
 class UpdateItemAction
 {
+    private const SENSITIVE_FIELDS = ['price', 'operation_type', 'category_id'];
+
     public function __construct(
-        private readonly ItemService $itemService
+        private readonly ItemService $itemService,
+        private readonly SubmitForApprovalAction $submitForApprovalAction
     ) {
     }
 
@@ -35,6 +40,27 @@ class UpdateItemAction
         $this->itemService->validateOperationRules($data);
 
         return DB::transaction(function () use ($item, $data, $attributes, $images) {
+            $item->refresh();
+            $wasApproved = $item->isApproved();
+            $hasSensitiveChanges = false;
+            $hasAttributeChanges = $attributes !== null;
+
+            // Check for sensitive field changes
+            foreach (self::SENSITIVE_FIELDS as $field) {
+                if (!isset($data[$field])) {
+                    continue;
+                }
+
+                $newValue = $field === 'operation_type' 
+                    ? OperationType::from($data[$field])
+                    : $data[$field];
+
+                if ($newValue != $item->$field) {
+                    $hasSensitiveChanges = true;
+                    break;
+                }
+            }
+
             // Update the item
             $item->update([
                 'category_id' => $data['category_id'] ?? $item->category_id,
@@ -49,9 +75,8 @@ class UpdateItemAction
             ]);
 
             // Update dynamic attributes if provided
-            if ($attributes !== null) {
+            if ($hasAttributeChanges) {
                 $this->itemService->validateCategoryAttributes($item, $attributes);
-                // Remove old attributes and set new ones
                 $item->itemAttributes()->delete();
                 $item->setAttributeValues($attributes);
             }
@@ -60,6 +85,14 @@ class UpdateItemAction
             if ($images !== null) {
                 $item->images()->delete();
                 $this->attachImages($item, $images);
+            }
+
+            // Re-submit for approval if sensitive fields changed and item was approved
+            if ($wasApproved && ($hasSensitiveChanges || $hasAttributeChanges)) {
+                $approval = $item->approval();
+                if ($approval && $approval->status !== ApprovalStatus::PENDING) {
+                    $this->submitForApprovalAction->execute($item, $item->user);
+                }
             }
 
             return $item->fresh(['user', 'category', 'images']);

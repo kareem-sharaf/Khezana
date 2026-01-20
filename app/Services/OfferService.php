@@ -136,6 +136,12 @@ class OfferService
         // Ensure request can still receive offers
         $this->ensureRequestCanReceiveOffers($request);
 
+        // Validate item if offer is linked to an item (BR-024)
+        if ($offer->item_id) {
+            $offer->load('item');
+            $offer->item->ensureCanReceiveOffers();
+        }
+
         return \Illuminate\Support\Facades\DB::transaction(function () use ($offer, $request) {
             // Accept the offer
             $offer->update(['status' => OfferStatus::ACCEPTED]);

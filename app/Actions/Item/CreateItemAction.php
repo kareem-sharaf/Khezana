@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Item;
 
+use App\Actions\Approval\SubmitForApprovalAction;
 use App\Enums\OperationType;
 use App\Models\Item;
 use App\Models\User;
@@ -16,7 +17,8 @@ use Illuminate\Support\Facades\DB;
 class CreateItemAction
 {
     public function __construct(
-        private readonly ItemService $itemService
+        private readonly ItemService $itemService,
+        private readonly SubmitForApprovalAction $submitForApprovalAction
     ) {
     }
 
@@ -58,6 +60,9 @@ class CreateItemAction
             if ($images) {
                 $this->attachImages($item, $images);
             }
+
+            // Create approval automatically
+            $this->submitForApprovalAction->execute($item, $user);
 
             return $item->fresh(['user', 'category', 'images']);
         });

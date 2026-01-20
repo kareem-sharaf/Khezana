@@ -46,6 +46,12 @@ class CreateOfferAction
             throw new \Exception(__('offers.validation.duplicate_offer'));
         }
 
+        // Validate item if offer is linked to an item (BR-024)
+        if (isset($data['item_id']) && $data['item_id']) {
+            $item = \App\Models\Item::findOrFail($data['item_id']);
+            $item->ensureCanReceiveOffers();
+        }
+
         return DB::transaction(function () use ($data, $request, $user) {
             // Create the offer
             $offer = Offer::create([

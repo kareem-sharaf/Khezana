@@ -144,4 +144,20 @@ class Item extends Model implements Approvable
     {
         return $query->approved();
     }
+
+    /**
+     * Ensure item can receive offers (BR-024)
+     *
+     * @throws \Exception If item cannot receive offers
+     */
+    public function ensureCanReceiveOffers(): void
+    {
+        if (!$this->isApproved()) {
+            throw new \Exception('Item must be approved to receive offers.');
+        }
+
+        if (!$this->is_available) {
+            throw new \Exception('Item must be available to receive offers.');
+        }
+    }
 }

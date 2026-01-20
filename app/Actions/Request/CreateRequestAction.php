@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Request;
 
+use App\Actions\Approval\SubmitForApprovalAction;
 use App\Enums\RequestStatus;
 use App\Models\Request;
 use App\Models\User;
@@ -16,7 +17,8 @@ use Illuminate\Support\Facades\DB;
 class CreateRequestAction
 {
     public function __construct(
-        private readonly RequestService $requestService
+        private readonly RequestService $requestService,
+        private readonly SubmitForApprovalAction $submitForApprovalAction
     ) {
     }
 
@@ -49,6 +51,9 @@ class CreateRequestAction
                 $this->requestService->validateCategoryAttributes($request, $attributes);
                 $request->setAttributeValues($attributes);
             }
+
+            // Create approval automatically
+            $this->submitForApprovalAction->execute($request, $user);
 
             return $request->fresh(['user', 'category']);
         });
