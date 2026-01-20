@@ -185,13 +185,20 @@ class ItemResource extends Resource
                     ->falseLabel(__('filament-dashboard.Unavailable Only')),
                 Tables\Filters\SelectFilter::make('approvalRelation.status')
                     ->label(__('filament-dashboard.Approval Status'))
-                    ->relationship('approvalRelation', 'status')
                     ->options([
                         ApprovalStatus::PENDING->value => ApprovalStatus::PENDING->label(),
                         ApprovalStatus::APPROVED->value => ApprovalStatus::APPROVED->label(),
                         ApprovalStatus::REJECTED->value => ApprovalStatus::REJECTED->label(),
                         ApprovalStatus::ARCHIVED->value => ApprovalStatus::ARCHIVED->label(),
-                    ]),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (!empty($data['value'])) {
+                            return $query->whereHas('approvalRelation', function ($q) use ($data) {
+                                $q->where('status', $data['value']);
+                            });
+                        }
+                        return $query;
+                    }),
             ])
             ->actions([
                 Actions\ViewAction::make(),

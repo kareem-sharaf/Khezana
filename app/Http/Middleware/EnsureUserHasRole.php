@@ -16,14 +16,16 @@ class EnsureUserHasRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) {
-            return redirect()->route('filament.admin.auth.login');
+        // Skip role check for login page - Filament handles authentication
+        if ($request->routeIs('filament.admin.auth.login')) {
+            return $next($request);
         }
 
+        // Filament's Authenticate middleware already handles authentication
+        // We only need to check the role here
         $user = Auth::user();
 
-        // Check if user has admin or super_admin role
-        if (!$user->hasAnyRole(['admin', 'super_admin'])) {
+        if (!$user || !$user->hasAnyRole(['admin', 'super_admin'])) {
             abort(403, 'Unauthorized access to admin panel.');
         }
 
