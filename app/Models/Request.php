@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 /**
  * Request Model
@@ -34,6 +35,7 @@ class Request extends Model implements Approvable
         'user_id',
         'category_id',
         'title',
+        'slug',
         'description',
         'status',
         'archived_at',
@@ -170,5 +172,16 @@ class Request extends Model implements Approvable
     {
         $this->update(['archived_at' => now()]);
         $this->delete();
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (Request $request) {
+            if (empty($request->slug)) {
+                $request->slug = Str::slug($request->title);
+            }
+        });
     }
 }

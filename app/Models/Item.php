@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 /**
  * Item Model
@@ -34,6 +35,7 @@ class Item extends Model implements Approvable
         'category_id',
         'operation_type',
         'title',
+        'slug',
         'description',
         'price',
         'deposit_amount',
@@ -182,5 +184,16 @@ class Item extends Model implements Approvable
     {
         $this->update(['archived_at' => now()]);
         $this->delete();
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (Item $item) {
+            if (empty($item->slug)) {
+                $item->slug = Str::slug($item->title);
+            }
+        });
     }
 }
