@@ -89,7 +89,9 @@ class RequestController extends Controller
             'user',
             'category',
             'itemAttributes.attribute',
-            'approvalRelation'
+            'approvalRelation',
+            'offers.user',
+            'offers.item'
         ]);
 
         return view('requests.show', compact('requestModel'));

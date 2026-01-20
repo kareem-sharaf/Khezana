@@ -28,6 +28,22 @@ Route::middleware('auth')->group(function () {
         ->name('requests.submit-for-approval');
     Route::post('requests/{request}/close', [\App\Http\Controllers\RequestController::class, 'close'])
         ->name('requests.close');
+    
+    // Offers routes
+    Route::get('requests/{request}/offers/create', [\App\Http\Controllers\OfferController::class, 'create'])
+        ->name('offers.create');
+    Route::post('requests/{request}/offers', [\App\Http\Controllers\OfferController::class, 'store'])
+        ->name('offers.store');
+    Route::get('offers/{offer}/edit', [\App\Http\Controllers\OfferController::class, 'edit'])
+        ->name('offers.edit');
+    Route::put('offers/{offer}', [\App\Http\Controllers\OfferController::class, 'update'])
+        ->name('offers.update');
+    Route::post('offers/{offer}/cancel', [\App\Http\Controllers\OfferController::class, 'cancel'])
+        ->name('offers.cancel');
+    Route::post('offers/{offer}/accept', [\App\Http\Controllers\OfferController::class, 'accept'])
+        ->name('offers.accept');
+    Route::post('offers/{offer}/reject', [\App\Http\Controllers\OfferController::class, 'reject'])
+        ->name('offers.reject');
 });
 
 require __DIR__.'/auth.php';
