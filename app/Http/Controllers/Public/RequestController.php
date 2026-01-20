@@ -22,6 +22,11 @@ class RequestController extends Controller
     ) {
     }
 
+    public function createInfo(): View
+    {
+        return view('public.requests.create-info');
+    }
+
     public function index(Request $request): View
     {
         $filters = [

@@ -52,7 +52,11 @@ class RequestController extends Controller
      */
     public function create(): View
     {
-        $categories = Category::with('attributes')->get();
+        $categories = Category::active()
+            ->with(['attributes.values', 'children.attributes.values'])
+            ->whereNull('parent_id')
+            ->get();
+        
         return view('requests.create', compact('categories'));
     }
 

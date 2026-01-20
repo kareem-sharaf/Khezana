@@ -52,7 +52,7 @@
                 </a>
                 
                 <!-- Request -->
-                <a href="{{ route('public.requests.index') }}" class="khezana-service-card">
+                <a href="{{ route('public.requests.create-info') }}" class="khezana-service-card">
                     <div class="khezana-service-icon">📝</div>
                     <h3 class="khezana-service-title">اطلب لباسًا</h3>
                     <p class="khezana-service-description">

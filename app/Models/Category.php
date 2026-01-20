@@ -99,13 +99,38 @@ class Category extends Model
      */
     public function getAllAttributes()
     {
-        $attributes = $this->attributes;
+        // Get attributes from the relationship, not the model's attributes property
+        $attributes = $this->relationLoaded('attributes') 
+            ? $this->attributes 
+            : $this->attributes()->get();
 
-        if ($this->parent) {
-            $attributes = $attributes->merge($this->parent->getAllAttributes());
+        // Ensure we have a Collection of Models
+        if (!$attributes instanceof \Illuminate\Support\Collection) {
+            $attributes = collect($attributes);
         }
 
-        return $attributes->unique('id');
+        // Filter to ensure all items are Attribute models
+        $attributes = $attributes->filter(function($item) {
+            return $item instanceof \App\Models\Attribute;
+        });
+
+        if ($this->parent) {
+            $parentAttributes = $this->parent->getAllAttributes();
+            // Ensure parent attributes is also a Collection
+            if (!$parentAttributes instanceof \Illuminate\Support\Collection) {
+                $parentAttributes = collect($parentAttributes);
+            }
+            // Filter to ensure all items are Attribute models
+            $parentAttributes = $parentAttributes->filter(function($item) {
+                return $item instanceof \App\Models\Attribute;
+            });
+            $attributes = $attributes->merge($parentAttributes);
+        }
+
+        // Use unique with callback to ensure we get unique Attribute models
+        return $attributes->unique(function($attribute) {
+            return $attribute->id;
+        })->values();
     }
 
     /**
