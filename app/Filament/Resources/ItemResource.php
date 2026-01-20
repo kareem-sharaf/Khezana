@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ItemResource\Pages;
+use App\Enums\ApprovalStatus;
 use App\Enums\OperationType;
 use App\Models\Item;
 use Filament\Actions;
@@ -185,7 +186,12 @@ class ItemResource extends Resource
                 Tables\Filters\SelectFilter::make('approvalRelation.status')
                     ->label(__('filament-dashboard.Approval Status'))
                     ->relationship('approvalRelation', 'status')
-                    ->options(\App\Enums\ApprovalStatus::class),
+                    ->options([
+                        ApprovalStatus::PENDING->value => ApprovalStatus::PENDING->label(),
+                        ApprovalStatus::APPROVED->value => ApprovalStatus::APPROVED->label(),
+                        ApprovalStatus::REJECTED->value => ApprovalStatus::REJECTED->label(),
+                        ApprovalStatus::ARCHIVED->value => ApprovalStatus::ARCHIVED->label(),
+                    ]),
             ])
             ->actions([
                 Actions\ViewAction::make(),

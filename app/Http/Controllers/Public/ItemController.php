@@ -9,6 +9,7 @@ use App\Read\Items\Models\ItemReadModel;
 use App\Read\Items\Queries\BrowseItemsQuery;
 use App\Read\Items\Queries\ViewItemQuery;
 use App\Services\Cache\CacheService;
+use App\Services\Cache\CategoryCacheService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -20,6 +21,7 @@ class ItemController extends Controller
         private readonly BrowseItemsQuery $browseItemsQuery,
         private readonly ViewItemQuery $viewItemQuery,
         private readonly CacheService $cacheService,
+        private readonly CategoryCacheService $categoryCacheService,
     ) {}
 
     public function index(Request $request): View
@@ -48,10 +50,13 @@ class ItemController extends Controller
             $locale
         );
 
+        $categories = $this->categoryCacheService->getTree();
+
         return view('public.items.index', [
             'items' => $items,
             'filters' => $filters,
             'sort' => $sort,
+            'categories' => $categories,
         ]);
     }
 
