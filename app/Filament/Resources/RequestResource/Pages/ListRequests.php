@@ -12,6 +12,8 @@ class ListRequests extends ListRecords
 {
     protected static string $resource = RequestResource::class;
 
+    protected ?string $pollingInterval = '30s';
+
     protected function getHeaderActions(): array
     {
         return [

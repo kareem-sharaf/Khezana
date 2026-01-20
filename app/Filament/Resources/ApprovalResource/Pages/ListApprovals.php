@@ -16,6 +16,8 @@ class ListApprovals extends ListRecords
 {
     protected static string $resource = ApprovalResource::class;
 
+    protected ?string $pollingInterval = '30s';
+
     protected function getHeaderActions(): array
     {
         return [

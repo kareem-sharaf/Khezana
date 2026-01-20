@@ -8,7 +8,7 @@ use App\Filament\Resources\ItemResource\Pages;
 use App\Enums\OperationType;
 use App\Models\Item;
 use Filament\Actions;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -34,27 +34,39 @@ class ItemResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-dashboard.Content Management');
+        return __('filament.navigation_groups.moderation');
     }
 
     public static function getNavigationSort(): ?int
     {
-        return 4;
+        return 2;
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-dashboard.Items');
+        return __('items.title');
     }
 
     public static function getModelLabel(): string
     {
-        return __('filament-dashboard.Item');
+        return __('items.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('filament-dashboard.Items');
+        return __('items.plural');
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::pending()->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        $count = static::getModel()::pending()->count();
+        return $count > 0 ? 'warning' : null;
     }
 
     public static function form(Schema $schema): Schema
@@ -208,8 +220,6 @@ class ItemResource extends Resource
             ->with(['user', 'category', 'images', 'approvalRelation']);
     }
 
-    public static function canViewAny(): bool
-    {
-        return auth()->user()?->hasAnyRole(['admin', 'super_admin']) ?? false;
-    }
+    // canViewAny removed - Panel-level access control handles admin/super_admin check
+    // For resource-specific permissions, use Policies instead
 }

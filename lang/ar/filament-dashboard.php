@@ -10,6 +10,8 @@ return [
     'User Management' => 'إدارة المستخدمين',
     'Users and permissions' => 'المستخدمين والصلاحيات',
     'Settings' => 'الإعدادات',
+    'Moderation' => 'المراقبة والموافقة',
+    'Content Moderation' => 'مراقبة المحتوى',
 
     // Resources
     'Role' => 'الدور',

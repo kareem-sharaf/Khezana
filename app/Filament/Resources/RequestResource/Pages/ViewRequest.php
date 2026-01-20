@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\RequestResource\Pages;
 
-use App\Actions\Approval\ApproveAction;
-use App\Actions\Approval\ArchiveAction;
-use App\Actions\Approval\RejectAction;
+use App\Actions\Request\ApproveRequestAction;
+use App\Actions\Request\ArchiveRequestAction;
+use App\Actions\Request\RejectRequestAction;
 use App\Filament\Resources\RequestResource;
 use App\Models\Request;
 use Filament\Actions;
@@ -27,14 +27,7 @@ class ViewRequest extends ViewRecord
                 ->color('success')
                 ->requiresConfirmation()
                 ->action(function (Request $record) {
-                    $approval = $record->approval();
-                    $user = Auth::user();
-
-                    if (!$approval || !$user) {
-                        return;
-                    }
-
-                    app(ApproveAction::class)->execute($approval, $user);
+                    app(ApproveRequestAction::class)->execute($record, Auth::user());
                     $this->redirect($this->getResource()::getUrl('index'));
                 })
                 ->visible(fn(Request $record) => $record->isPending() && Auth::user()?->can('approve', $record->approval())),
@@ -51,14 +44,7 @@ class ViewRequest extends ViewRecord
                         ->placeholder(__('filament-dashboard.Enter the reason for rejection...')),
                 ])
                 ->action(function (Request $record, array $data) {
-                    $approval = $record->approval();
-                    $user = Auth::user();
-
-                    if (!$approval || !$user) {
-                        return;
-                    }
-
-                    app(RejectAction::class)->execute($approval, $user, $data['rejection_reason']);
+                    app(RejectRequestAction::class)->execute($record, Auth::user(), $data['rejection_reason']);
                     $this->redirect($this->getResource()::getUrl('index'));
                 })
                 ->visible(fn(Request $record) => $record->isPending() && Auth::user()?->can('reject', $record->approval())),
@@ -69,14 +55,7 @@ class ViewRequest extends ViewRecord
                 ->color('gray')
                 ->requiresConfirmation()
                 ->action(function (Request $record) {
-                    $approval = $record->approval();
-                    $user = Auth::user();
-
-                    if (!$approval || !$user) {
-                        return;
-                    }
-
-                    app(ArchiveAction::class)->execute($approval, $user);
+                    app(ArchiveRequestAction::class)->execute($record, Auth::user());
                     $this->redirect($this->getResource()::getUrl('index'));
                 })
                 ->visible(fn(Request $record) => $record->approval()?->status->isArchived() === false && Auth::user()?->can('archive', $record->approval())),

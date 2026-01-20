@@ -8,7 +8,7 @@ use App\Models\Attribute;
 use Filament\Actions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -27,7 +27,7 @@ class AttributeResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('common.navigation.content_management');
+        return __('filament.navigation_groups.content_management');
     }
 
     public static function getNavigationSort(): ?int
@@ -188,13 +188,5 @@ class AttributeResource extends Resource
         ];
     }
 
-    public static function canViewAny(): bool
-    {
-        return auth()->user()?->can('viewAny', Attribute::class) ?? false;
-    }
-
-    public static function canCreate(): bool
-    {
-        return auth()->user()?->can('create', Attribute::class) ?? false;
-    }
+    // canViewAny() and canCreate() removed - Filament automatically uses AttributePolicy
 }

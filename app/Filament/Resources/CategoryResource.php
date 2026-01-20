@@ -6,7 +6,7 @@ use App\Filament\Resources\CategoryResource\Pages;
 use App\Models\Category;
 use Filament\Actions;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -27,7 +27,7 @@ class CategoryResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('common.navigation.content_management');
+        return __('filament.navigation_groups.content_management');
     }
 
     public static function getNavigationSort(): ?int
@@ -198,13 +198,5 @@ class CategoryResource extends Resource
             ->with(['parent', 'children']);
     }
 
-    public static function canViewAny(): bool
-    {
-        return auth()->user()?->can('viewAny', Category::class) ?? false;
-    }
-
-    public static function canCreate(): bool
-    {
-        return auth()->user()?->can('create', Category::class) ?? false;
-    }
+    // canViewAny() and canCreate() removed - Filament automatically uses CategoryPolicy
 }

@@ -10,6 +10,8 @@ return [
     'User Management' => 'User Management',
     'Users and permissions' => 'Users and permissions',
     'Settings' => 'Settings',
+    'Moderation' => 'Moderation',
+    'Content Moderation' => 'Content Moderation',
 
     // Resources
     'Role' => 'Role',

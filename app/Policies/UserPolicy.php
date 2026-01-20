@@ -91,11 +91,14 @@ class UserPolicy
     /**
      * Determine whether the user can manage roles.
      */
-    public function manageRoles(User $user, User $model): bool
+    public function manageRoles(User $user, User|string|null $model = null): bool
     {
-        // Cannot manage roles of super admin unless you are super admin
-        if ($model->isSuperAdmin() && !$user->isSuperAdmin()) {
-            return false;
+        // If checking for a specific model instance, ensure we can manage roles for that user
+        if ($model instanceof User) {
+            // Cannot manage roles of super admin unless you are super admin
+            if ($model->isSuperAdmin() && !$user->isSuperAdmin()) {
+                return false;
+            }
         }
 
         return $user->hasAnyRole(['super_admin', 'admin']) || $user->can('manage_users');

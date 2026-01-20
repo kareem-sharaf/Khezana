@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasTable('products')) {
-            Schema::table('products', function (Blueprint $table) {
-                if (!Schema::hasColumn('products', 'category_id')) {
+        if (Schema::hasTable('items')) {
+            Schema::table('items', function (Blueprint $table) {
+                if (!Schema::hasColumn('items', 'category_id')) {
                     $table->foreignId('category_id')->nullable()->after('user_id')->constrained()->onDelete('set null');
                     $table->index('category_id');
                 }
@@ -26,8 +26,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (Schema::hasTable('products') && Schema::hasColumn('products', 'category_id')) {
-            Schema::table('products', function (Blueprint $table) {
+        if (Schema::hasTable('items') && Schema::hasColumn('items', 'category_id')) {
+            Schema::table('items', function (Blueprint $table) {
                 $table->dropForeign(['category_id']);
                 $table->dropColumn('category_id');
             });

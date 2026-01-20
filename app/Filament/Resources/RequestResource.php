@@ -8,7 +8,7 @@ use App\Filament\Resources\RequestResource\Pages;
 use App\Enums\RequestStatus;
 use App\Models\Request;
 use Filament\Actions;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -33,27 +33,39 @@ class RequestResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-dashboard.Content Management');
+        return __('filament.navigation_groups.moderation');
     }
 
     public static function getNavigationSort(): ?int
     {
-        return 5;
+        return 3;
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-dashboard.Requests');
+        return __('requests.title');
     }
 
     public static function getModelLabel(): string
     {
-        return __('filament-dashboard.Request');
+        return __('requests.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('filament-dashboard.Requests');
+        return __('requests.plural');
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::pending()->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        $count = static::getModel()::pending()->count();
+        return $count > 0 ? 'warning' : null;
     }
 
     public static function form(Schema $schema): Schema

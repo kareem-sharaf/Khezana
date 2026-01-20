@@ -58,5 +58,6 @@ return [
         'settings' => 'Settings',
         'content_management' => 'Content Management',
         'user_management' => 'User Management',
+        'moderation' => 'Moderation',
     ],
 ];

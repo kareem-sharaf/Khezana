@@ -9,7 +9,7 @@ use App\Enums\OfferStatus;
 use App\Enums\OperationType;
 use App\Models\Offer;
 use Filament\Actions;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -34,27 +34,39 @@ class OfferResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-dashboard.Content Management');
+        return __('filament.navigation_groups.moderation');
     }
 
     public static function getNavigationSort(): ?int
     {
-        return 6;
+        return 4;
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-dashboard.Offers');
+        return __('offers.title');
     }
 
     public static function getModelLabel(): string
     {
-        return __('filament-dashboard.Offer');
+        return __('offers.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('filament-dashboard.Offers');
+        return __('offers.plural');
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::pending()->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        $count = static::getModel()::pending()->count();
+        return $count > 0 ? 'info' : null;
     }
 
     public static function form(Schema $schema): Schema

@@ -58,5 +58,6 @@ return [
         'settings' => 'الإعدادات',
         'content_management' => 'إدارة المحتوى',
         'user_management' => 'إدارة المستخدمين',
+        'moderation' => 'المراقبة والموافقة',
     ],
 ];

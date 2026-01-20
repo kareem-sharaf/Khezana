@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PermissionResource\Pages;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -25,7 +25,7 @@ class PermissionResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-dashboard.User Management');
+        return __('filament.navigation_groups.user_management');
     }
 
     public static function getNavigationSort(): ?int
@@ -70,9 +70,8 @@ class PermissionResource extends Resource
                             ->label(__('filament-dashboard.Roles'))
                             ->multiple()
                             ->relationship('roles', 'name')
-                            ->preload()
                             ->searchable()
-                            ->options(Role::pluck('name', 'name'))
+                            ->preload()
                             ->helperText(__('filament-dashboard.Select roles that have this permission'))
                             ->required(false),
                     ])

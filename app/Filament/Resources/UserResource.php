@@ -6,7 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -29,7 +29,7 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-dashboard.User Management');
+        return __('filament.navigation_groups.user_management');
     }
 
     public static function getNavigationLabel(): string
@@ -45,6 +45,18 @@ class UserResource extends Resource
     public static function getPluralModelLabel(): string
     {
         return __('filament-dashboard.Users');
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $suspendedCount = static::getModel()::where('status', 'suspended')->count();
+        return $suspendedCount > 0 ? (string) $suspendedCount : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        $suspendedCount = static::getModel()::where('status', 'suspended')->count();
+        return $suspendedCount > 0 ? 'danger' : null;
     }
 
     public static function getNavigationSort(): ?int
@@ -99,9 +111,8 @@ class UserResource extends Resource
                             ->label(__('filament-dashboard.Roles'))
                             ->multiple()
                             ->relationship('roles', 'name')
-                            ->preload()
-                            ->options(Role::pluck('name', 'name'))
                             ->searchable()
+                            ->preload()
                             ->required(false),
                     ])
                     ->visible(fn() => auth()->user()?->can('manageRoles', User::class)),
@@ -172,8 +183,9 @@ class UserResource extends Resource
                 Tables\Filters\Filter::make('roles')
                     ->form([
                         Forms\Components\Select::make('role')
-                            ->options(Role::pluck('name', 'name'))
-                            ->searchable(),
+                            ->relationship('roles', 'name', fn($query) => $query->orderBy('name'))
+                            ->searchable()
+                            ->preload(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -235,21 +247,5 @@ class UserResource extends Resource
             ->with(['roles', 'profile']);
     }
 
-    /**
-     * Check if user can view any models.
-     * Uses UserPolicy::viewAny() automatically.
-     */
-    public static function canViewAny(): bool
-    {
-        return auth()->user()?->can('viewAny', User::class) ?? false;
-    }
-
-    /**
-     * Check if user can create models.
-     * Uses UserPolicy::create() automatically.
-     */
-    public static function canCreate(): bool
-    {
-        return auth()->user()?->can('create', User::class) ?? false;
-    }
+    // canViewAny() and canCreate() removed - Filament automatically uses UserPolicy
 }

@@ -1,51 +1,15 @@
 <?php
 
 return [
-    'resources' => [
-        'categories' => [
-            'label' => 'Category',
-            'plural_label' => 'Categories',
-            'navigation_label' => 'Categories',
-            'navigation_group' => 'Content Management',
-        ],
-        'attributes' => [
-            'label' => 'Attribute',
-            'plural_label' => 'Attributes',
-            'navigation_label' => 'Attributes',
-            'navigation_group' => 'Content Management',
-        ],
-        'products' => [
-            'label' => 'Product',
-            'plural_label' => 'Products',
-            'navigation_label' => 'Products',
-            'navigation_group' => 'Content Management',
-        ],
-        'users' => [
-            'label' => 'User',
-            'plural_label' => 'Users',
-            'navigation_label' => 'Users',
-            'navigation_group' => 'User Management',
-        ],
-        'approvals' => [
-            'label' => 'Approval',
-            'plural_label' => 'Approvals',
-            'navigation_label' => 'Approvals',
-            'navigation_group' => 'Content Management',
-        ],
-        'roles' => [
-            'label' => 'Role',
-            'plural_label' => 'Roles',
-            'navigation_label' => 'Roles',
-            'navigation_group' => 'User Management',
-        ],
-        'permissions' => [
-            'label' => 'Permission',
-            'plural_label' => 'Permissions',
-            'navigation_label' => 'Permissions',
-            'navigation_group' => 'User Management',
-        ],
+    // Navigation Groups
+    'navigation_groups' => [
+        'content_management' => 'Content Management',
+        'user_management' => 'User Management',
+        'moderation' => 'Moderation',
+        'settings' => 'Settings',
     ],
-    
+
+    // Common Actions
     'actions' => [
         'create' => 'Create',
         'edit' => 'Edit',
@@ -53,25 +17,76 @@ return [
         'view' => 'View',
         'save' => 'Save',
         'cancel' => 'Cancel',
+        'back' => 'Back',
+        'search' => 'Search',
+        'filter' => 'Filter',
+        'export' => 'Export',
+        'import' => 'Import',
         'approve' => 'Approve',
         'reject' => 'Reject',
         'archive' => 'Archive',
     ],
-    
+
+    // Common Table Columns
     'table' => [
-        'columns' => [
-            'id' => 'ID',
-            'name' => 'Name',
-            'title' => 'Title',
-            'description' => 'Description',
-            'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-        ],
-        'filters' => [
-            'active' => 'Active Only',
-            'inactive' => 'Inactive Only',
-            'all' => 'All',
-        ],
+        'id' => 'ID',
+        'name' => 'Name',
+        'title' => 'Title',
+        'description' => 'Description',
+        'status' => 'Status',
+        'email' => 'Email',
+        'phone' => 'Phone',
+        'type' => 'Type',
+        'price' => 'Price',
+        'owner' => 'Owner',
+        'created_at' => 'Created At',
+        'updated_at' => 'Updated At',
+    ],
+
+    // Common Status
+    'status' => [
+        'active' => 'Active',
+        'inactive' => 'Inactive',
+        'pending' => 'Pending',
+        'approved' => 'Approved',
+        'rejected' => 'Rejected',
+        'suspended' => 'Suspended',
+    ],
+
+    // Common Filters
+    'filters' => [
+        'active_only' => 'Active Only',
+        'inactive_only' => 'Inactive Only',
+        'all' => 'All',
+    ],
+
+    // Common Sections
+    'sections' => [
+        'user_information' => 'User Information',
+        'roles_permissions' => 'Roles & Permissions',
+        'profile_information' => 'Profile Information',
+        'approval_information' => 'Approval Information',
+        'content_information' => 'Content Information',
+        'rejection_reason' => 'Rejection Reason',
+    ],
+
+    // Common Messages
+    'messages' => [
+        'operation_completed' => 'Operation completed successfully',
+        'error_occurred' => 'An error occurred',
+        'not_found' => 'Not found',
+        'unauthorized' => 'Unauthorized',
+        'deleted_successfully' => 'Deleted successfully',
+        'saved_successfully' => 'Saved successfully',
+        'updated_successfully' => 'Updated successfully',
+        'created_successfully' => 'Created successfully',
+    ],
+
+    // Common Confirmations
+    'confirmations' => [
+        'delete' => 'Are you sure you want to delete?',
+        'deactivate' => 'Are you sure you want to deactivate?',
+        'approve' => 'Are you sure you want to approve?',
+        'reject' => 'Are you sure you want to reject?',
     ],
 ];

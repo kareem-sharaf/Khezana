@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\ItemResource\Pages;
 
-use App\Actions\Approval\ApproveAction;
-use App\Actions\Approval\ArchiveAction;
-use App\Actions\Approval\RejectAction;
+use App\Actions\Item\ApproveItemAction;
+use App\Actions\Item\ArchiveItemAction;
+use App\Actions\Item\RejectItemAction;
 use App\Enums\ApprovalStatus;
 use App\Filament\Resources\ItemResource;
 use App\Models\Item;
 use Filament\Actions;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Facades\Auth;
 
 class ViewItem extends ViewRecord
 {
@@ -27,10 +28,10 @@ class ViewItem extends ViewRecord
                 ->color('success')
                 ->requiresConfirmation()
                 ->action(function (Item $record) {
-                    app(ApproveAction::class)->execute($record->approval, auth()->user());
+                    app(ApproveItemAction::class)->execute($record, Auth::user());
                     $this->redirect($this->getResource()::getUrl('index'));
                 })
-                ->visible(fn (Item $record) => $record->isPending() && auth()->user()?->can('approve', $record->approval)),
+                ->visible(fn (Item $record) => $record->isPending() && Auth::user()?->can('approve', $record->approval)),
 
             Actions\Action::make('reject')
                 ->label(__('filament-dashboard.Reject'))
@@ -44,10 +45,10 @@ class ViewItem extends ViewRecord
                         ->placeholder(__('filament-dashboard.Enter the reason for rejection...')),
                 ])
                 ->action(function (Item $record, array $data) {
-                    app(RejectAction::class)->execute($record->approval, auth()->user(), $data['rejection_reason']);
+                    app(RejectItemAction::class)->execute($record, Auth::user(), $data['rejection_reason']);
                     $this->redirect($this->getResource()::getUrl('index'));
                 })
-                ->visible(fn (Item $record) => $record->isPending() && auth()->user()?->can('reject', $record->approval)),
+                ->visible(fn (Item $record) => $record->isPending() && Auth::user()?->can('reject', $record->approval)),
 
             Actions\Action::make('archive')
                 ->label(__('filament-dashboard.Archive'))
@@ -55,10 +56,10 @@ class ViewItem extends ViewRecord
                 ->color('gray')
                 ->requiresConfirmation()
                 ->action(function (Item $record) {
-                    app(ArchiveAction::class)->execute($record->approval, auth()->user());
+                    app(ArchiveItemAction::class)->execute($record, Auth::user());
                     $this->redirect($this->getResource()::getUrl('index'));
                 })
-                ->visible(fn (Item $record) => !$record->isArchived() && auth()->user()?->can('archive', $record->approval)),
+                ->visible(fn (Item $record) => !$record->isArchived() && Auth::user()?->can('archive', $record->approval)),
         ];
     }
 }

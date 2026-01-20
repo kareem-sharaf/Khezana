@@ -3,14 +3,17 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use App\Models\User;
 use Filament\Actions;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -25,7 +28,7 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-dashboard.User Management');
+        return __('filament.navigation_groups.user_management');
     }
 
     public static function getNavigationSort(): ?int
@@ -69,9 +72,8 @@ class RoleResource extends Resource
                             ->label(__('filament-dashboard.Permissions'))
                             ->multiple()
                             ->relationship('permissions', 'name')
-                            ->preload()
                             ->searchable()
-                            ->options(Permission::pluck('name', 'name'))
+                            ->preload()
                             ->helperText(__('filament-dashboard.Select permissions for this role'))
                             ->required(false),
                     ])
@@ -163,6 +165,13 @@ class RoleResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->can('manage_roles') ?? false;
+        if (!Auth::check()) {
+            return false;
+        }
+
+        /** @var User $user */
+        $user = Auth::user();
+        // @phpstan-ignore-next-line
+        return $user->hasPermissionTo('manage_roles');
     }
 }

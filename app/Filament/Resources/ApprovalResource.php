@@ -12,7 +12,7 @@ use App\Filament\Resources\ApprovalResource\Pages;
 use App\Models\Approval;
 use Filament\Actions;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Resource;
@@ -35,7 +35,7 @@ class ApprovalResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('filament-dashboard.Content Management');
+        return __('filament.navigation_groups.moderation');
     }
 
     public static function getNavigationSort(): ?int
@@ -45,17 +45,29 @@ class ApprovalResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-dashboard.Approvals');
+        return __('approvals.title');
     }
 
     public static function getModelLabel(): string
     {
-        return __('filament-dashboard.Approval');
+        return __('approvals.singular');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('filament-dashboard.Approvals');
+        return __('approvals.plural');
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::pending()->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        $count = static::getModel()::pending()->count();
+        return $count > 0 ? 'warning' : null;
     }
 
     public static function form(Schema $schema): Schema
@@ -268,8 +280,5 @@ class ApprovalResource extends Resource
             ->with(['approvable', 'submitter', 'reviewer']);
     }
 
-    public static function canViewAny(): bool
-    {
-        return auth()->user()?->can('viewAny', Approval::class) ?? false;
-    }
+    // canViewAny() removed - Filament automatically uses ApprovalPolicy
 }
