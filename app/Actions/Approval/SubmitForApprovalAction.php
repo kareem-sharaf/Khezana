@@ -33,12 +33,21 @@ class SubmitForApprovalAction
 
             // Allow resubmission if previously rejected or archived
             if ($approval->status === ApprovalStatus::REJECTED || $approval->status === ApprovalStatus::ARCHIVED) {
+                // BR-008.1: Only owner can resubmit (super_admin exception)
+                $owner = $approvable->getSubmitter();
+                if ($owner && $submittedBy->id !== $owner->id) {
+                    if (!$submittedBy->hasRole('super_admin')) {
+                        throw new \Exception('Only the content owner can resubmit for approval.');
+                    }
+                }
+
                 $approval->update([
                     'status' => ApprovalStatus::PENDING,
                     'submitted_by' => $submittedBy->id,
                     'reviewed_by' => null,
                     'reviewed_at' => null,
                     'rejection_reason' => null,
+                    'resubmission_count' => ($approval->resubmission_count ?? 0) + 1,
                 ]);
 
                 event(new ContentSubmitted($approval));

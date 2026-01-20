@@ -6,6 +6,7 @@ namespace App\Actions\Item;
 
 use App\Actions\Approval\SubmitForApprovalAction;
 use App\Enums\ApprovalStatus;
+use App\Enums\ItemAvailability;
 use App\Enums\OperationType;
 use App\Models\Item;
 use App\Services\ItemService;
@@ -61,6 +62,9 @@ class UpdateItemAction
                 }
             }
 
+            $isAvailable = $data['is_available'] ?? $item->is_available;
+            $availabilityStatus = $isAvailable ? ItemAvailability::AVAILABLE : ItemAvailability::UNAVAILABLE;
+            
             // Update the item
             $item->update([
                 'category_id' => $data['category_id'] ?? $item->category_id,
@@ -71,7 +75,8 @@ class UpdateItemAction
                 'description' => $data['description'] ?? $item->description,
                 'price' => $data['price'] ?? $item->price,
                 'deposit_amount' => $data['deposit_amount'] ?? $item->deposit_amount,
-                'is_available' => $data['is_available'] ?? $item->is_available,
+                'is_available' => $isAvailable,
+                'availability_status' => $availabilityStatus,
             ]);
 
             // Update dynamic attributes if provided

@@ -28,6 +28,7 @@ class Approval extends Model
         'reviewed_by',
         'reviewed_at',
         'rejection_reason',
+        'resubmission_count',
     ];
 
     protected $casts = [

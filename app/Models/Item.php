@@ -37,6 +37,7 @@ class Item extends Model implements Approvable
         'price',
         'deposit_amount',
         'is_available',
+        'availability_status',
     ];
 
     protected $casts = [
@@ -44,6 +45,7 @@ class Item extends Model implements Approvable
         'price' => 'decimal:2',
         'deposit_amount' => 'decimal:2',
         'is_available' => 'boolean',
+        'availability_status' => ItemAvailability::class,
     ];
 
     /**
@@ -156,7 +158,11 @@ class Item extends Model implements Approvable
             throw new \Exception('Item must be approved to receive offers.');
         }
 
-        if (!$this->is_available) {
+        $isAvailable = $this->availability_status 
+            ? $this->availability_status === ItemAvailability::AVAILABLE
+            : $this->is_available;
+
+        if (!$isAvailable) {
             throw new \Exception('Item must be available to receive offers.');
         }
     }

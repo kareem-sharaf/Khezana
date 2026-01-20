@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Item;
 
 use App\Actions\Approval\SubmitForApprovalAction;
+use App\Enums\ItemAvailability;
 use App\Enums\OperationType;
 use App\Models\Item;
 use App\Models\User;
@@ -38,6 +39,8 @@ class CreateItemAction
         $this->itemService->validateOperationRules($data);
 
         return DB::transaction(function () use ($data, $user, $attributes, $images) {
+            $isAvailable = $data['is_available'] ?? true;
+            
             // Create the item
             $item = Item::create([
                 'user_id' => $user->id,
@@ -47,7 +50,8 @@ class CreateItemAction
                 'description' => $data['description'] ?? null,
                 'price' => $data['price'] ?? null,
                 'deposit_amount' => $data['deposit_amount'] ?? null,
-                'is_available' => $data['is_available'] ?? true,
+                'is_available' => $isAvailable,
+                'availability_status' => $isAvailable ? ItemAvailability::AVAILABLE : ItemAvailability::UNAVAILABLE,
             ]);
 
             // Set dynamic attributes if provided

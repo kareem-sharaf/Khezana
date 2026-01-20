@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Actions\Approval;
 
 use App\Enums\ApprovalStatus;
+use App\Enums\RequestStatus;
 use App\Events\Approval\ContentApproved;
 use App\Models\Approval;
+use App\Models\Request;
 use App\Models\User;
 
 /**
@@ -38,6 +40,12 @@ class ApproveAction
             'reviewed_at' => now(),
             'rejection_reason' => null,
         ]);
+
+        // Side effects: Request becomes OPEN after approval
+        $approvable = $approval->approvable;
+        if ($approvable instanceof Request) {
+            $approvable->update(['status' => RequestStatus::OPEN]);
+        }
 
         event(new ContentApproved($approval));
 
