@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             CategoriesSeeder::class,
             AttributesSeeder::class,
+            UsersSeeder::class,
+            ItemsSeeder::class,
+            RequestsSeeder::class,
         ]);
 
         // Create a super admin user (if not exists)

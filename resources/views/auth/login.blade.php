@@ -4,8 +4,20 @@
     <x-auth.alert type="success" :message="session('status')" />
     @endif
 
+    @if(session('message'))
+    <x-auth.alert type="info" :message="session('message')" />
+    @endif
+
     <form method="POST" action="{{ route('login') }}" class="auth-form">
         @csrf
+        
+        @if(request()->has('redirect'))
+            <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+        @endif
+        
+        @if(request()->has('action'))
+            <input type="hidden" name="action" value="{{ request('action') }}">
+        @endif
 
         <!-- Phone Number -->
         <x-auth.input

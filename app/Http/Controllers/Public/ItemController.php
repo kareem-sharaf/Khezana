@@ -20,12 +20,12 @@ class ItemController extends Controller
         private readonly BrowseItemsQuery $browseItemsQuery,
         private readonly ViewItemQuery $viewItemQuery,
         private readonly CacheService $cacheService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): View
     {
         $filters = [
+            'search' => $request->get('search'),
             'operation_type' => $request->get('operation_type'),
             'category_id' => $request->get('category_id') ? (int) $request->get('category_id') : null,
             'price_min' => $request->get('price_min') ? (float) $request->get('price_min') : null,
@@ -81,5 +81,36 @@ class ItemController extends Controller
         return view('public.items.show', [
             'item' => $item,
         ]);
+    }
+
+    public function contact(Request $request, int $id): RedirectResponse
+    {
+        $item = \App\Models\Item::findOrFail($id);
+
+        $validated = $request->validate([
+            'message' => 'required|string|max:1000',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+        ]);
+
+        // TODO: Send contact message (email/notification)
+
+        return redirect()->route('public.items.show', ['id' => $item->id, 'slug' => $item->slug])
+            ->with('success', 'تم إرسال رسالتك بنجاح. سيتم التواصل معك قريباً.');
+    }
+
+    public function report(Request $request, int $id): RedirectResponse
+    {
+        $item = \App\Models\Item::findOrFail($id);
+
+        $validated = $request->validate([
+            'reason' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        // TODO: Create report record
+
+        return redirect()->route('public.items.show', ['id' => $item->id, 'slug' => $item->slug])
+            ->with('success', 'تم الإبلاغ عن الإعلان. شكراً لك.');
     }
 }

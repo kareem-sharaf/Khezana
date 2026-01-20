@@ -31,7 +31,7 @@ class RequestController extends Controller
         private readonly SubmitRequestForApprovalAction $submitForApprovalAction,
         private readonly CloseRequestAction $closeRequestAction
     ) {
-        $this->middleware('auth');
+        // Middleware is applied in routes/web.php
     }
 
     /**

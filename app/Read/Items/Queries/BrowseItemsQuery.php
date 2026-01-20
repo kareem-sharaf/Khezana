@@ -26,6 +26,14 @@ class BrowseItemsQuery
             ->whereNull('deleted_at')
             ->whereNull('archived_at');
 
+        if (isset($filters['search']) && $filters['search']) {
+            $search = $filters['search'];
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
         if (isset($filters['operation_type']) && $filters['operation_type']) {
             $query->where('operation_type', $filters['operation_type']);
         }

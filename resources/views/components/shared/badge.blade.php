@@ -1,6 +1,6 @@
 @props([
     'type',
-    'label',
+    'label' => null,
     'variant' => null,
 ])
 
@@ -12,10 +12,19 @@
         'fulfilled', 'archived' => 'info',
         default => 'default',
     };
+    
+    // Use label prop if provided, otherwise use slot content
+    $slotContent = trim((string) $slot);
+    $displayLabel = $label ?? ($slotContent ?: $type);
+    $ariaLabel = $displayLabel;
 @endphp
 
 <span class="badge badge--{{ $variant }}" 
       data-type="{{ $type }}"
-      aria-label="{{ $label }}">
-    {{ $label }}
+      aria-label="{{ $ariaLabel }}">
+    @if($label)
+        {{ $label }}
+    @else
+        {{ $slot }}
+    @endif
 </span>

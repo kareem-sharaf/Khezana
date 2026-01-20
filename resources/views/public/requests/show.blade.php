@@ -14,9 +14,16 @@
 @section('title', $request->title . ' - ' . config('app.name'))
 
 @section('content')
-    <div class="request-page">
-        <article class="request-details" itemscope itemtype="https://schema.org/Article">
-            <h1 class="request-details__title" itemprop="headline">{{ $request->title }}</h1>
+    <x-container>
+        <x-breadcrumbs :items="[
+            ['label' => __('Home'), 'url' => route('home')],
+            ['label' => $request->category->name ?? __('Requests'), 'url' => route('public.requests.index', $request->category ? ['category_id' => $request->category->id] : [])],
+            ['label' => $request->title, 'url' => $request->url],
+        ]" />
+        
+        <div class="request-page">
+            <article class="request-details" itemscope itemtype="https://schema.org/Article">
+                <h1 class="request-details__title" itemprop="headline">{{ $request->title }}</h1>
             
             <div class="request-details__meta">
                 <x-shared.badge :type="$request->status" :label="$request->statusLabel" />
@@ -100,6 +107,66 @@
             <time datetime="{{ $request->createdAt->toIso8601String() }}" itemprop="datePublished" class="request-details__published">
                 {{ __('Published') }}: {{ $request->createdAtFormatted }}
             </time>
-        </article>
-    </div>
+            
+                <div class="request-details__actions">
+                    @guest
+                        @if($request->status === 'open')
+                            <form method="POST" action="{{ route('public.requests.offer', $request->id) }}" class="inline">
+                                @csrf
+                                <x-button type="primary" 
+                                         data-tooltip="يجب تسجيل الدخول"
+                                         title="يجب تسجيل الدخول">
+                                    {{ __('Submit Offer') }}
+                                </x-button>
+                            </form>
+                        @endif
+                        
+                        <form method="POST" action="{{ route('public.requests.contact', $request->id) }}" class="inline">
+                            @csrf
+                            <x-button type="secondary" 
+                                     data-tooltip="يجب تسجيل الدخول"
+                                     title="يجب تسجيل الدخول">
+                                {{ __('Contact Requester') }}
+                            </x-button>
+                        </form>
+                        
+                        <form method="POST" action="{{ route('public.requests.report', $request->id) }}" class="inline">
+                            @csrf
+                            <x-button type="ghost" 
+                                     data-tooltip="يجب تسجيل الدخول"
+                                     title="يجب تسجيل الدخول">
+                                {{ __('Report') }}
+                            </x-button>
+                        </form>
+                    @else
+                        @if($request->user->id !== auth()->id())
+                            @if($request->status === 'open')
+                                <form method="POST" action="{{ route('public.requests.offer', $request->id) }}" class="inline">
+                                    @csrf
+                                    <x-button type="primary">
+                                        {{ __('Submit Offer') }}
+                                    </x-button>
+                                </form>
+                            @endif
+                            
+                            <form method="POST" action="{{ route('public.requests.contact', $request->id) }}" class="inline">
+                                @csrf
+                                <x-button type="secondary">
+                                    {{ __('Contact Requester') }}
+                                </x-button>
+                            </form>
+                            
+                            <form method="POST" action="{{ route('public.requests.report', $request->id) }}" class="inline">
+                                @csrf
+                                <x-button type="ghost">
+                                    {{ __('Report') }}
+                                </x-button>
+                            </form>
+                        @endif
+                    @endguest
+                </div>
+            </article>
+        </div>
+    </x-container>
 @endsection
+

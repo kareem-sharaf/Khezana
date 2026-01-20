@@ -17,9 +17,16 @@
 @section('title', $item->title . ' - ' . config('app.name'))
 
 @section('content')
-    <div class="item-page">
-        <article class="item-details" itemscope itemtype="https://schema.org/Product">
-            <h1 class="item-details__title" itemprop="name">{{ $item->title }}</h1>
+    <x-container>
+        <x-breadcrumbs :items="[
+            ['label' => __('Home'), 'url' => route('home')],
+            ['label' => $item->category->name ?? __('Items'), 'url' => route('public.items.index', $item->category ? ['category_id' => $item->category->id] : [])],
+            ['label' => $item->title, 'url' => $item->url],
+        ]" />
+        
+        <div class="item-page">
+            <article class="item-details" itemscope itemtype="https://schema.org/Product">
+                <h1 class="item-details__title" itemprop="name">{{ $item->title }}</h1>
             
             <div class="item-details__meta">
                 <x-shared.badge :type="$item->operationType" :label="$item->operationTypeLabel" />
@@ -31,12 +38,28 @@
                 @endif
             </div>
             
-            @if($item->primaryImage)
-                <div class="item-details__image">
-                    <img src="{{ $item->primaryImage->path }}" 
-                         alt="{{ $item->primaryImage->alt ?? $item->title }}"
-                         loading="eager"
-                         itemprop="image">
+            @if($item->images->isNotEmpty())
+                <div class="item-details__gallery">
+                    <div class="item-details__image-primary">
+                        <img src="{{ $item->primaryImage?->path ?? $item->images->first()->path }}" 
+                             alt="{{ $item->primaryImage?->alt ?? $item->title }}"
+                             loading="eager"
+                             itemprop="image"
+                             id="item-main-image">
+                    </div>
+                    @if($item->images->count() > 1)
+                        <div class="item-details__image-thumbnails">
+                            @foreach($item->images->take(5) as $image)
+                                <button type="button" 
+                                        class="item-details__thumbnail {{ $image->is_primary ? 'is-active' : '' }}"
+                                        onclick="document.getElementById('item-main-image').src = '{{ $image->path }}'">
+                                    <img src="{{ $image->path }}" 
+                                         alt="{{ $image->alt ?? $item->title }}"
+                                         loading="lazy">
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
             @endif
             
@@ -78,6 +101,61 @@
             <time datetime="{{ $item->createdAt->toIso8601String() }}" itemprop="datePublished" class="item-details__published">
                 {{ __('Published') }}: {{ $item->createdAtFormatted }}
             </time>
-        </article>
-    </div>
+            
+                <div class="item-details__actions">
+                    @guest
+                        <form method="POST" action="{{ route('public.items.contact', $item->id) }}" class="inline">
+                            @csrf
+                            <x-button type="primary" 
+                                     data-tooltip="يجب تسجيل الدخول"
+                                     title="يجب تسجيل الدخول">
+                                {{ __('Contact Seller') }}
+                            </x-button>
+                        </form>
+                        
+                        <form method="POST" action="{{ route('public.items.favorite', $item->id) }}" class="inline">
+                            @csrf
+                            <x-button type="secondary" 
+                                     data-tooltip="يجب تسجيل الدخول"
+                                     title="يجب تسجيل الدخول">
+                                {{ __('Add to Favorites') }}
+                            </x-button>
+                        </form>
+                        
+                        <form method="POST" action="{{ route('public.items.report', $item->id) }}" class="inline">
+                            @csrf
+                            <x-button type="ghost" 
+                                     data-tooltip="يجب تسجيل الدخول"
+                                     title="يجب تسجيل الدخول">
+                                {{ __('Report') }}
+                            </x-button>
+                        </form>
+                    @else
+                        @if($item->user->id !== auth()->id())
+                            <form method="POST" action="{{ route('public.items.contact', $item->id) }}" class="inline">
+                                @csrf
+                                <x-button type="primary">
+                                    {{ __('Contact Seller') }}
+                                </x-button>
+                            </form>
+                            
+                            <form method="POST" action="{{ route('public.items.favorite', $item->id) }}" class="inline">
+                                @csrf
+                                <x-button type="secondary">
+                                    {{ __('Add to Favorites') }}
+                                </x-button>
+                            </form>
+                            
+                            <form method="POST" action="{{ route('public.items.report', $item->id) }}" class="inline">
+                                @csrf
+                                <x-button type="ghost">
+                                    {{ __('Report') }}
+                                </x-button>
+                            </form>
+                        @endif
+                    @endguest
+                </div>
+            </article>
+        </div>
+    </x-container>
 @endsection

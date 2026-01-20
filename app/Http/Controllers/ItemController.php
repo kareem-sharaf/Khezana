@@ -17,7 +17,7 @@ use Illuminate\View\View;
 
 /**
  * Item Controller
- * 
+ *
  * Handles user-facing item operations
  * All business logic is delegated to Actions
  */
@@ -29,7 +29,7 @@ class ItemController extends Controller
         private readonly DeleteItemAction $deleteItemAction,
         private readonly SubmitItemForApprovalAction $submitForApprovalAction
     ) {
-        $this->middleware('auth');
+        // Middleware is applied in routes/web.php
     }
 
     /**

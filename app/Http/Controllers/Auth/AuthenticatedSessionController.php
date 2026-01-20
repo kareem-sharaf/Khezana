@@ -28,7 +28,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $redirectUrl = $request->input('redirect');
+        
+        if ($redirectUrl && filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+            return redirect($redirectUrl)
+                ->with('success', 'مرحباً بك! يمكنك الآن إتمام العملية.');
+        }
+
+        return redirect()->intended(route('dashboard', absolute: false))
+            ->with('success', 'مرحباً بك!');
     }
 
     /**

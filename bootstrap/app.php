@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'cache.headers' => \App\Http\Middleware\AddCacheHeaders::class,
+            'auth.redirect' => \App\Http\Middleware\EnsureAuthenticatedWithRedirect::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

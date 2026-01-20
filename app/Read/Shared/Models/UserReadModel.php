@@ -19,11 +19,13 @@ class UserReadModel
 
     public static function fromModel(User $user): self
     {
+        $createdAt = $user->created_at ?? now();
+        
         return new self(
             id: $user->id,
             name: $user->name,
-            createdAt: $user->created_at,
-            memberSinceFormatted: __('Member since :date', ['date' => $user->created_at->format('M Y')]),
+            createdAt: $createdAt,
+            memberSinceFormatted: __('Member since :date', ['date' => $createdAt->format('M Y')]),
         );
     }
 }

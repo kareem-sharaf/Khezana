@@ -71,4 +71,25 @@ Route::middleware('auth')->group(function () {
         ->name('offers.reject');
 });
 
+// Public Actions (Require Authentication with Redirect)
+Route::middleware('auth.redirect')->group(function () {
+    Route::post('/items/{item}/contact', [\App\Http\Controllers\Public\ItemController::class, 'contact'])
+        ->name('public.items.contact');
+    
+    Route::post('/items/{item}/favorite', [\App\Http\Controllers\FavoriteController::class, 'toggle'])
+        ->name('public.items.favorite');
+    
+    Route::post('/items/{item}/report', [\App\Http\Controllers\Public\ItemController::class, 'report'])
+        ->name('public.items.report');
+    
+    Route::post('/requests/{request}/offer', [\App\Http\Controllers\Public\RequestController::class, 'submitOffer'])
+        ->name('public.requests.offer');
+    
+    Route::post('/requests/{request}/contact', [\App\Http\Controllers\Public\RequestController::class, 'contact'])
+        ->name('public.requests.contact');
+    
+    Route::post('/requests/{request}/report', [\App\Http\Controllers\Public\RequestController::class, 'report'])
+        ->name('public.requests.report');
+});
+
 require __DIR__ . '/auth.php';

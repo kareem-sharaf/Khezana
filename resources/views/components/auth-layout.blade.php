@@ -15,7 +15,7 @@
         <div class="auth-card">
             <!-- Logo Section -->
             <div class="auth-logo">
-                <a href="{{ route('welcome', [], false) }}">
+                <a href="{{ route('home') }}">
                     <x-application-logo style="width: 64px; height: 64px; margin: 0 auto; display: block;" />
                 </a>
             </div>

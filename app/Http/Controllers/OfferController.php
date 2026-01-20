@@ -32,7 +32,7 @@ class OfferController extends Controller
         private readonly AcceptOfferAction $acceptOfferAction,
         private readonly RejectOfferAction $rejectOfferAction
     ) {
-        $this->middleware('auth');
+        // Middleware is applied in routes/web.php
     }
 
     /**

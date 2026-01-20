@@ -1,8 +1,10 @@
 @props([
     'title',
     'message' => null,
+    'description' => null,
     'icon' => null,
-    'action' => null,
+    'actionLabel' => null,
+    'actionUrl' => null,
 ])
 
 <div class="empty-state" role="status" aria-live="polite">
@@ -14,13 +16,17 @@
     
     <h2 class="empty-state__title">{{ $title }}</h2>
     
-    @if($message)
-        <p class="empty-state__message">{{ $message }}</p>
+    @if($description)
+        <p class="empty-state__description">{{ $description }}</p>
+    @elseif($message)
+        <p class="empty-state__description">{{ $message }}</p>
     @endif
     
-    @if($action)
-        <a href="{{ $action['url'] }}" class="empty-state__action">
-            {{ $action['label'] }}
-        </a>
+    @if($actionLabel && $actionUrl)
+        <div class="empty-state__action">
+            <x-button type="primary" href="{{ $actionUrl }}">
+                {{ $actionLabel }}
+            </x-button>
+        </div>
     @endif
 </div>
