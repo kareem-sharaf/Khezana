@@ -3,10 +3,16 @@
 namespace App\Actions\Category;
 
 use App\Models\Category;
+use App\Services\Cache\CategoryCacheService;
 use Illuminate\Support\Str;
 
 class UpdateCategoryAction
 {
+    public function __construct(
+        private readonly CategoryCacheService $categoryCacheService
+    ) {
+    }
+
     /**
      * Update a category.
      */
@@ -37,6 +43,9 @@ class UpdateCategoryAction
         }
 
         $category->update($data);
+        
+        $this->categoryCacheService->invalidateAll();
+        $this->categoryCacheService->invalidateCategoryAttributes($category->id);
 
         return $category->fresh();
     }

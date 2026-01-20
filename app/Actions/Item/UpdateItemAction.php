@@ -9,6 +9,7 @@ use App\Enums\ApprovalStatus;
 use App\Enums\ItemAvailability;
 use App\Enums\OperationType;
 use App\Models\Item;
+use App\Services\Cache\CacheService;
 use App\Services\ItemService;
 use Illuminate\Support\Facades\DB;
 
@@ -21,9 +22,9 @@ class UpdateItemAction
 
     public function __construct(
         private readonly ItemService $itemService,
-        private readonly SubmitForApprovalAction $submitForApprovalAction
-    ) {
-    }
+        private readonly SubmitForApprovalAction $submitForApprovalAction,
+        private readonly CacheService $cacheService
+    ) {}
 
     /**
      * Update an item
@@ -43,7 +44,7 @@ class UpdateItemAction
         return DB::transaction(function () use ($item, $data, $attributes, $images) {
             $item->refresh();
             $item->ensureCanBeModified();
-            
+
             $wasApproved = $item->isApproved();
             $hasSensitiveChanges = false;
             $hasAttributeChanges = $attributes !== null;
@@ -54,7 +55,7 @@ class UpdateItemAction
                     continue;
                 }
 
-                $newValue = $field === 'operation_type' 
+                $newValue = $field === 'operation_type'
                     ? OperationType::from($data[$field])
                     : $data[$field];
 
@@ -66,12 +67,12 @@ class UpdateItemAction
 
             $isAvailable = $data['is_available'] ?? $item->is_available;
             $availabilityStatus = $isAvailable ? ItemAvailability::AVAILABLE : ItemAvailability::UNAVAILABLE;
-            
+
             // Update the item
             $item->update([
                 'category_id' => $data['category_id'] ?? $item->category_id,
-                'operation_type' => isset($data['operation_type']) 
-                    ? OperationType::from($data['operation_type']) 
+                'operation_type' => isset($data['operation_type'])
+                    ? OperationType::from($data['operation_type'])
                     : $item->operation_type,
                 'title' => $data['title'] ?? $item->title,
                 'description' => $data['description'] ?? $item->description,
@@ -83,6 +84,7 @@ class UpdateItemAction
 
             // Update dynamic attributes if provided
             if ($hasAttributeChanges) {
+                /** @var \App\Models\Item $item */
                 $this->itemService->validateCategoryAttributes($item, $attributes);
                 $item->itemAttributes()->delete();
                 $item->setAttributeValues($attributes);
@@ -101,6 +103,9 @@ class UpdateItemAction
                     $this->submitForApprovalAction->execute($item, $item->user);
                 }
             }
+
+            // Invalidate cache after update
+            $this->cacheService->invalidateItem($item->id);
 
             return $item->fresh(['user', 'category', 'images']);
         });

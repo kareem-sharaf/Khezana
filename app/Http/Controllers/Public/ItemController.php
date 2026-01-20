@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Read\Items\Models\ItemReadModel;
 use App\Read\Items\Queries\BrowseItemsQuery;
 use App\Read\Items\Queries\ViewItemQuery;
+use App\Services\Cache\CacheService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -18,6 +19,7 @@ class ItemController extends Controller
     public function __construct(
         private readonly BrowseItemsQuery $browseItemsQuery,
         private readonly ViewItemQuery $viewItemQuery,
+        private readonly CacheService $cacheService,
     ) {
     }
 
@@ -33,10 +35,18 @@ class ItemController extends Controller
         $sort = $request->get('sort', 'created_at_desc');
         $page = max(1, (int) $request->get('page', 1));
         $perPage = min(50, max(1, (int) $request->get('per_page', 20)));
+        $locale = app()->getLocale();
 
-        $itemsPaginator = $this->browseItemsQuery->execute($filters, $sort, $page, $perPage);
-
-        $items = $itemsPaginator->through(fn($item) => ItemReadModel::fromModel($item));
+        $items = $this->cacheService->rememberItemsIndex(
+            function () use ($filters, $sort, $page, $perPage) {
+                $itemsPaginator = $this->browseItemsQuery->execute($filters, $sort, $page, $perPage);
+                return $itemsPaginator->through(fn($item) => ItemReadModel::fromModel($item));
+            },
+            $filters,
+            $sort,
+            $page,
+            $locale
+        );
 
         return view('public.items.index', [
             'items' => $items,
@@ -48,8 +58,17 @@ class ItemController extends Controller
     public function show(Request $request, int $id, ?string $slug = null): View|RedirectResponse
     {
         $user = $request->user();
+        $locale = app()->getLocale();
 
-        $item = $this->viewItemQuery->execute($id, $slug, $user);
+        $item = $this->cacheService->rememberItemShow(
+            function () use ($id, $slug, $user) {
+                return $this->viewItemQuery->execute($id, $slug, $user);
+            },
+            $id,
+            $slug,
+            $user?->id,
+            $locale
+        );
 
         if (!$item) {
             abort(404, 'Item not found or not visible.');

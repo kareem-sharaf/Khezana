@@ -3,10 +3,16 @@
 namespace App\Actions\Category;
 
 use App\Models\Category;
+use App\Services\Cache\CategoryCacheService;
 use Illuminate\Support\Str;
 
 class CreateCategoryAction
 {
+    public function __construct(
+        private readonly CategoryCacheService $categoryCacheService
+    ) {
+    }
+
     /**
      * Create a new category.
      */
@@ -24,6 +30,10 @@ class CreateCategoryAction
             $counter++;
         }
 
-        return Category::create($data);
+        $category = Category::create($data);
+        
+        $this->categoryCacheService->invalidateAll();
+        
+        return $category;
     }
 }

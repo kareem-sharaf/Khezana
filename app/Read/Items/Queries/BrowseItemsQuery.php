@@ -8,11 +8,15 @@ use App\Enums\ApprovalStatus;
 use App\Enums\ItemAvailability;
 use App\Models\Item;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class BrowseItemsQuery
 {
     public function execute(array $filters = [], ?string $sort = null, int $page = 1, int $perPage = 20): LengthAwarePaginator
     {
+        $startTime = microtime(true);
+        
         $query = Item::query()
             ->whereHas('approvalRelation', fn($q) => $q->where('status', ApprovalStatus::APPROVED->value))
             ->where(function($q) {
@@ -55,10 +59,21 @@ class BrowseItemsQuery
             'images' => fn($q) => $q->select('id', 'item_id', 'path', 'is_primary')
                                    ->orderBy('is_primary', 'desc')
                                    ->limit(1),
-            'approvalRelation:id,approvable_type,approvable_id,status',
         ]);
 
         $paginator = $query->paginate(min($perPage, 50), ['*'], 'page', max(1, $page));
+
+        $duration = (microtime(true) - $startTime) * 1000;
+        $threshold = config('app.slow_query_threshold', 100);
+        
+        if ($duration > $threshold) {
+            Log::warning('Slow query detected: BrowseItemsQuery', [
+                'duration_ms' => round($duration, 2),
+                'filters' => $filters,
+                'sort' => $sort,
+                'page' => $page,
+            ]);
+        }
 
         return $paginator;
     }

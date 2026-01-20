@@ -8,11 +8,14 @@ use App\Enums\ApprovalStatus;
 use App\Enums\OfferStatus;
 use App\Models\Request;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 
 class BrowseRequestsQuery
 {
     public function execute(array $filters = [], ?string $sort = null, int $page = 1, int $perPage = 20): LengthAwarePaginator
     {
+        $startTime = microtime(true);
+        
         $query = Request::query()
             ->whereHas('approvalRelation', fn($q) => $q->where('status', ApprovalStatus::APPROVED->value))
             ->whereNull('deleted_at')
@@ -40,13 +43,26 @@ class BrowseRequestsQuery
         $query->with([
             'user:id,name',
             'category:id,name,slug',
-            'approvalRelation:id,approvable_type,approvable_id,status',
         ]);
 
         $query->withCount([
             'offers' => fn($q) => $q->where('status', OfferStatus::PENDING->value)
         ]);
 
-        return $query->paginate(min($perPage, 50), ['*'], 'page', max(1, $page));
+        $paginator = $query->paginate(min($perPage, 50), ['*'], 'page', max(1, $page));
+
+        $duration = (microtime(true) - $startTime) * 1000;
+        $threshold = config('app.slow_query_threshold', 100);
+        
+        if ($duration > $threshold) {
+            Log::warning('Slow query detected: BrowseRequestsQuery', [
+                'duration_ms' => round($duration, 2),
+                'filters' => $filters,
+                'sort' => $sort,
+                'page' => $page,
+            ]);
+        }
+
+        return $paginator;
     }
 }

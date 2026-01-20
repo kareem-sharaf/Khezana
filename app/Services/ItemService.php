@@ -63,11 +63,11 @@ class ItemService
     /**
      * Validate category attributes
      *
-     * @param Item $item The item
+     * @param \App\Models\Item $item The item
      * @param array $attributes Attribute values
      * @throws \Exception If validation fails
      */
-    public function validateCategoryAttributes(Item $item, array $attributes): void
+    public function validateCategoryAttributes(\App\Models\Item $item, array $attributes): void
     {
         $category = Category::with('attributes')->findOrFail($item->category_id);
         $allAttributes = $category->getAllAttributes();

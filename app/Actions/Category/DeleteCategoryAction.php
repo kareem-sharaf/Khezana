@@ -3,9 +3,15 @@
 namespace App\Actions\Category;
 
 use App\Models\Category;
+use App\Services\Cache\CategoryCacheService;
 
 class DeleteCategoryAction
 {
+    public function __construct(
+        private readonly CategoryCacheService $categoryCacheService
+    ) {
+    }
+
     /**
      * Delete a category.
      */
@@ -16,6 +22,14 @@ class DeleteCategoryAction
             throw new \InvalidArgumentException('Cannot delete category with children. Please delete or move children first.');
         }
 
-        return $category->delete();
+        $categoryId = $category->id;
+        $deleted = $category->delete();
+        
+        if ($deleted) {
+            $this->categoryCacheService->invalidateAll();
+            $this->categoryCacheService->invalidateCategoryAttributes($categoryId);
+        }
+
+        return $deleted;
     }
 }

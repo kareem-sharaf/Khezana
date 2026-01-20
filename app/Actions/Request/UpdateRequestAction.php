@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Request;
 
 use App\Models\Request;
+use App\Services\Cache\CacheService;
 use App\Services\RequestService;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,8 @@ use Illuminate\Support\Facades\DB;
 class UpdateRequestAction
 {
     public function __construct(
-        private readonly RequestService $requestService
+        private readonly RequestService $requestService,
+        private readonly CacheService $cacheService
     ) {
     }
 
@@ -49,6 +51,9 @@ class UpdateRequestAction
                 $request->itemAttributes()->delete();
                 $request->setAttributeValues($attributes);
             }
+
+            // Invalidate cache after update
+            $this->cacheService->invalidateRequest($request->id);
 
             return $request->fresh(['user', 'category']);
         });

@@ -39,5 +39,31 @@ class AppServiceProvider extends ServiceProvider
             \App\Events\UserDeleted::class,
             [\App\Listeners\LogAdminAction::class, 'handleUserDeleted']
         );
+
+        // Cache invalidation listeners
+        Event::listen(
+            \App\Events\Approval\ContentApproved::class,
+            \App\Listeners\InvalidateItemCache::class
+        );
+        Event::listen(
+            \App\Events\Approval\ContentApproved::class,
+            \App\Listeners\InvalidateRequestCache::class
+        );
+        Event::listen(
+            \App\Events\Approval\ContentRejected::class,
+            \App\Listeners\InvalidateItemCache::class
+        );
+        Event::listen(
+            \App\Events\Approval\ContentRejected::class,
+            \App\Listeners\InvalidateRequestCache::class
+        );
+        Event::listen(
+            \App\Events\Approval\ContentArchived::class,
+            \App\Listeners\InvalidateItemCache::class
+        );
+        Event::listen(
+            \App\Events\Approval\ContentArchived::class,
+            \App\Listeners\InvalidateRequestCache::class
+        );
     }
 }

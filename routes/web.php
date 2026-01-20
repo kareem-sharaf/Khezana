@@ -5,11 +5,13 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes (No Authentication Required) - Must be before auth routes
-Route::get('/items', [\App\Http\Controllers\Public\ItemController::class, 'index'])->name('public.items.index');
-Route::get('/items/{id}/{slug?}', [\App\Http\Controllers\Public\ItemController::class, 'show'])->name('public.items.show');
-
-Route::get('/requests', [\App\Http\Controllers\Public\RequestController::class, 'index'])->name('public.requests.index');
-Route::get('/requests/{id}/{slug?}', [\App\Http\Controllers\Public\RequestController::class, 'show'])->name('public.requests.show');
+Route::middleware(['cache.headers:300', 'throttle:60,1'])->group(function () {
+    Route::get('/items', [\App\Http\Controllers\Public\ItemController::class, 'index'])->name('public.items.index');
+    Route::get('/items/{id}/{slug?}', [\App\Http\Controllers\Public\ItemController::class, 'show'])->name('public.items.show');
+    
+    Route::get('/requests', [\App\Http\Controllers\Public\RequestController::class, 'index'])->name('public.requests.index');
+    Route::get('/requests/{id}/{slug?}', [\App\Http\Controllers\Public\RequestController::class, 'show'])->name('public.requests.show');
+});
 
 Route::get('/', function () {
     return redirect()->route('public.items.index');

@@ -123,4 +123,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Performance & Caching Configuration
+    |--------------------------------------------------------------------------
+    */
+
+    'slow_query_threshold' => env('SLOW_QUERY_THRESHOLD', 100), // milliseconds
+
+    'log_cache_misses' => env('LOG_CACHE_MISSES', false), // Enable cache miss logging
+
+    'currency' => env('APP_CURRENCY', 'SAR'),
+
+    'default_image' => env('DEFAULT_IMAGE', '/images/default-placeholder.png'),
+
 ];
