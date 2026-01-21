@@ -700,11 +700,25 @@ body {
     justify-content: center;
     flex-wrap: wrap;
     margin-top: var(--khezana-spacing-lg);
+    align-items: center;
+}
+
+.khezana-btn-hero-primary {
+    font-size: 1.125rem !important;
+    padding: 1rem 2.5rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35) !important;
+}
+
+.khezana-btn-hero-secondary {
+    font-size: 1rem !important;
+    padding: 0.875rem 2rem !important;
+    opacity: 0.9;
 }
 
 /* Hero Microcopy */
 .khezana-hero-microcopy {
-    margin-top: var(--khezana-spacing-md);
+    margin-top: var(--khezana-spacing-lg);
     text-align: center;
 }
 
@@ -713,6 +727,8 @@ body {
     color: var(--khezana-text-light);
     margin: 0;
     line-height: 1.6;
+    font-weight: 500;
+    letter-spacing: 0.025em;
 }
 
 .khezana-microcopy-hint {
@@ -1257,6 +1273,24 @@ body {
         font-size: var(--khezana-font-size-lg);
     }
 
+    .khezana-hero-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: var(--khezana-spacing-sm);
+    }
+
+    .khezana-btn-hero-primary {
+        width: 100%;
+        font-size: 1rem !important;
+        padding: 1rem 2rem !important;
+    }
+
+    .khezana-btn-hero-secondary {
+        width: 100%;
+        font-size: 0.9375rem !important;
+        padding: 0.875rem 1.5rem !important;
+    }
+
     .khezana-header {
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
@@ -1634,6 +1668,7 @@ img[loading="lazy"].loaded {
     max-width: 600px;
     margin: 0 auto;
 }
+
 
 .khezana-empty-icon {
     font-size: 4.5rem;

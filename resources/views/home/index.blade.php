@@ -12,20 +12,18 @@
                     {{ __('common.home.hero_subtitle') }}
                 </p>
                 <div class="khezana-hero-actions">
-                    <a href="{{ route('public.requests.create-info') }}"
-                        class="khezana-btn khezana-btn-primary khezana-btn-large">
-                        {{ __('common.home.request_clothing') }}
-                    </a>
-                    <a href="{{ route('public.items.index') }}" class="khezana-btn khezana-btn-secondary khezana-btn-large">
+                    <a href="{{ route('public.items.index') }}" class="khezana-btn khezana-btn-primary khezana-btn-large khezana-btn-hero-primary">
                         {{ __('common.home.browse_offers') }}
+                    </a>
+                    <a href="{{ route('public.requests.create-info') }}"
+                        class="khezana-btn khezana-btn-secondary khezana-btn-large khezana-btn-hero-secondary">
+                        {{ __('common.home.request_clothing') }}
                     </a>
                 </div>
                 <!-- Microcopy Guidance -->
                 <div class="khezana-hero-microcopy">
                     <p class="khezana-microcopy-text">
-                        <span class="khezana-microcopy-hint">{{ __('common.home.hero_guide_browse') }}</span>
-                        <span class="khezana-microcopy-separator">•</span>
-                        <span class="khezana-microcopy-hint">{{ __('common.home.hero_guide_request') }}</span>
+                        {{ __('common.home.hero_guide_simple') }}
                     </p>
                 </div>
             </div>
@@ -35,11 +33,6 @@
     <!-- Services Section -->
     <section class="khezana-services">
         <div class="khezana-container">
-            @if (isset($isNewVisitor) && $isNewVisitor)
-                <div class="khezana-services-guide">
-                    <p class="khezana-services-guide-text">{{ __('common.home.services_guide') }}</p>
-                </div>
-            @endif
             <div class="khezana-services-grid">
                 <!-- Buy -->
                 <a href="{{ route('public.items.index', ['operation_type' => 'sell']) }}" class="khezana-service-card">
@@ -172,13 +165,9 @@
                     </a>
                 </div>
             @else
-                <div style="text-align: center; padding: var(--khezana-spacing-xl) 0;">
-                    <p style="color: var(--khezana-text-light); margin-bottom: var(--khezana-spacing-md);">
-                        {{ __('common.home.no_items_available') }}
-                    </p>
-                    <p style="color: var(--khezana-text-light); font-size: var(--khezana-font-size-sm); margin-bottom: var(--khezana-spacing-lg);">
-                        {{ __('common.ui.no_items_available_hint') }}
-                    </p>
+                <div class="khezana-empty-state">
+                    <p class="khezana-empty-title">{{ __('common.home.no_items_available') }}</p>
+                    <p class="khezana-empty-text">{{ __('common.home.no_items_available_hint') }}</p>
                     <a href="{{ route('public.requests.create-info') }}" class="khezana-btn khezana-btn-primary">
                         {{ __('common.home.request_clothing') }}
                     </a>
@@ -228,13 +217,9 @@
                     </a>
                 </div>
             @else
-                <div style="text-align: center; padding: var(--khezana-spacing-xl) 0;">
-                    <p style="color: var(--khezana-text-light); margin-bottom: var(--khezana-spacing-md);">
-                        {{ __('common.home.no_items_available') }}
-                    </p>
-                    <p style="color: var(--khezana-text-light); font-size: var(--khezana-font-size-sm); margin-bottom: var(--khezana-spacing-lg);">
-                        {{ __('common.ui.no_items_available_hint') }}
-                    </p>
+                <div class="khezana-empty-state">
+                    <p class="khezana-empty-title">{{ __('common.home.no_items_available') }}</p>
+                    <p class="khezana-empty-text">{{ __('common.home.no_items_available_hint') }}</p>
                     <a href="{{ route('public.requests.create-info') }}" class="khezana-btn khezana-btn-primary">
                         {{ __('common.home.request_clothing') }}
                     </a>
@@ -283,13 +268,9 @@
                     </a>
                 </div>
             @else
-                <div style="text-align: center; padding: var(--khezana-spacing-xl) 0;">
-                    <p style="color: var(--khezana-text-light); margin-bottom: var(--khezana-spacing-md);">
-                        {{ __('common.home.no_items_available') }}
-                    </p>
-                    <p style="color: var(--khezana-text-light); font-size: var(--khezana-font-size-sm); margin-bottom: var(--khezana-spacing-lg);">
-                        {{ __('common.ui.no_items_available_hint') }}
-                    </p>
+                <div class="khezana-empty-state">
+                    <p class="khezana-empty-title">{{ __('common.home.no_items_available') }}</p>
+                    <p class="khezana-empty-text">{{ __('common.home.no_items_available_hint') }}</p>
                     <a href="{{ route('public.requests.create-info') }}" class="khezana-btn khezana-btn-primary">
                         {{ __('common.home.request_clothing') }}
                     </a>
