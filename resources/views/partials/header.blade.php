@@ -27,12 +27,26 @@
                 <!-- Actions -->
                 <div class="khezana-nav-actions">
                     @auth
-                        <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary">
-                            {{ __('common.ui.add_item') ?? 'أضف غرض' }}
-                        </a>
-                        <a href="{{ route('dashboard') }}" class="khezana-btn khezana-btn-secondary">
-                            {{ __('common.ui.dashboard') ?? 'لوحة التحكم' }}
-                        </a>
+                        <div class="khezana-user-box">
+                            <div class="khezana-user-info">
+                                <span class="khezana-user-greeting">مرحباً،</span>
+                                <span class="khezana-user-name">{{ Auth::user()->name ?? Auth::user()->phone }}</span>
+                            </div>
+                            <div class="khezana-user-actions">
+                                <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary">
+                                    {{ __('common.ui.add_item') ?? 'أضف غرض' }}
+                                </a>
+                                <a href="{{ route('dashboard') }}" class="khezana-btn khezana-btn-secondary">
+                                    {{ __('common.ui.dashboard') ?? 'لوحة التحكم' }}
+                                </a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="khezana-btn khezana-btn-secondary khezana-btn-ghost">
+                                        {{ __('common.ui.logout') ?? 'تسجيل الخروج' }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     @else
                         <a href="{{ route('login') }}" class="khezana-btn khezana-btn-secondary">
                             {{ __('common.ui.login') ?? 'تسجيل الدخول' }}

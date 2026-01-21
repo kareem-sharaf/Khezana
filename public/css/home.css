@@ -140,6 +140,36 @@ body {
     flex-wrap: wrap;
 }
 
+.khezana-user-box {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-md);
+    flex-wrap: wrap;
+}
+
+.khezana-user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-xs);
+    font-weight: 600;
+    color: var(--khezana-text);
+}
+
+.khezana-user-greeting {
+    color: var(--khezana-text-light);
+    font-weight: 500;
+}
+
+.khezana-user-name {
+    color: var(--khezana-text);
+}
+
+.khezana-user-actions {
+    display: flex;
+    gap: var(--khezana-spacing-sm);
+    flex-wrap: wrap;
+}
+
 /* Buttons */
 .khezana-btn {
     display: inline-flex;
@@ -174,6 +204,18 @@ body {
 }
 
 .khezana-btn-secondary:hover {
+    background: var(--khezana-bg);
+    border-color: var(--khezana-primary);
+    color: var(--khezana-primary);
+}
+
+.khezana-btn-ghost {
+    background: transparent;
+    color: var(--khezana-text);
+    border: 1px solid var(--khezana-border);
+}
+
+.khezana-btn-ghost:hover {
     background: var(--khezana-bg);
     border-color: var(--khezana-primary);
     color: var(--khezana-primary);
