@@ -65,7 +65,7 @@ class RegisteredUserController extends Controller
                 ->with('success', 'مرحباً بك! تم إنشاء حسابك بنجاح. يمكنك الآن إتمام العملية.');
         }
 
-        return redirect(route('dashboard', absolute: false))
+        return redirect(route('home', absolute: false))
             ->with('success', 'مرحباً بك! تم إنشاء حسابك بنجاح.');
     }
 }

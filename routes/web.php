@@ -17,7 +17,8 @@ Route::middleware(['cache.headers:300', 'throttle:60,1'])->group(function () {
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    // Redirect dashboard to home for simplicity
+    return redirect()->route('home');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

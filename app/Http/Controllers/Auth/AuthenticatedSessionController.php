@@ -43,7 +43,7 @@ class AuthenticatedSessionController extends Controller
                 ->with('success', 'مرحباً بك! يمكنك الآن إتمام العملية.');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false))
+        return redirect()->intended(route('home', absolute: false))
             ->with('success', 'مرحباً بك!');
     }
 
