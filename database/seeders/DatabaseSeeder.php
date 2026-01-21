@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             AttributesSeeder::class,
             UsersSeeder::class,
             ItemsSeeder::class,
+            ItemImagesSeeder::class,
             RequestsSeeder::class,
         ]);
 

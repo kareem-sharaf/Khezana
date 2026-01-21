@@ -219,8 +219,8 @@
                             @endif
                             @if (request('price_min') || request('price_max'))
                                 <span class="khezana-filter-tag">
-                                    {{ __('common.ui.price') }}: 
-                                    {{ request('price_min') ? number_format(request('price_min'), 0) : '0' }} - 
+                                    {{ __('common.ui.price') }}:
+                                    {{ request('price_min') ? number_format(request('price_min'), 0) : '0' }} -
                                     {{ request('price_max') ? number_format(request('price_max'), 0) : '∞' }}
                                     <a href="{{ route('public.items.index', array_merge(request()->except(['price_min', 'price_max']), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
                                 </span>
@@ -234,16 +234,44 @@
                         <div class="khezana-items-grid">
                             @foreach ($items as $item)
                                 <a href="{{ route('public.items.show', ['id' => $item->id, 'slug' => $item->slug]) }}"
-                                    class="khezana-item-card">
-                                    @if ($item->primaryImage)
-                                        <img src="{{ asset('storage/' . $item->primaryImage->path) }}"
-                                            alt="{{ $item->title }}" class="khezana-item-image" loading="lazy">
-                                    @else
-                                        <div class="khezana-item-image"
-                                            style="display: flex; align-items: center; justify-content: center; color: #9ca3af;">
-                                            {{ __('common.ui.no_image') }}
+                                    class="khezana-item-card" data-item-id="{{ $item->id }}">
+                                    <div class="khezana-item-image-wrapper">
+                                        @if ($item->primaryImage)
+                                            <div class="khezana-item-image-container">
+                                                <img src="{{ asset('storage/' . $item->primaryImage->path) }}"
+                                                    alt="{{ $item->title }}"
+                                                    class="khezana-item-image"
+                                                    loading="lazy"
+                                                    data-primary-image="{{ asset('storage/' . $item->primaryImage->path) }}">
+                                                @if ($item->images->count() > 1)
+                                                    <div class="khezana-item-image-overlay">
+                                                        <span class="khezana-item-image-count">+{{ $item->images->count() - 1 }}</span>
+                                                    </div>
+                                                    <div class="khezana-item-image-preview" style="display: none;">
+                                                        @foreach ($item->images->take(4) as $image)
+                                                            <img src="{{ asset('storage/' . $image->path) }}"
+                                                                alt="{{ $item->title }}"
+                                                                class="khezana-preview-image"
+                                                                data-image-index="{{ $loop->index }}"
+                                                                loading="lazy">
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @else
+                                            <div class="khezana-item-image-placeholder">
+                                                <svg class="khezana-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                                                    <polyline points="21 15 16 10 5 21"/>
+                                                </svg>
+                                                <span class="khezana-placeholder-text">{{ __('common.ui.no_image') }}</span>
+                                            </div>
+                                        @endif
+                                        <div class="khezana-item-image-skeleton" style="display: none;">
+                                            <div class="khezana-skeleton-shimmer"></div>
                                         </div>
-                                    @endif
+                                    </div>
                                     <div class="khezana-item-content">
                                         <h3 class="khezana-item-title">{{ $item->title }}</h3>
                                         @if ($item->category)
@@ -309,7 +337,7 @@
                 const filtersToggle = document.getElementById('filtersToggle');
                 const filtersSidebar = document.getElementById('filtersSidebar');
                 const activeFiltersCount = document.getElementById('activeFiltersCount');
-                
+
                 if (!form) return;
 
                 const isMobile = window.innerWidth <= 768;
@@ -318,14 +346,14 @@
                 // Mobile filters toggle
                 if (filtersToggle && filtersSidebar && isMobile) {
                     filtersSidebar.style.display = 'none';
-                    
+
                     filtersToggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
                         const isVisible = filtersSidebar.style.display !== 'none';
                         filtersSidebar.style.display = isVisible ? 'none' : 'block';
                         filtersToggle.setAttribute('aria-expanded', !isVisible);
-                        
+
                         if (!isVisible) {
                             setTimeout(function() {
                                 filtersSidebar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -357,12 +385,12 @@
                             e.stopPropagation();
                             const section = this.closest('.khezana-filter-section');
                             if (!section) return;
-                            
+
                             const content = section.querySelector('.khezana-filter-section-content');
                             if (!content) return;
-                            
+
                             const isExpanded = section.classList.contains('khezana-filter-section-expanded');
-                            
+
                             if (isExpanded) {
                                 section.classList.remove('khezana-filter-section-expanded');
                                 content.style.display = 'none';

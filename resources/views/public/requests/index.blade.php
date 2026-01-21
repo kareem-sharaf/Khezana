@@ -49,7 +49,7 @@
                             <div class="khezana-filter-section-content">
                                 <div class="khezana-filter-group">
                                     <input type="text" name="search" value="{{ request('search') }}"
-                                        placeholder="{{ __('common.ui.search_requests') }}" 
+                                        placeholder="{{ __('common.ui.search_requests') }}"
                                         class="khezana-filter-input khezana-filter-input-search">
                                 </div>
                             </div>
@@ -276,7 +276,7 @@
                 const filtersToggle = document.getElementById('filtersToggle');
                 const filtersSidebar = document.getElementById('filtersSidebar');
                 const activeFiltersCount = document.getElementById('activeFiltersCount');
-                
+
                 if (!form) return;
 
                 const isMobile = window.innerWidth <= 768;
@@ -285,14 +285,14 @@
                 // Mobile filters toggle
                 if (filtersToggle && filtersSidebar && isMobile) {
                     filtersSidebar.style.display = 'none';
-                    
+
                     filtersToggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
                         const isVisible = filtersSidebar.style.display !== 'none';
                         filtersSidebar.style.display = isVisible ? 'none' : 'block';
                         filtersToggle.setAttribute('aria-expanded', !isVisible);
-                        
+
                         if (!isVisible) {
                             setTimeout(function() {
                                 filtersSidebar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -324,12 +324,12 @@
                             e.stopPropagation();
                             const section = this.closest('.khezana-filter-section');
                             if (!section) return;
-                            
+
                             const content = section.querySelector('.khezana-filter-section-content');
                             if (!content) return;
-                            
+
                             const isExpanded = section.classList.contains('khezana-filter-section-expanded');
-                            
+
                             if (isExpanded) {
                                 section.classList.remove('khezana-filter-section-expanded');
                                 content.style.display = 'none';

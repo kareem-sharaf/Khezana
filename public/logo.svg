@@ -1,0 +1,47 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wardrobe/Closet Icon - Enhanced Design -->
+
+  <!-- Shadow -->
+  <ellipse cx="100" cy="195" rx="70" ry="5" fill="#d97706" opacity="0.3"/>
+
+  <!-- Main body frame -->
+  <rect x="25" y="15" width="150" height="170" rx="10" fill="#f59e0b" stroke="#d97706" stroke-width="4"/>
+
+  <!-- Top decoration/crown -->
+  <rect x="20" y="10" width="160" height="12" rx="6" fill="#d97706"/>
+  <rect x="22" y="12" width="156" height="8" rx="4" fill="#fbbf24"/>
+
+  <!-- Door left -->
+  <rect x="30" y="30" width="70" height="150" rx="6" fill="#fbbf24" stroke="#d97706" stroke-width="3"/>
+
+  <!-- Door right -->
+  <rect x="105" y="30" width="70" height="150" rx="6" fill="#fbbf24" stroke="#d97706" stroke-width="3"/>
+
+  <!-- Vertical divider between doors -->
+  <line x1="100" y1="30" x2="100" y2="180" stroke="#d97706" stroke-width="3"/>
+
+  <!-- Top shelf -->
+  <line x1="30" y1="60" x2="170" y2="60" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Middle shelf -->
+  <line x1="30" y1="110" x2="170" y2="110" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Bottom shelf -->
+  <line x1="30" y1="160" x2="170" y2="160" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Door handles left (circular) -->
+  <circle cx="85" cy="105" r="6" fill="#ffffff" stroke="#d97706" stroke-width="2"/>
+  <circle cx="85" cy="105" r="3" fill="#d97706"/>
+
+  <!-- Door handles right (circular) -->
+  <circle cx="115" cy="105" r="6" fill="#ffffff" stroke="#d97706" stroke-width="2"/>
+  <circle cx="115" cy="105" r="3" fill="#d97706"/>
+
+  <!-- Door panels/design lines left -->
+  <line x1="50" y1="40" x2="50" y2="170" stroke="#f59e0b" stroke-width="1.5" opacity="0.6"/>
+  <line x1="70" y1="40" x2="70" y2="170" stroke="#f59e0b" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Door panels/design lines right -->
+  <line x1="125" y1="40" x2="125" y2="170" stroke="#f59e0b" stroke-width="1.5" opacity="0.6"/>
+  <line x1="145" y1="40" x2="145" y2="170" stroke="#f59e0b" stroke-width="1.5" opacity="0.6"/>
+</svg>

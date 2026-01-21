@@ -94,7 +94,7 @@ class RequestController extends Controller
     public function submitOffer(Request $request, int $id): RedirectResponse
     {
         $requestModel = \App\Models\Request::findOrFail($id);
-        
+
         $validated = $request->validate([
             'operation_type' => 'required|in:sell,rent,donate',
             'price' => 'nullable|numeric|min:0',
@@ -105,7 +105,7 @@ class RequestController extends Controller
 
         $offer = \App\Actions\Offer\CreateOfferAction::class;
         $createOfferAction = app(\App\Actions\Offer\CreateOfferAction::class);
-        
+
         $offer = $createOfferAction->execute(
             $validated,
             $requestModel,
@@ -119,7 +119,7 @@ class RequestController extends Controller
     public function contact(Request $request, int $id): RedirectResponse
     {
         $requestModel = \App\Models\Request::findOrFail($id);
-        
+
         $validated = $request->validate([
             'message' => 'required|string|max:1000',
             'name' => 'required|string|max:255',
@@ -127,7 +127,7 @@ class RequestController extends Controller
         ]);
 
         // TODO: Send contact message
-        
+
         return redirect()->route('public.requests.show', ['id' => $requestModel->id, 'slug' => $requestModel->slug])
             ->with('success', 'تم إرسال رسالتك بنجاح. سيتم التواصل معك قريباً.');
     }
@@ -135,14 +135,14 @@ class RequestController extends Controller
     public function report(Request $request, int $id): RedirectResponse
     {
         $requestModel = \App\Models\Request::findOrFail($id);
-        
+
         $validated = $request->validate([
             'reason' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
         ]);
 
         // TODO: Create report record
-        
+
         return redirect()->route('public.requests.show', ['id' => $requestModel->id, 'slug' => $requestModel->slug])
             ->with('success', 'تم الإبلاغ عن الطلب. شكراً لك.');
     }
