@@ -10,6 +10,9 @@
 
                 <!-- Navigation Links -->
                 <div class="khezana-nav-links" aria-label="التنقل الرئيسي">
+                    <a href="{{ route('public.items.index') }}" class="khezana-nav-link">
+                        {{ __('common.ui.offers') ?? 'العروض' }}
+                    </a>
                     <a href="{{ route('public.items.index', ['operation_type' => 'sell']) }}" class="khezana-nav-link">
                         {{ __('items.operation_types.sell') ?? 'بيع' }}
                     </a>
@@ -34,11 +37,14 @@
                                 <span class="khezana-user-name">{{ Auth::user()->name ?? Auth::user()->phone }}</span>
                             </div>
                             <div class="khezana-user-actions">
+                                <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn-secondary">
+                                    عروضي
+                                </a>
+                                <a href="{{ route('requests.index') }}" class="khezana-btn khezana-btn-secondary">
+                                    طلباتي
+                                </a>
                                 <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary">
                                     {{ __('common.ui.add_item') ?? 'أضف غرض' }}
-                                </a>
-                                <a href="{{ route('dashboard') }}" class="khezana-btn khezana-btn-secondary">
-                                    {{ __('common.ui.dashboard') ?? 'لوحة التحكم' }}
                                 </a>
                                 <form method="POST" action="{{ route('logout') }}" class="khezana-logout-form">
                                     @csrf

@@ -5,7 +5,8 @@
 
 :root {
     /* Colors */
-    --khezana-primary: #f59e0b; /* Amber */
+    --khezana-primary: #f59e0b;
+    /* Amber */
     --khezana-primary-dark: #d97706;
     --khezana-primary-light: #fbbf24;
     --khezana-secondary: #6b7280;
@@ -1907,4 +1908,224 @@ img[loading="lazy"].loaded {
         text-align: center;
         gap: var(--khezana-spacing-xs);
     }
+}
+
+/* ============================================
+   Requests Listing Page
+   ============================================ */
+
+.khezana-requests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--khezana-spacing-lg);
+    margin-top: var(--khezana-spacing-xl);
+}
+
+.khezana-request-card {
+    background: var(--khezana-white);
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius-lg);
+    padding: var(--khezana-spacing-lg);
+    transition: var(--khezana-transition);
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.khezana-request-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--khezana-shadow-lg);
+    border-color: var(--khezana-primary);
+}
+
+.khezana-request-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-sm);
+}
+
+.khezana-request-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--khezana-spacing-sm);
+    margin-bottom: var(--khezana-spacing-xs);
+}
+
+.khezana-request-title {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 600;
+    color: var(--khezana-text);
+    margin: 0;
+    flex: 1;
+    line-height: 1.4;
+}
+
+.khezana-request-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 500;
+    border-radius: var(--khezana-radius);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.khezana-request-badge-open {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.khezana-request-badge-fulfilled {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.khezana-request-badge-closed {
+    background: rgba(107, 114, 128, 0.1);
+    color: #6b7280;
+}
+
+.khezana-request-category {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    margin: 0;
+}
+
+.khezana-request-description {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text);
+    line-height: 1.6;
+    margin: var(--khezana-spacing-xs) 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.khezana-request-attributes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--khezana-spacing-xs);
+    margin-top: var(--khezana-spacing-xs);
+}
+
+.khezana-request-attribute {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    background: var(--khezana-bg);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--khezana-radius);
+}
+
+.khezana-request-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--khezana-spacing-sm);
+    padding-top: var(--khezana-spacing-sm);
+    border-top: 1px solid var(--khezana-border);
+}
+
+.khezana-request-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+}
+
+.khezana-request-user {
+    font-weight: 500;
+    color: var(--khezana-text);
+}
+
+.khezana-request-date {
+    font-size: var(--khezana-font-size-xs);
+}
+
+.khezana-request-offers {
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 500;
+    color: var(--khezana-primary);
+    background: rgba(245, 158, 11, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--khezana-radius);
+}
+
+@media (max-width: 768px) {
+    .khezana-requests-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================
+   Approval Status Badges & Info Boxes
+   ============================================ */
+
+.khezana-approval-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 500;
+    border-radius: var(--khezana-radius);
+    white-space: nowrap;
+}
+
+.khezana-approval-badge-approved {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.khezana-approval-badge-pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--khezana-primary);
+}
+
+.khezana-approval-badge-rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--khezana-danger);
+}
+
+.khezana-approval-badge-archived {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--khezana-secondary);
+}
+
+.khezana-approval-info {
+    margin-top: var(--khezana-spacing-lg);
+}
+
+.khezana-info-box {
+    padding: var(--khezana-spacing-md);
+    border-radius: var(--khezana-radius);
+    margin-bottom: var(--khezana-spacing-md);
+    line-height: 1.6;
+}
+
+.khezana-info-box-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid var(--khezana-primary-light);
+    color: var(--khezana-text);
+}
+
+.khezana-info-box-error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--khezana-danger);
+    color: var(--khezana-text);
+}
+
+.khezana-info-box-success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--khezana-success);
+    color: var(--khezana-text);
+}
+
+.khezana-item-actions {
+    display: flex;
+    gap: var(--khezana-spacing-sm);
+    flex-wrap: wrap;
+    margin-top: var(--khezana-spacing-lg);
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid var(--khezana-border);
 }

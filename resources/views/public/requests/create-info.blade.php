@@ -174,11 +174,13 @@
                         سجّل حسابك مجاناً وابدأ بطلب ما تحتاجه الآن
                     </p>
                     @auth
-                        <a href="{{ route('requests.create') }}" class="khezana-btn khezana-btn-primary khezana-btn-large">
+                        <a href="{{ route('requests.create', [], false) }}"
+                            class="khezana-btn khezana-btn-primary khezana-btn-large">
                             اكتب طلبك الآن
                         </a>
                     @else
-                        <a href="{{ route('register') }}" class="khezana-btn khezana-btn-primary khezana-btn-large">
+                        <a href="{{ route('register', ['redirect' => route('requests.create', [], false)], false) }}"
+                            class="khezana-btn khezana-btn-primary khezana-btn-large">
                             سجل واطلب لباسًا
                         </a>
                     @endauth

@@ -18,7 +18,7 @@ use Illuminate\View\View;
 
 /**
  * Request Controller
- * 
+ *
  * Handles user-facing request operations
  * All business logic is delegated to Actions
  */
@@ -40,7 +40,7 @@ class RequestController extends Controller
     public function index(): View
     {
         $requests = RequestModel::where('user_id', Auth::id())
-            ->with(['category', 'approvalRelation'])
+            ->with(['category', 'approvalRelation', 'itemAttributes.attribute', 'offers'])
             ->latest()
             ->paginate(12);
 
@@ -56,7 +56,7 @@ class RequestController extends Controller
             ->with(['attributes.values', 'children.attributes.values'])
             ->whereNull('parent_id')
             ->get();
-        
+
         return view('requests.create', compact('categories'));
     }
 
@@ -65,8 +65,6 @@ class RequestController extends Controller
      */
     public function store(HttpRequest $request): RedirectResponse
     {
-        $this->authorize('create', RequestModel::class);
-
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'title' => 'required|string|max:255',
@@ -87,11 +85,11 @@ class RequestController extends Controller
     /**
      * Display the specified request
      */
-    public function show(RequestModel $requestModel): View
+    public function show(RequestModel $request): View
     {
-        $this->authorize('view', $requestModel);
+        $this->authorize('view', $request);
 
-        $requestModel->load([
+        $request->load([
             'user',
             'category',
             'itemAttributes.attribute',
@@ -100,25 +98,25 @@ class RequestController extends Controller
             'offers.item'
         ]);
 
-        return view('requests.show', compact('requestModel'));
+        return view('requests.show', ['requestModel' => $request]);
     }
 
     /**
      * Show the form for editing the specified request
      */
-    public function edit(RequestModel $requestModel): View
+    public function edit(RequestModel $request): View
     {
-        $this->authorize('update', $requestModel);
+        $this->authorize('update', $request);
 
         // Cannot edit closed or fulfilled requests
-        if ($requestModel->isClosed() || $requestModel->isFulfilled()) {
+        if ($request->isClosed() || $request->isFulfilled()) {
             abort(403, __('requests.messages.cannot_edit_closed'));
         }
 
         $categories = Category::with('attributes')->get();
-        $requestModel->load('itemAttributes.attribute');
+        $request->load('itemAttributes.attribute');
 
-        return view('requests.edit', compact('requestModel', 'categories'));
+        return view('requests.edit', ['requestModel' => $request, 'categories' => $categories]);
     }
 
     /**

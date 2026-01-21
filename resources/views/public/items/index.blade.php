@@ -7,20 +7,29 @@
         <div class="khezana-container">
             <!-- Page Header -->
             <div class="khezana-page-header">
-                <h1 class="khezana-page-title">
-                    @if (request('operation_type') == 'sell')
-                        {{ __('items.operation_types.sell') ?? 'بيع' }}
-                    @elseif(request('operation_type') == 'rent')
-                        {{ __('items.operation_types.rent') ?? 'إيجار' }}
-                    @elseif(request('operation_type') == 'donate')
-                        {{ __('items.operation_types.donate') ?? 'تبرع' }}
-                    @else
-                        {{ __('items.title') ?? 'جميع الإعلانات' }}
-                    @endif
-                </h1>
-                <p class="khezana-page-subtitle">
-                    {{ $items->total() }} {{ __('items.plural') ?? 'إعلان' }}
-                </p>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--khezana-spacing-md);">
+                    <div>
+                        <h1 class="khezana-page-title">
+                            @if (request('operation_type') == 'sell')
+                                {{ __('items.operation_types.sell') ?? 'بيع' }}
+                            @elseif(request('operation_type') == 'rent')
+                                {{ __('items.operation_types.rent') ?? 'إيجار' }}
+                            @elseif(request('operation_type') == 'donate')
+                                {{ __('items.operation_types.donate') ?? 'تبرع' }}
+                            @else
+                                {{ __('items.title') ?? 'جميع الإعلانات' }}
+                            @endif
+                        </h1>
+                        <p class="khezana-page-subtitle">
+                            {{ $items->total() }} {{ __('items.plural') ?? 'إعلان' }}
+                        </p>
+                    </div>
+                    @auth
+                        <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn-secondary">
+                            عروضي
+                        </a>
+                    @endauth
+                </div>
             </div>
 
             <div class="khezana-listing-layout">

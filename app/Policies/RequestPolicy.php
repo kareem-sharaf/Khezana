@@ -9,7 +9,7 @@ use App\Models\User;
 
 /**
  * Request Policy
- * 
+ *
  * Authorization rules:
  * - User can manage only their own requests
  * - Admin can view all requests
