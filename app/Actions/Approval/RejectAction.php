@@ -48,7 +48,11 @@ class RejectAction
             'rejection_reason' => $rejectionReason,
         ]);
 
-        $this->logService->logReject($approval->approvable, $reviewedBy->id, $rejectionReason);
+        // Log admin action if approvable exists
+        $approvable = $approval->approvable;
+        if ($approvable) {
+            $this->logService->logReject($approvable, $reviewedBy->id, $rejectionReason);
+        }
 
         event(new ContentRejected($approval));
 

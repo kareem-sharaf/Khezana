@@ -10,6 +10,7 @@ use App\Enums\OperationType;
 use App\Models\Item;
 use Filament\Actions;
 use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -202,11 +203,67 @@ class ItemResource extends Resource
             ])
             ->actions([
                 Actions\ViewAction::make(),
+                Actions\DeleteAction::make()
+                    ->label(__('filament-dashboard.Delete'))
+                    ->requiresConfirmation()
+                    ->form([
+                        Textarea::make('reason')
+                            ->label(__('items.deletion.reason_label'))
+                            ->required()
+                            ->rows(3)
+                            ->placeholder(__('items.deletion.reason_placeholder'))
+                            ->helperText(__('items.deletion.archive_hint')),
+                        Checkbox::make('archive')
+                            ->label(__('items.deletion.archive_option'))
+                            ->helperText(__('items.deletion.archive_hint')),
+                    ])
+                    ->action(function (Item $record, array $data) {
+                        $user = auth()->user();
+                        $deleteAction = app(\App\Actions\Item\DeleteItemAction::class);
+                        $deleteAction->softDelete($record, $user, $data['reason'] ?? null, $data['archive'] ?? false);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title(__('items.messages.deleted'))
+                            ->success()
+                            ->send();
+                    })
+                    ->successNotificationTitle(__('items.messages.deleted'))
+                    ->visible(fn (Item $record) => auth()->user()?->can('delete', $record)),
             ])
             ->bulkActions([
                 Actions\BulkActionGroup::make([
                     Actions\DeleteBulkAction::make()
-                        ->visible(fn () => auth()->user()?->hasRole('super_admin')),
+                        ->label(__('filament-dashboard.Delete Selected'))
+                        ->requiresConfirmation()
+                        ->form([
+                            Textarea::make('reason')
+                                ->label(__('items.deletion.reason_label'))
+                                ->required()
+                                ->rows(3)
+                                ->placeholder(__('items.deletion.reason_placeholder')),
+                            Checkbox::make('archive')
+                                ->label(__('items.deletion.archive_option'))
+                                ->helperText(__('items.deletion.archive_hint')),
+                        ])
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data) {
+                            $user = \Illuminate\Support\Facades\Auth::user();
+                            $deleteAction = app(\App\Actions\Item\DeleteItemAction::class);
+                            $deletedCount = 0;
+
+                            foreach ($records as $record) {
+                                if ($user && $user->can('delete', $record)) {
+                                    $deleteAction->softDelete($record, $user, $data['reason'] ?? null, $data['archive'] ?? false);
+                                    $deletedCount++;
+                                }
+                            }
+
+                            \Filament\Notifications\Notification::make()
+                                ->title(__('items.messages.deleted') . ' (' . $deletedCount . ')')
+                                ->success()
+                                ->send();
+                        })
+                        ->successNotificationTitle(fn ($records) => __('items.messages.deleted') . ' (' . $records->count() . ')')
+                        ->visible(fn () => auth()->user()?->hasAnyRole(['admin', 'super_admin'])),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
@@ -231,6 +288,8 @@ class ItemResource extends Resource
     {
         return parent::getEloquentQuery()
             ->with(['user', 'category', 'images', 'approvalRelation']);
+        // Note: Soft deleted items are hidden by default (SoftDeletes global scope)
+        // Admins can see them by filtering or using a custom query if needed
     }
 
     // canViewAny removed - Panel-level access control handles admin/super_admin check

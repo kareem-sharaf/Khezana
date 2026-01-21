@@ -7,8 +7,10 @@
                 <a href="{{ route('home') }}" class="khezana-logo" aria-label="{{ __('common.ui.main_navigation') }}">
                     @if(file_exists(public_path('logo.svg')))
                         <img src="{{ asset('logo.svg') }}" alt="{{ config('app.name') }}" class="khezana-logo-img">
+                        <span class="khezana-logo-text">خزانة</span>
                     @elseif(file_exists(public_path('logo.png')))
                         <img src="{{ asset('logo.png') }}" alt="{{ config('app.name') }}" class="khezana-logo-img">
+                        <span class="khezana-logo-text">خزانة</span>
                     @else
                         <span class="khezana-logo-text">{{ config('app.name') }}</span>
                     @endif

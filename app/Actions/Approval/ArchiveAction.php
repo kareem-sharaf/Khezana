@@ -46,7 +46,11 @@ class ArchiveAction
             'rejection_reason' => $reason,
         ]);
 
-        $this->logService->logArchive($approval->approvable, $reviewedBy->id, $reason);
+        // Log admin action if approvable exists
+        $approvable = $approval->approvable;
+        if ($approvable) {
+            $this->logService->logArchive($approvable, $reviewedBy->id, $reason);
+        }
 
         event(new ContentArchived($approval));
 

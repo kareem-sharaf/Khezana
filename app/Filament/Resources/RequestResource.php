@@ -10,6 +10,7 @@ use App\Enums\RequestStatus;
 use App\Models\Request;
 use Filament\Actions;
 use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -176,10 +177,67 @@ class RequestResource extends Resource
             ])
             ->actions([
                 Actions\ViewAction::make(),
+                Actions\DeleteAction::make()
+                    ->label(__('filament-dashboard.Delete'))
+                    ->requiresConfirmation()
+                    ->form([
+                        Textarea::make('reason')
+                            ->label(__('requests.deletion.reason_label'))
+                            ->required()
+                            ->rows(3)
+                            ->placeholder(__('requests.deletion.reason_placeholder'))
+                            ->helperText(__('requests.deletion.archive_hint')),
+                        Checkbox::make('archive')
+                            ->label(__('requests.deletion.archive_option'))
+                            ->helperText(__('requests.deletion.archive_hint')),
+                    ])
+                    ->action(function (Request $record, array $data) {
+                        $user = \Illuminate\Support\Facades\Auth::user();
+                        $deleteAction = app(\App\Actions\Request\DeleteRequestAction::class);
+                        $deleteAction->softDelete($record, $user, $data['reason'] ?? null, $data['archive'] ?? false);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title(__('requests.messages.deleted_successfully'))
+                            ->success()
+                            ->send();
+                    })
+                    ->successNotificationTitle(__('requests.messages.deleted_successfully'))
+                    ->visible(fn (Request $record) => auth()->user()?->can('delete', $record)),
             ])
             ->bulkActions([
                 Actions\BulkActionGroup::make([
-                    Actions\DeleteBulkAction::make(),
+                    Actions\DeleteBulkAction::make()
+                        ->label(__('filament-dashboard.Delete Selected'))
+                        ->requiresConfirmation()
+                        ->form([
+                            Textarea::make('reason')
+                                ->label(__('requests.deletion.reason_label'))
+                                ->required()
+                                ->rows(3)
+                                ->placeholder(__('requests.deletion.reason_placeholder')),
+                            Checkbox::make('archive')
+                                ->label(__('requests.deletion.archive_option'))
+                                ->helperText(__('requests.deletion.archive_hint')),
+                        ])
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data) {
+                            $user = \Illuminate\Support\Facades\Auth::user();
+                            $deleteAction = app(\App\Actions\Request\DeleteRequestAction::class);
+                            $deletedCount = 0;
+
+                            foreach ($records as $record) {
+                                if ($user && $user->can('delete', $record)) {
+                                    $deleteAction->softDelete($record, $user, $data['reason'] ?? null, $data['archive'] ?? false);
+                                    $deletedCount++;
+                                }
+                            }
+
+                            \Filament\Notifications\Notification::make()
+                                ->title(__('requests.messages.deleted_successfully') . ' (' . $deletedCount . ')')
+                                ->success()
+                                ->send();
+                        })
+                        ->successNotificationTitle(fn ($records) => __('requests.messages.deleted_successfully') . ' (' . $records->count() . ')')
+                        ->visible(fn () => auth()->user()?->hasAnyRole(['admin', 'super_admin'])),
                 ]),
             ]);
     }
@@ -203,6 +261,8 @@ class RequestResource extends Resource
     {
         return parent::getEloquentQuery()
             ->with(['user', 'category', 'approvalRelation']);
+        // Note: Soft deleted requests are hidden by default (SoftDeletes global scope)
+        // Admins can see them by filtering or using a custom query if needed
     }
 
     public static function canCreate(): bool

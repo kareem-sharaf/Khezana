@@ -11,6 +11,13 @@ class AdminActionLog extends Model
 {
     use HasFactory;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'admin_actions_logs';
+
     protected $fillable = [
         'admin_id',
         'action_type',

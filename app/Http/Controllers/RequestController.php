@@ -144,16 +144,89 @@ class RequestController extends Controller
     }
 
     /**
-     * Remove the specified request
+     * Remove the specified request (soft delete)
      */
-    public function destroy(RequestModel $requestModel): RedirectResponse
+    public function destroy(HttpRequest $request, RequestModel $requestModel): RedirectResponse
     {
         $this->authorize('delete', $requestModel);
 
-        $this->deleteRequestAction->execute($requestModel);
+        try {
+            $user = Auth::user();
+            $reason = $request->input('reason');
+            $archive = $request->boolean('archive', false);
 
-        return redirect()->route('requests.index')
-            ->with('success', __('requests.messages.deleted_successfully'));
+            // Admin must provide reason
+            if ($user && method_exists($user, 'hasAnyRole') && $user->hasAnyRole(['admin', 'super_admin']) && empty($reason)) {
+                return back()->withErrors(['reason' => __('requests.deletion.reason_required')]);
+            }
+
+            $this->deleteRequestAction->softDelete($requestModel, $user, $reason, $archive);
+
+            $message = $archive
+                ? __('requests.messages.archived')
+                : __('requests.messages.deleted_successfully');
+
+            return redirect()->route('requests.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Hard delete a request (super admin only)
+     * Requires confirmation text "DELETE"
+     */
+    public function forceDestroy(HttpRequest $request, RequestModel $requestModel): RedirectResponse
+    {
+        $this->authorize('hardDelete', $requestModel);
+
+        $user = Auth::user();
+        $reason = $request->input('reason');
+        $confirmation = $request->input('confirmation');
+
+        // Validate confirmation
+        if ($confirmation !== 'DELETE') {
+            return back()->withErrors([
+                'confirmation' => __('requests.deletion.confirmation_required')
+            ]);
+        }
+
+        // Reason is required
+        if (empty($reason)) {
+            return back()->withErrors(['reason' => __('requests.deletion.reason_required')]);
+        }
+
+        try {
+            $this->deleteRequestAction->hardDelete($requestModel, $user, $reason);
+
+            return redirect()->route('requests.index')
+                ->with('success', __('requests.messages.permanently_deleted'));
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Restore a soft-deleted request (admin only)
+     */
+    public function restore(RequestModel $requestModel): RedirectResponse
+    {
+        $this->authorize('restore', $requestModel);
+
+        try {
+            $requestModel->restore();
+
+            // Clear archived_at if it exists
+            if ($requestModel->archived_at) {
+                $requestModel->update(['archived_at' => null]);
+            }
+
+            return redirect()->route('requests.show', $requestModel)
+                ->with('success', __('requests.messages.restored'));
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
 
     /**

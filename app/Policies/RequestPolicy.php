@@ -54,10 +54,51 @@ class RequestPolicy
 
     /**
      * Determine if the user can delete the request.
+     *
+     * Rules:
+     * - Regular users: Can delete own requests only in specific states (Pending, Rejected, Open without accepted offers)
+     * - Admin: Can soft delete any request with reason (except requests with accepted offers)
+     * - Super Admin: Can delete any request (soft or hard delete with restrictions)
      */
     public function delete(User $user, Request $request): bool
     {
-        return $user->hasRole('super_admin');
+        // Super admin always can delete
+        if ($user->hasRole('super_admin')) {
+            return true;
+        }
+
+        // Admin can delete (soft delete)
+        if ($user->hasRole('admin')) {
+            return app(\App\Services\RequestDeletionService::class)
+                ->canAdminDelete($user, $request);
+        }
+
+        // Regular user can delete own requests in specific conditions
+        return app(\App\Services\RequestDeletionService::class)
+            ->canUserDelete($user, $request);
+    }
+
+    /**
+     * Determine if the user can hard delete the request (permanent deletion).
+     * Only super admin can hard delete, and only under strict conditions.
+     */
+    public function hardDelete(User $user, Request $request): bool
+    {
+        if (!$user->hasRole('super_admin')) {
+            return false;
+        }
+
+        return app(\App\Services\RequestDeletionService::class)
+            ->canSuperAdminHardDelete($user, $request);
+    }
+
+    /**
+     * Determine if the user can restore a soft-deleted request.
+     */
+    public function restore(User $user, Request $request): bool
+    {
+        // Only admin and super admin can restore
+        return $user->hasAnyRole(['admin', 'super_admin']);
     }
 
     public function archive(User $user, Request $request): bool

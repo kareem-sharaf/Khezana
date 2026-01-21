@@ -46,12 +46,14 @@ class ApproveAction
             'rejection_reason' => null,
         ]);
 
+        // Log admin action if approvable exists
         $approvable = $approval->approvable;
-        if ($approvable instanceof Request) {
-            $approvable->update(['status' => RequestStatus::OPEN]);
+        if ($approvable) {
+            if ($approvable instanceof Request) {
+                $approvable->update(['status' => RequestStatus::OPEN]);
+            }
+            $this->logService->logApprove($approvable, $reviewedBy->id);
         }
-
-        $this->logService->logApprove($approvable, $reviewedBy->id);
 
         event(new ContentApproved($approval));
 

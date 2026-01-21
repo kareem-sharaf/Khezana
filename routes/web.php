@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/{item}/edit', [\App\Http\Controllers\ItemController::class, 'edit'])->name('edit');
         Route::put('/{item}', [\App\Http\Controllers\ItemController::class, 'update'])->name('update');
         Route::delete('/{item}', [\App\Http\Controllers\ItemController::class, 'destroy'])->name('destroy');
+        Route::delete('/{item}/force', [\App\Http\Controllers\ItemController::class, 'forceDestroy'])->name('force-destroy');
+        Route::post('/{item}/restore', [\App\Http\Controllers\ItemController::class, 'restore'])->name('restore');
         Route::post('/{item}/submit-for-approval', [\App\Http\Controllers\ItemController::class, 'submitForApproval'])
             ->name('submit-for-approval');
     });
@@ -48,6 +50,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/{request}/edit', [\App\Http\Controllers\RequestController::class, 'edit'])->name('edit');
         Route::put('/{request}', [\App\Http\Controllers\RequestController::class, 'update'])->name('update');
         Route::delete('/{request}', [\App\Http\Controllers\RequestController::class, 'destroy'])->name('destroy');
+        Route::delete('/{request}/force', [\App\Http\Controllers\RequestController::class, 'forceDestroy'])->name('force-destroy');
+        Route::post('/{request}/restore', [\App\Http\Controllers\RequestController::class, 'restore'])->name('restore');
         Route::post('/{request}/submit-for-approval', [\App\Http\Controllers\RequestController::class, 'submitForApproval'])
             ->name('submit-for-approval');
         Route::post('/{request}/close', [\App\Http\Controllers\RequestController::class, 'close'])

@@ -6,11 +6,13 @@ namespace App\Filament\Resources\ItemResource\Pages;
 
 use App\Actions\Item\ApproveItemAction;
 use App\Actions\Item\ArchiveItemAction;
+use App\Actions\Item\DeleteItemAction;
 use App\Actions\Item\RejectItemAction;
 use App\Enums\ApprovalStatus;
 use App\Filament\Resources\ItemResource;
 use App\Models\Item;
 use Filament\Actions;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Auth;
@@ -66,6 +68,40 @@ class ViewItem extends ViewRecord
                     $this->redirect($this->getResource()::getUrl('index'));
                 })
                 ->visible(fn (Item $record) => !$record->isArchived() && Auth::user()?->can('archive', $record->approval)),
+
+            Actions\DeleteAction::make()
+                ->label(__('filament-dashboard.Delete'))
+                ->requiresConfirmation()
+                ->form([
+                    Textarea::make('reason')
+                        ->label(__('items.deletion.reason_label'))
+                        ->required()
+                        ->rows(3)
+                        ->placeholder(__('items.deletion.reason_placeholder')),
+                    Checkbox::make('archive')
+                        ->label(__('items.deletion.archive_option'))
+                        ->helperText(__('items.deletion.archive_hint')),
+                ])
+                ->action(function (Item $record, array $data) {
+                    $deleteAction = app(DeleteItemAction::class);
+                    $deleteAction->softDelete($record, Auth::user(), $data['reason'] ?? null, $data['archive'] ?? false);
+                    $this->redirect($this->getResource()::getUrl('index'));
+                })
+                ->visible(fn (Item $record) => Auth::user()?->can('delete', $record)),
+
+            Actions\Action::make('restore')
+                ->label(__('filament-dashboard.Restore'))
+                ->icon('heroicon-o-arrow-path')
+                ->color('success')
+                ->requiresConfirmation()
+                ->action(function (Item $record) {
+                    $record->restore();
+                    if ($record->archived_at) {
+                        $record->update(['archived_at' => null]);
+                    }
+                    $this->redirect($this->getResource()::getUrl('index'));
+                })
+                ->visible(fn (Item $record) => $record->trashed() && Auth::user()?->can('restore', $record)),
         ];
     }
 }
