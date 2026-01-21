@@ -41,7 +41,7 @@
         </div>
 
         <div class="khezana-footer-bottom">
-            <p>&copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('common.ui.all_rights_reserved') }}</p>
+            <p>&copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('common.ui.all_rights_reserved') }}.</p>
         </div>
     </div>
 </footer>

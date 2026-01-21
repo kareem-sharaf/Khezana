@@ -10,63 +10,68 @@
 
                 <!-- Navigation Links -->
                 <div class="khezana-nav-links" aria-label="التنقل الرئيسي">
-                    <a href="{{ route('public.items.index') }}" class="khezana-nav-link">
-                        {{ __('common.ui.offers') }}
-                    </a>
-                    <a href="{{ route('public.items.index', ['operation_type' => 'sell']) }}" class="khezana-nav-link">
-                        {{ __('items.operation_types.sell') }}
-                    </a>
-                    <a href="{{ route('public.items.index', ['operation_type' => 'rent']) }}" class="khezana-nav-link">
-                        {{ __('items.operation_types.rent') }}
-                    </a>
-                    <a href="{{ route('public.items.index', ['operation_type' => 'donate']) }}"
-                        class="khezana-nav-link">
-                        {{ __('items.operation_types.donate') }}
-                    </a>
+                    <!-- Offers Dropdown -->
+                    <div class="khezana-nav-dropdown">
+                        <a href="{{ route('public.items.index') }}" class="khezana-nav-link khezana-nav-link-dropdown">
+                            {{ __('common.ui.offers') }}
+                            <span class="khezana-dropdown-icon">▼</span>
+                        </a>
+                        <div class="khezana-dropdown-menu">
+                            <a href="{{ route('public.items.index', ['operation_type' => 'sell']) }}" class="khezana-dropdown-item">
+                                {{ __('items.operation_types.sell') }}
+                            </a>
+                            <a href="{{ route('public.items.index', ['operation_type' => 'rent']) }}" class="khezana-dropdown-item">
+                                {{ __('items.operation_types.rent') }}
+                            </a>
+                            <a href="{{ route('public.items.index', ['operation_type' => 'donate']) }}" class="khezana-dropdown-item">
+                                {{ __('items.operation_types.donate') }}
+                            </a>
+                        </div>
+                    </div>
                     <a href="{{ route('public.requests.index') }}" class="khezana-nav-link">
                         {{ __('requests.title') }}
                     </a>
+                    @auth
+                        <a href="{{ route('items.index') }}" class="khezana-nav-link">
+                            {{ __('common.ui.my_items') }}
+                        </a>
+                        <a href="{{ route('requests.index') }}" class="khezana-nav-link">
+                            {{ __('common.ui.my_requests') }}
+                        </a>
+                    @endauth
                 </div>
 
                 <!-- Actions -->
                 <div class="khezana-nav-actions">
                     @auth
-                        <div class="khezana-user-box" aria-label="حساب المستخدم">
-                            <div class="khezana-user-info">
-                                <span class="khezana-user-greeting">مرحباً،</span>
-                                <span class="khezana-user-name">{{ Auth::user()->name ?? Auth::user()->phone }}</span>
-                            </div>
-                            <div class="khezana-user-actions">
-                                <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn-secondary">
-                                    {{ __('common.ui.my_items') }}
-                                </a>
-                                <a href="{{ route('requests.index') }}" class="khezana-btn khezana-btn-secondary">
-                                    {{ __('common.ui.my_requests') }}
-                                </a>
-                                <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary">
-                                    {{ __('common.ui.add_item') }}
-                                </a>
+                        <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary khezana-btn-cta">
+                            {{ __('common.ui.add_item') }}
+                        </a>
+                        <div class="khezana-user-dropdown">
+                            <button class="khezana-user-trigger" aria-label="حساب المستخدم" aria-expanded="false">
+                                <span class="khezana-user-icon">👤</span>
+                                <span class="khezana-user-name-short">{{ Str::limit(Auth::user()->name ?? Auth::user()->phone, 15) }}</span>
+                                <span class="khezana-dropdown-icon">▼</span>
+                            </button>
+                            <div class="khezana-user-menu">
                                 <form method="POST" action="{{ route('logout') }}" class="khezana-logout-form">
                                     @csrf
-                                    <button type="submit" class="khezana-btn khezana-btn-ghost">
+                                    <button type="submit" class="khezana-user-menu-item khezana-user-menu-item-logout">
                                         {{ __('common.ui.logout') }}
                                     </button>
                                 </form>
                             </div>
                         </div>
                     @else
-                        <div class="khezana-guest-actions">
-                            <a href="{{ route('login') }}" class="khezana-btn khezana-btn-secondary">
-                                {{ __('common.ui.login') }}
-                            </a>
-                            <a href="{{ route('register') }}" class="khezana-btn khezana-btn-primary">
-                                {{ __('common.ui.register') }}
-                            </a>
-                            <a href="{{ route('items.create') }}"
-                                class="khezana-btn khezana-btn-primary khezana-btn-outline">
-                                {{ __('common.ui.add_item') }}
-                            </a>
-                        </div>
+                        <a href="{{ route('login') }}" class="khezana-btn khezana-btn-secondary">
+                            {{ __('common.ui.login') }}
+                        </a>
+                        <a href="{{ route('register') }}" class="khezana-btn khezana-btn-secondary">
+                            {{ __('common.ui.register') }}
+                        </a>
+                        <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary khezana-btn-cta">
+                            {{ __('common.ui.add_item') }}
+                        </a>
                     @endauth
                 </div>
             </div>
