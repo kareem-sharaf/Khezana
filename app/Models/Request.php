@@ -18,10 +18,10 @@ use Illuminate\Support\Str;
 
 /**
  * Request Model
- * 
+ *
  * Represents a user's request for a specific clothing item.
  * Other users can respond with offers (sell, rent, donate).
- * 
+ *
  * Uses:
  * - HasCategory trait for category relationship
  * - HasAttributes trait for dynamic attributes
@@ -151,7 +151,7 @@ class Request extends Model implements Approvable
      */
     public function getApprovalType(): string
     {
-        return 'request';
+        return self::class;
     }
 
     public function ensureCanBeModified(): void

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Approval Model
- * 
+ *
  * Represents an approval record for any approvable entity (Product, Request, etc.)
  */
 class Approval extends Model
@@ -39,10 +39,31 @@ class Approval extends Model
     ];
 
     /**
+     * Boot the model
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        // Fix legacy 'request' type when models are loaded
+        static::retrieved(function (Approval $approval) {
+            if (isset($approval->attributes['approvable_type']) && $approval->attributes['approvable_type'] === 'request') {
+                $approval->attributes['approvable_type'] = Request::class;
+            }
+        });
+    }
+
+    /**
      * Get the approvable entity (Product, Request, etc.)
      */
     public function approvable(): MorphTo
     {
+        // Fix legacy 'request' type before morphTo() reads it
+        // morphTo() reads directly from $this->attributes, so we need to fix it here
+        if (isset($this->attributes['approvable_type']) && $this->attributes['approvable_type'] === 'request') {
+            $this->attributes['approvable_type'] = Request::class;
+        }
+
         return $this->morphTo();
     }
 

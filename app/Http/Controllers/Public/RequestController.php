@@ -9,6 +9,7 @@ use App\Read\Requests\Models\RequestReadModel;
 use App\Read\Requests\Queries\BrowseRequestsQuery;
 use App\Read\Requests\Queries\ViewRequestQuery;
 use App\Services\Cache\CacheService;
+use App\Services\Cache\CategoryCacheService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -19,6 +20,7 @@ class RequestController extends Controller
         private readonly BrowseRequestsQuery $browseRequestsQuery,
         private readonly ViewRequestQuery $viewRequestQuery,
         private readonly CacheService $cacheService,
+        private readonly CategoryCacheService $categoryCacheService,
     ) {
     }
 
@@ -51,10 +53,13 @@ class RequestController extends Controller
             $locale
         );
 
+        $categories = $this->categoryCacheService->getTree();
+
         return view('public.requests.index', [
             'requests' => $requests,
             'filters' => $filters,
             'sort' => $sort,
+            'categories' => $categories,
         ]);
     }
 
