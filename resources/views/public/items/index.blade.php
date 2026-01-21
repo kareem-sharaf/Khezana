@@ -11,22 +11,22 @@
                     <div>
                         <h1 class="khezana-page-title">
                             @if (request('operation_type') == 'sell')
-                                {{ __('items.operation_types.sell') ?? 'بيع' }}
+                                {{ __('items.operation_types.sell') }}
                             @elseif(request('operation_type') == 'rent')
-                                {{ __('items.operation_types.rent') ?? 'إيجار' }}
+                                {{ __('items.operation_types.rent') }}
                             @elseif(request('operation_type') == 'donate')
-                                {{ __('items.operation_types.donate') ?? 'تبرع' }}
+                                {{ __('items.operation_types.donate') }}
                             @else
-                                {{ __('items.title') ?? 'جميع الإعلانات' }}
+                                {{ __('items.title') }}
                             @endif
                         </h1>
                         <p class="khezana-page-subtitle">
-                            {{ $items->total() }} {{ __('items.plural') ?? 'إعلان' }}
+                            {{ $items->total() }} {{ __('items.plural') }}
                         </p>
                     </div>
                     @auth
                         <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn-secondary">
-                            عروضي
+                            {{ __('common.ui.my_items') }}
                         </a>
                     @endauth
                 </div>
@@ -43,39 +43,39 @@
 
                         <!-- Search -->
                         <div class="khezana-filter-group">
-                            <label class="khezana-filter-label">{{ __('common.ui.search') ?? 'بحث' }}</label>
+                            <label class="khezana-filter-label">{{ __('common.ui.search') }}</label>
                             <input type="text" name="search" value="{{ request('search') }}"
-                                placeholder="{{ __('common.ui.search_items') ?? 'بحث في الإعلانات...' }}"
+                                placeholder="{{ __('common.ui.search_items') }}"
                                 class="khezana-filter-input">
                         </div>
 
                         <!-- Operation Type -->
                         <div class="khezana-filter-group">
                             <label
-                                class="khezana-filter-label">{{ __('items.fields.operation_type') ?? 'نوع العملية' }}</label>
+                                class="khezana-filter-label">{{ __('items.fields.operation_type') }}</label>
                             <div class="khezana-filter-options">
                                 <label class="khezana-filter-option">
                                     <input type="radio" name="operation_type" value="sell"
                                         {{ request('operation_type') == 'sell' ? 'checked' : '' }}
                                         onchange="this.form.submit()">
-                                    <span>{{ __('items.operation_types.sell') ?? 'بيع' }}</span>
+                                    <span>{{ __('items.operation_types.sell') }}</span>
                                 </label>
                                 <label class="khezana-filter-option">
                                     <input type="radio" name="operation_type" value="rent"
                                         {{ request('operation_type') == 'rent' ? 'checked' : '' }}
                                         onchange="this.form.submit()">
-                                    <span>{{ __('items.operation_types.rent') ?? 'إيجار' }}</span>
+                                    <span>{{ __('items.operation_types.rent') }}</span>
                                 </label>
                                 <label class="khezana-filter-option">
                                     <input type="radio" name="operation_type" value="donate"
                                         {{ request('operation_type') == 'donate' ? 'checked' : '' }}
                                         onchange="this.form.submit()">
-                                    <span>{{ __('items.operation_types.donate') ?? 'تبرع' }}</span>
+                                    <span>{{ __('items.operation_types.donate') }}</span>
                                 </label>
                                 <label class="khezana-filter-option">
                                     <input type="radio" name="operation_type" value=""
                                         {{ !request('operation_type') ? 'checked' : '' }} onchange="this.form.submit()">
-                                    <span>{{ __('common.ui.all') ?? 'الكل' }}</span>
+                                    <span>{{ __('common.ui.all') }}</span>
                                 </label>
                             </div>
                         </div>
@@ -83,9 +83,9 @@
                         <!-- Category -->
                         @if ($categories->count() > 0)
                             <div class="khezana-filter-group">
-                                <label class="khezana-filter-label">{{ __('items.fields.category') ?? 'الفئة' }}</label>
+                                <label class="khezana-filter-label">{{ __('items.fields.category') }}</label>
                                 <select name="category_id" class="khezana-filter-select" onchange="this.form.submit()">
-                                    <option value="">{{ __('common.ui.all_categories') ?? 'جميع الفئات' }}</option>
+                                    <option value="">{{ __('common.ui.all_categories') }}</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}"
                                             {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -108,14 +108,14 @@
                         @if (in_array(request('operation_type'), ['sell', 'rent']) || !request('operation_type'))
                             <div class="khezana-filter-group">
                                 <label
-                                    class="khezana-filter-label">{{ __('common.ui.price_range') ?? 'نطاق السعر' }}</label>
+                                    class="khezana-filter-label">{{ __('common.ui.price_range') }}</label>
                                 <div class="khezana-price-range">
                                     <input type="number" name="price_min" value="{{ request('price_min') }}"
-                                        placeholder="{{ __('common.ui.min') ?? 'الحد الأدنى' }}"
+                                        placeholder="{{ __('common.ui.min') }}"
                                         class="khezana-filter-input" min="0" step="0.01">
                                     <span class="khezana-price-separator">-</span>
                                     <input type="number" name="price_max" value="{{ request('price_max') }}"
-                                        placeholder="{{ __('common.ui.max') ?? 'الحد الأقصى' }}"
+                                        placeholder="{{ __('common.ui.max') }}"
                                         class="khezana-filter-input" min="0" step="0.01">
                                 </div>
                             </div>
@@ -123,20 +123,20 @@
 
                         <!-- Sort -->
                         <div class="khezana-filter-group">
-                            <label class="khezana-filter-label">{{ __('common.ui.filters') ?? 'ترتيب' }}</label>
+                            <label class="khezana-filter-label">{{ __('common.ui.filters') }}</label>
                             <select name="sort" class="khezana-filter-select" onchange="this.form.submit()">
                                 <option value="created_at_desc"
                                     {{ request('sort') == 'created_at_desc' ? 'selected' : '' }}>
-                                    {{ __('common.ui.latest') ?? 'الأحدث' }}
+                                    {{ __('common.ui.latest') }}
                                 </option>
                                 <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>
-                                    {{ __('common.ui.price_low_to_high') ?? 'السعر: من الأقل إلى الأعلى' }}
+                                    {{ __('common.ui.price_low_to_high') }}
                                 </option>
                                 <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
-                                    {{ __('common.ui.price_high_to_low') ?? 'السعر: من الأعلى إلى الأقل' }}
+                                    {{ __('common.ui.price_high_to_low') }}
                                 </option>
                                 <option value="title_asc" {{ request('sort') == 'title_asc' ? 'selected' : '' }}>
-                                    {{ __('common.ui.title_a_z') ?? 'العنوان: أ-ي' }}
+                                    {{ __('common.ui.title_a_z') }}
                                 </option>
                             </select>
                         </div>
@@ -145,7 +145,7 @@
                         @if (request()->hasAny(['search', 'operation_type', 'category_id', 'price_min', 'price_max']))
                             <a href="{{ route('public.items.index') }}" class="khezana-btn khezana-btn-secondary"
                                 style="width: 100%; margin-top: var(--khezana-spacing-md);">
-                                {{ __('common.ui.clear_filters') ?? 'مسح الفلاتر' }}
+                                {{ __('common.ui.clear_filters') }}
                             </a>
                         @endif
                     </form>
@@ -165,7 +165,7 @@
                                     @else
                                         <div class="khezana-item-image"
                                             style="display: flex; align-items: center; justify-content: center; color: #9ca3af;">
-                                            {{ __('common.ui.no_image') ?? 'لا توجد صورة' }}
+                                            {{ __('common.ui.no_image') }}
                                         </div>
                                     @endif
                                     <div class="khezana-item-content">
@@ -176,20 +176,14 @@
                                         <div class="khezana-item-footer">
                                             @if ($item->price && $item->operationType != 'donate')
                                                 <div class="khezana-item-price">
-                                                    {{ number_format($item->price, 0) }} ل.س
+                                                    {{ number_format($item->price, 0) }} {{ __('common.ui.currency') }}
                                                     @if ($item->operationType == 'rent')
-                                                        <span class="khezana-price-unit">/يوم</span>
+                                                        <span class="khezana-price-unit">{{ __('common.ui.per_day') }}</span>
                                                     @endif
                                                 </div>
                                             @endif
                                             <span class="khezana-item-badge khezana-item-badge-{{ $item->operationType }}">
-                                                @if ($item->operationType == 'sell')
-                                                    {{ __('items.operation_types.sell') ?? 'بيع' }}
-                                                @elseif($item->operationType == 'rent')
-                                                    {{ __('items.operation_types.rent') ?? 'إيجار' }}
-                                                @else
-                                                    {{ __('items.operation_types.donate') ?? 'تبرع مجاني' }}
-                                                @endif
+                                                {{ __('items.operation_types.' . $item->operationType) }}
                                             </span>
                                         </div>
                                     </div>
@@ -206,16 +200,21 @@
                     @else
                         <!-- Empty State -->
                         <div class="khezana-empty-state">
-                            <div class="khezana-empty-icon">📦</div>
-                            <h3 class="khezana-empty-title">{{ __('common.messages.not_found') ?? 'لا توجد نتائج' }}</h3>
+                            <div class="khezana-empty-icon">🔍</div>
+                            <h3 class="khezana-empty-title">{{ __('common.messages.not_found') }}</h3>
                             <p class="khezana-empty-text">
-                                لم نجد إعلانات تطابق معايير البحث الخاصة بك. جرب تغيير الفلاتر.
+                                {{ __('common.ui.no_results_message') }}
                             </p>
-                            @if (request()->hasAny(['search', 'operation_type', 'category_id', 'price_min', 'price_max']))
-                                <a href="{{ route('public.items.index') }}" class="khezana-btn khezana-btn-primary">
-                                    {{ __('common.ui.clear_filters') ?? 'مسح الفلاتر' }}
+                            <div class="khezana-empty-actions">
+                                @if (request()->hasAny(['search', 'operation_type', 'category_id', 'price_min', 'price_max']))
+                                    <a href="{{ route('public.items.index') }}" class="khezana-btn khezana-btn-secondary">
+                                        {{ __('common.ui.no_results_cta_search') }}
+                                    </a>
+                                @endif
+                                <a href="{{ route('public.requests.create-info') }}" class="khezana-btn khezana-btn-primary">
+                                    {{ __('common.ui.no_results_cta_request') }}
                                 </a>
-                            @endif
+                            </div>
                         </div>
                     @endif
                 </main>

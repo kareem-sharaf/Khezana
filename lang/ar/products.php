@@ -4,7 +4,7 @@ return [
     'title' => 'المنتجات',
     'singular' => 'منتج',
     'plural' => 'منتجات',
-    
+
     'fields' => [
         'title' => 'العنوان',
         'description' => 'الوصف',
@@ -15,13 +15,13 @@ return [
         'user' => 'المالك',
         'status' => 'الحالة',
     ],
-    
+
     'types' => [
         'sell' => 'بيع',
         'rent' => 'إيجار',
-        'donate' => 'تبرع',
+        'donate' => 'مشاركة',
     ],
-    
+
     'messages' => [
         'created' => 'تم إنشاء المنتج بنجاح',
         'updated' => 'تم تحديث المنتج بنجاح',
@@ -29,7 +29,7 @@ return [
         'category_required' => 'يجب اختيار الفئة',
         'attributes_required' => 'يجب ملء جميع الخصائص المطلوبة',
     ],
-    
+
     'placeholders' => [
         'title' => 'أدخل عنوان المنتج',
         'description' => 'أدخل وصف المنتج',

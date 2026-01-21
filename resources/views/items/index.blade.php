@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'عروضي - ' . config('app.name'))
+@section('title', __('common.ui.my_items_page') . ' - ' . config('app.name'))
 
 @section('content')
     <div class="khezana-listing-page">
@@ -9,13 +9,13 @@
             <div class="khezana-page-header">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--khezana-spacing-md);">
                     <div>
-                        <h1 class="khezana-page-title">عروضي</h1>
+                        <h1 class="khezana-page-title">{{ __('common.ui.my_items_page') }}</h1>
                         <p class="khezana-page-subtitle">
-                            {{ $items->total() }} {{ __('items.plural') ?? 'إعلان' }}
+                            {{ $items->total() }} {{ __('items.plural') }}
                         </p>
                     </div>
                     <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary">
-                        {{ __('common.ui.add_item') ?? 'أضف غرض جديد' }}
+                        {{ __('common.ui.add_new_item') }}
                     </a>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                                 @else
                                     <div class="khezana-item-image"
                                         style="display: flex; align-items: center; justify-content: center; color: #9ca3af;">
-                                        {{ __('common.ui.no_image') ?? 'لا توجد صورة' }}
+                                        {{ __('common.ui.no_image') }}
                                     </div>
                                 @endif
                                 <div class="khezana-item-content">
@@ -47,21 +47,15 @@
                                     <div class="khezana-item-footer">
                                         @if ($item->price && $item->operation_type->value != 'donate')
                                             <div class="khezana-item-price">
-                                                {{ number_format($item->price, 0) }} ل.س
+                                                {{ number_format($item->price, 0) }} {{ __('common.ui.currency') }}
                                                 @if ($item->operation_type->value == 'rent')
-                                                    <span class="khezana-price-unit">/يوم</span>
+                                                    <span class="khezana-price-unit">{{ __('common.ui.per_day') }}</span>
                                                 @endif
                                             </div>
                                         @endif
                                         <div style="display: flex; gap: var(--khezana-spacing-xs); flex-wrap: wrap;">
                                             <span class="khezana-item-badge khezana-item-badge-{{ $item->operation_type->value }}">
-                                                @if ($item->operation_type->value == 'sell')
-                                                    {{ __('items.operation_types.sell') ?? 'بيع' }}
-                                                @elseif($item->operation_type->value == 'rent')
-                                                    {{ __('items.operation_types.rent') ?? 'إيجار' }}
-                                                @else
-                                                    {{ __('items.operation_types.donate') ?? 'تبرع مجاني' }}
-                                                @endif
+                                                {{ __('items.operation_types.' . $item->operation_type->value) }}
                                             </span>
 
                                             @if($item->approvalRelation)
@@ -96,13 +90,15 @@
                     <!-- Empty State -->
                     <div class="khezana-empty-state">
                         <div class="khezana-empty-icon">📦</div>
-                        <h3 class="khezana-empty-title">لا توجد عروض</h3>
+                        <h3 class="khezana-empty-title">{{ __('common.ui.no_items') }}</h3>
                         <p class="khezana-empty-text">
-                            لم تقم بإضافة أي عروض بعد. ابدأ بإضافة أول عرض لك!
+                            {{ __('common.ui.no_items_message') }}
                         </p>
-                        <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary">
-                            {{ __('common.ui.add_item') ?? 'أضف غرض جديد' }}
-                        </a>
+                        <div class="khezana-empty-actions">
+                            <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary khezana-btn-large">
+                                {{ __('common.ui.no_items_cta') }}
+                            </a>
+                        </div>
                     </div>
                 @endif
             </main>

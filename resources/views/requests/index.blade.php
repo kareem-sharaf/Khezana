@@ -4,7 +4,7 @@
     use Illuminate\Support\Str;
 @endphp
 
-@section('title', 'طلباتي - ' . config('app.name'))
+@section('title', __('common.ui.my_requests_page') . ' - ' . config('app.name'))
 
 @section('content')
     <div class="khezana-listing-page">
@@ -13,13 +13,13 @@
             <div class="khezana-page-header">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--khezana-spacing-md);">
                     <div>
-                        <h1 class="khezana-page-title">طلباتي</h1>
+                        <h1 class="khezana-page-title">{{ __('common.ui.my_requests_page') }}</h1>
                         <p class="khezana-page-subtitle">
-                            {{ $requests->total() }} {{ __('requests.plural') ?? 'طلب' }}
+                            {{ $requests->total() }} {{ __('requests.plural') }}
                         </p>
                     </div>
                     <a href="{{ route('requests.create') }}" class="khezana-btn khezana-btn-primary">
-                        {{ __('requests.create_new') ?? 'إنشاء طلب جديد' }}
+                        {{ __('common.ui.create_new_request') }}
                     </a>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                                         </div>
                                         @if ($request->offers->count() > 0)
                                             <span class="khezana-request-offers">
-                                                {{ $request->offers->count() }} {{ __('requests.offers') ?? 'عرض' }}
+                                                {{ $request->offers->count() }} {{ __('common.ui.offers') }}
                                             </span>
                                         @endif
                                     </div>
@@ -105,13 +105,15 @@
                     <!-- Empty State -->
                     <div class="khezana-empty-state">
                         <div class="khezana-empty-icon">📝</div>
-                        <h3 class="khezana-empty-title">لا توجد طلبات</h3>
+                        <h3 class="khezana-empty-title">{{ __('common.ui.no_requests') }}</h3>
                         <p class="khezana-empty-text">
-                            لم تقم بإنشاء أي طلبات بعد. ابدأ بإنشاء أول طلب لك!
+                            {{ __('common.ui.no_requests_message') }}
                         </p>
-                        <a href="{{ route('requests.create') }}" class="khezana-btn khezana-btn-primary">
-                            {{ __('requests.create_new') ?? 'إنشاء طلب جديد' }}
-                        </a>
+                        <div class="khezana-empty-actions">
+                            <a href="{{ route('requests.create') }}" class="khezana-btn khezana-btn-primary khezana-btn-large">
+                                {{ __('common.ui.no_requests_cta') }}
+                            </a>
+                        </div>
                     </div>
                 @endif
             </main>

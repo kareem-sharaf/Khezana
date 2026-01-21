@@ -15,15 +15,15 @@
                     style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--khezana-spacing-md);">
                     <div>
                         <h1 class="khezana-page-title">
-                            {{ __('requests.title') ?? 'الطلبات' }}
+                            {{ __('requests.title') }}
                         </h1>
                         <p class="khezana-page-subtitle">
-                            {{ $requests->total() }} {{ __('requests.plural') ?? 'طلب' }}
+                            {{ $requests->total() }} {{ __('requests.plural') }}
                         </p>
                     </div>
                     @auth
                         <a href="{{ route('requests.index') }}" class="khezana-btn khezana-btn-secondary">
-                            طلباتي
+                            {{ __('common.ui.my_requests') }}
                         </a>
                     @endauth
                 </div>
@@ -35,42 +35,41 @@
                     <form method="GET" action="{{ route('public.requests.index') }}" class="khezana-filters-form">
                         <!-- Search -->
                         <div class="khezana-filter-group">
-                            <label class="khezana-filter-label">{{ __('common.ui.search') ?? 'بحث' }}</label>
+                            <label class="khezana-filter-label">{{ __('common.ui.search') }}</label>
                             <input type="text" name="search" value="{{ request('search') }}"
-                                placeholder="{{ __('common.ui.search_requests') ?? 'بحث في الطلبات...' }}"
-                                class="khezana-filter-input">
+                                placeholder="{{ __('common.ui.search_requests') }}" class="khezana-filter-input">
                         </div>
 
                         <!-- Status -->
                         <div class="khezana-filter-group">
-                            <label class="khezana-filter-label">{{ __('requests.fields.status') ?? 'الحالة' }}</label>
+                            <label class="khezana-filter-label">{{ __('requests.fields.status') }}</label>
                             <select name="status" class="khezana-filter-select" onchange="this.form.submit()">
-                                <option value="">{{ __('common.ui.all') ?? 'الكل' }}</option>
+                                <option value="">{{ __('common.ui.all') }}</option>
                                 <option value="open" {{ request('status') == 'open' ? 'selected' : '' }}>
-                                    {{ __('requests.status.open') ?? 'مفتوح' }}
+                                    {{ __('requests.status.open') }}
                                 </option>
                                 <option value="fulfilled" {{ request('status') == 'fulfilled' ? 'selected' : '' }}>
-                                    {{ __('requests.status.fulfilled') ?? 'مكتمل' }}
+                                    {{ __('requests.status.fulfilled') }}
                                 </option>
                                 <option value="closed" {{ request('status') == 'closed' ? 'selected' : '' }}>
-                                    {{ __('requests.status.closed') ?? 'مغلق' }}
+                                    {{ __('requests.status.closed') }}
                                 </option>
                             </select>
                         </div>
 
                         <!-- Sort -->
                         <div class="khezana-filter-group">
-                            <label class="khezana-filter-label">{{ __('common.ui.filters') ?? 'ترتيب' }}</label>
+                            <label class="khezana-filter-label">{{ __('common.ui.filters') }}</label>
                             <select name="sort" class="khezana-filter-select" onchange="this.form.submit()">
                                 <option value="created_at_desc"
                                     {{ request('sort') == 'created_at_desc' ? 'selected' : '' }}>
-                                    {{ __('common.ui.latest') ?? 'الأحدث' }}
+                                    {{ __('common.ui.latest') }}
                                 </option>
                                 <option value="created_at_asc" {{ request('sort') == 'created_at_asc' ? 'selected' : '' }}>
-                                    {{ __('common.ui.oldest') ?? 'الأقدم' }}
+                                    {{ __('common.ui.oldest') }}
                                 </option>
                                 <option value="title_asc" {{ request('sort') == 'title_asc' ? 'selected' : '' }}>
-                                    {{ __('common.ui.title_a_z') ?? 'العنوان: أ-ي' }}
+                                    {{ __('common.ui.title_a_z') }}
                                 </option>
                             </select>
                         </div>
@@ -79,7 +78,7 @@
                         @if (request()->hasAny(['search', 'status']))
                             <a href="{{ route('public.requests.index') }}" class="khezana-btn khezana-btn-secondary"
                                 style="width: 100%; margin-top: var(--khezana-spacing-md);">
-                                {{ __('common.ui.clear_filters') ?? 'مسح الفلاتر' }}
+                                {{ __('common.ui.clear_filters') }}
                             </a>
                         @endif
                     </form>
@@ -134,7 +133,7 @@
                                             </div>
                                             @if ($request->offersCount > 0)
                                                 <span class="khezana-request-offers">
-                                                    {{ $request->offersCount }} {{ __('requests.offers') ?? 'عرض' }}
+                                                    {{ $request->offersCount }} {{ __('common.ui.offers') }}
                                                 </span>
                                             @endif
                                         </div>
@@ -152,16 +151,27 @@
                     @else
                         <!-- Empty State -->
                         <div class="khezana-empty-state">
-                            <div class="khezana-empty-icon">📝</div>
-                            <h3 class="khezana-empty-title">{{ __('common.messages.not_found') ?? 'لا توجد نتائج' }}</h3>
+                            <div class="khezana-empty-icon">🔍</div>
+                            <h3 class="khezana-empty-title">{{ __('common.messages.not_found') }}</h3>
                             <p class="khezana-empty-text">
-                                لم نجد طلبات تطابق معايير البحث الخاصة بك. جرب تغيير الفلاتر.
+                                {{ __('common.ui.no_results_message') }}
                             </p>
-                            @if (request()->hasAny(['search', 'status']))
-                                <a href="{{ route('public.requests.index') }}" class="khezana-btn khezana-btn-primary">
-                                    {{ __('common.ui.clear_filters') ?? 'مسح الفلاتر' }}
-                                </a>
-                            @endif
+                            <div class="khezana-empty-actions">
+                                @if (request()->hasAny(['search', 'status']))
+                                    <a href="{{ route('public.requests.index') }}" class="khezana-btn khezana-btn-secondary">
+                                        {{ __('common.ui.no_results_cta_search') }}
+                                    </a>
+                                @endif
+                                @auth
+                                    <a href="{{ route('requests.create') }}" class="khezana-btn khezana-btn-primary">
+                                        {{ __('common.ui.no_results_cta_request') }}
+                                    </a>
+                                @else
+                                    <a href="{{ route('public.requests.create-info') }}" class="khezana-btn khezana-btn-primary">
+                                        {{ __('common.ui.no_results_cta_request') }}
+                                    </a>
+                                @endauth
+                            </div>
                         </div>
                     @endif
                 </main>

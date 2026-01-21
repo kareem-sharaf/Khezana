@@ -4,25 +4,25 @@ return [
     'title' => 'العروض',
     'singular' => 'عرض',
     'plural' => 'عروض',
-    
+
     'fields' => [
         'operation_type' => 'نوع العملية',
         'price' => 'السعر',
         'deposit_amount' => 'مبلغ التأمين',
         'status' => 'الحالة',
         'message' => 'رسالة',
-        'item' => 'العنصر',
-        'linked_item' => 'العنصر المرتبط',
+        'item' => 'الإعلان',
+        'linked_item' => 'الإعلان المرتبط',
         'offer_owner' => 'صاحب العرض',
     ],
-    
+
     'status' => [
         'pending' => 'قيد الانتظار',
         'accepted' => 'مقبول',
         'rejected' => 'مرفوض',
         'cancelled' => 'ملغي',
     ],
-    
+
     'messages' => [
         'created_successfully' => 'تم إنشاء العرض بنجاح',
         'updated_successfully' => 'تم تحديث العرض بنجاح',
@@ -31,7 +31,7 @@ return [
         'rejected_successfully' => 'تم رفض العرض بنجاح',
         'no_offers' => 'لا توجد عروض',
     ],
-    
+
     'validation' => [
         'price_required_for_sell' => 'السعر مطلوب للبيع',
         'price_required_for_rent' => 'السعر مطلوب للإيجار',
@@ -49,14 +49,14 @@ return [
         'only_request_owner_can_accept' => 'فقط صاحب الطلب يمكنه قبول العرض',
         'only_request_owner_can_reject' => 'فقط صاحب الطلب يمكنه رفض العرض',
     ],
-    
+
     'placeholders' => [
         'price' => 'أدخل السعر',
         'deposit_amount' => 'أدخل مبلغ التأمين',
         'message' => 'أدخل رسالة (اختياري)',
-        'no_item' => 'لا يوجد عنصر مرتبط',
+        'no_item' => 'لا يوجد إعلان مرتبط',
     ],
-    
+
     'actions' => [
         'create' => 'إنشاء عرض',
         'edit' => 'تعديل العرض',

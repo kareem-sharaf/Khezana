@@ -6,9 +6,9 @@
     <div class="khezana-create-page">
         <div class="khezana-container">
             <div class="khezana-page-header">
-                <h1 class="khezana-page-title">{{ __('items.actions.create') ?? 'إضافة إعلان جديد' }}</h1>
+                <h1 class="khezana-page-title">{{ __('items.actions.create') }}</h1>
                 <p class="khezana-page-subtitle">
-                    {{ __('items.messages.create_help') ?? 'أضف إعلانك مع كل التفاصيل ليسهل على الآخرين العثور عليه.' }}
+                    {{ __('items.messages.create_help') }}
                 </p>
             </div>
 
@@ -18,12 +18,12 @@
 
                     <div class="khezana-form-group">
                         <label for="category_id" class="khezana-form-label">
-                            {{ __('items.fields.category') ?? 'الفئة' }}
+                            {{ __('items.fields.category') }}
                             <span class="khezana-required">*</span>
                         </label>
                         <select name="category_id" id="category_id" class="khezana-form-input khezana-form-select" required
                             onchange="loadCategoryAttributes(this.value)">
-                            <option value="">{{ __('common.ui.select_category') ?? 'اختر الفئة' }}</option>
+                            <option value="">{{ __('common.ui.select_category') }}</option>
                             @foreach ($categories as $category)
                                 @php
                                     $allAttrs = $category->getAllAttributes();
@@ -93,6 +93,7 @@
                                 @endif
                             @endforeach
                         </select>
+                        <p class="khezana-form-hint">{{ __('items.hints.category') }}</p>
                         @error('category_id')
                             <span class="khezana-form-error">{{ $message }}</span>
                         @enderror
@@ -100,24 +101,25 @@
 
                     <div class="khezana-form-group">
                         <label class="khezana-form-label">
-                            {{ __('items.fields.operation_type') ?? 'نوع العملية' }}
+                            {{ __('items.fields.operation_type') }}
                             <span class="khezana-required">*</span>
                         </label>
+                        <p class="khezana-form-hint">{{ __('items.hints.operation_type') }}</p>
                         <div class="khezana-filter-options">
                             <label class="khezana-filter-option">
                                 <input type="radio" name="operation_type" value="sell" required
                                     {{ old('operation_type') === 'sell' ? 'checked' : '' }}>
-                                <span>{{ __('items.operation_types.sell') ?? 'بيع' }}</span>
+                                <span>{{ __('items.operation_types.sell') }}</span>
                             </label>
                             <label class="khezana-filter-option">
                                 <input type="radio" name="operation_type" value="rent" required
                                     {{ old('operation_type') === 'rent' ? 'checked' : '' }}>
-                                <span>{{ __('items.operation_types.rent') ?? 'إيجار' }}</span>
+                                <span>{{ __('items.operation_types.rent') }}</span>
                             </label>
                             <label class="khezana-filter-option">
                                 <input type="radio" name="operation_type" value="donate" required
                                     {{ old('operation_type') === 'donate' ? 'checked' : '' }}>
-                                <span>{{ __('items.operation_types.donate') ?? 'تبرع' }}</span>
+                                <span>{{ __('items.operation_types.donate') }}</span>
                             </label>
                         </div>
                         @error('operation_type')
@@ -127,12 +129,11 @@
 
                     <div class="khezana-form-group">
                         <label for="title" class="khezana-form-label">
-                            {{ __('items.fields.title') ?? 'العنوان' }}
+                            {{ __('items.fields.title') }}
                             <span class="khezana-required">*</span>
                         </label>
                         <input type="text" name="title" id="title" class="khezana-form-input"
-                            value="{{ old('title') }}"
-                            placeholder="{{ __('items.placeholders.title') ?? 'مثال: فستان سهرة بحالة ممتازة' }}" required
+                            value="{{ old('title') }}" placeholder="{{ __('items.placeholders.title') }}" required
                             maxlength="255">
                         @error('title')
                             <span class="khezana-form-error">{{ $message }}</span>
@@ -141,10 +142,11 @@
 
                     <div class="khezana-form-group">
                         <label for="description" class="khezana-form-label">
-                            {{ __('items.fields.description') ?? 'الوصف' }}
+                            {{ __('items.fields.description') }}
                         </label>
+                        <p class="khezana-form-hint">{{ __('items.hints.description') }}</p>
                         <textarea name="description" id="description" class="khezana-form-input khezana-form-textarea" rows="5"
-                            placeholder="{{ __('items.placeholders.description') ?? 'أضف وصفاً واضحاً للحالة والمقاس وأي تفاصيل مهمة' }}">{{ old('description') }}</textarea>
+                            placeholder="{{ __('items.placeholders.description') }}">{{ old('description') }}</textarea>
                         @error('description')
                             <span class="khezana-form-error">{{ $message }}</span>
                         @enderror
@@ -153,11 +155,11 @@
                     <div class="khezana-form-row">
                         <div class="khezana-form-group">
                             <label for="price" class="khezana-form-label">
-                                {{ __('items.fields.price') ?? 'السعر' }}
+                                {{ __('items.fields.price') }}
                             </label>
+                            <p class="khezana-form-hint">{{ __('items.hints.price') }}</p>
                             <input type="number" step="0.01" name="price" id="price" class="khezana-form-input"
-                                value="{{ old('price') }}"
-                                placeholder="{{ __('items.placeholders.price') ?? 'اتركه فارغاً للتبرع' }}">
+                                value="{{ old('price') }}" placeholder="{{ __('items.placeholders.price') }}">
                             @error('price')
                                 <span class="khezana-form-error">{{ $message }}</span>
                             @enderror
@@ -165,11 +167,12 @@
 
                         <div class="khezana-form-group">
                             <label for="deposit_amount" class="khezana-form-label">
-                                {{ __('items.fields.deposit_amount') ?? 'مبلغ التأمين' }}
+                                {{ __('items.fields.deposit_amount') }}
                             </label>
+                            <p class="khezana-form-hint">{{ __('items.hints.deposit_amount') }}</p>
                             <input type="number" step="0.01" name="deposit_amount" id="deposit_amount"
                                 class="khezana-form-input" value="{{ old('deposit_amount') }}"
-                                placeholder="{{ __('items.placeholders.deposit_amount') ?? 'اختياري للإيجار' }}">
+                                placeholder="{{ __('items.placeholders.deposit_amount') }}">
                             @error('deposit_amount')
                                 <span class="khezana-form-error">{{ $message }}</span>
                             @enderror
@@ -180,15 +183,16 @@
                         <label class="khezana-form-label">
                             <input type="checkbox" name="is_available" value="1"
                                 {{ old('is_available', true) ? 'checked' : '' }}>
-                            {{ __('items.fields.is_available') ?? 'متاح حالياً' }}
+                            {{ __('items.fields.is_available') }}
                         </label>
+                        <p class="khezana-form-hint">{{ __('items.hints.is_available') }}</p>
                         @error('is_available')
                             <span class="khezana-form-error">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <div id="attributesContainer" class="khezana-attributes-container" style="display: none;">
-                        <h3 class="khezana-section-title-small">{{ __('items.fields.attributes') ?? 'المواصفات' }}</h3>
+                        <h3 class="khezana-section-title-small">{{ __('items.fields.attributes') }}</h3>
                         <div id="attributesFields"></div>
                     </div>
 
@@ -196,17 +200,17 @@
                         <div class="khezana-info-icon">ℹ️</div>
                         <div class="khezana-info-content">
                             <p class="khezana-info-text">
-                                {{ __('items.messages.review_notice') ?? 'سيتم مراجعة الإعلان قبل النشر لضمان الجودة والأمان.' }}
+                                {{ __('items.messages.review_notice') }}
                             </p>
                         </div>
                     </div>
 
                     <div class="khezana-form-actions">
                         <button type="submit" class="khezana-btn khezana-btn-primary khezana-btn-large">
-                            {{ __('items.actions.submit_for_approval') ?? 'نشر الإعلان' }}
+                            {{ __('items.actions.submit_for_approval') }}
                         </button>
                         <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn-secondary">
-                            {{ __('common.actions.cancel') ?? 'إلغاء' }}
+                            {{ __('common.actions.cancel') }}
                         </a>
                     </div>
                 </form>
@@ -264,7 +268,7 @@
 
                         const emptyOption = document.createElement('option');
                         emptyOption.value = '';
-                        emptyOption.textContent = '{{ __('common.ui.choose') ?? 'اختر...' }}';
+                        emptyOption.textContent = '{{ __('common.ui.choose') }}';
                         input.appendChild(emptyOption);
 
                         if (attribute.values && attribute.values.length > 0) {

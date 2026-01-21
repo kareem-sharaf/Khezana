@@ -7,9 +7,9 @@
         <div class="khezana-container">
             <!-- Breadcrumb -->
             <nav class="khezana-breadcrumb">
-                <a href="{{ route('home') }}">الرئيسية</a>
+                <a href="{{ route('home') }}">{{ __('common.ui.home') }}</a>
                 <span>/</span>
-                <a href="{{ route('items.index') }}">عناصري</a>
+                <a href="{{ route('items.index') }}">{{ __('common.ui.my_items_page') }}</a>
                 <span>/</span>
                 <span>{{ $item->title }}</span>
             </nav>
@@ -43,7 +43,7 @@
                     @else
                         <div class="khezana-item-main-image khezana-no-image">
                             <div class="khezana-no-image-placeholder">
-                                {{ __('common.ui.no_image') ?? 'لا توجد صورة' }}
+                                {{ __('common.ui.no_image') }}
                             </div>
                         </div>
                     @endif
@@ -56,13 +56,7 @@
                         <h1 class="khezana-item-detail-title">{{ $item->title }}</h1>
                         <div style="display: flex; gap: var(--khezana-spacing-sm); flex-wrap: wrap;">
                             <span class="khezana-item-badge khezana-item-badge-{{ $item->operation_type->value }}">
-                                @if ($item->operation_type->value == 'sell')
-                                    {{ __('items.operation_types.sell') ?? 'بيع' }}
-                                @elseif($item->operation_type->value == 'rent')
-                                    {{ __('items.operation_types.rent') ?? 'إيجار' }}
-                                @else
-                                    {{ __('items.operation_types.donate') ?? 'تبرع مجاني' }}
-                                @endif
+                                {{ __('items.operation_types.' . $item->operation_type->value) }}
                             </span>
 
                             @if ($item->approvalRelation)
@@ -87,21 +81,21 @@
                     <div class="khezana-item-price-section">
                         @if ($item->operation_type->value == 'donate')
                             <div class="khezana-item-price khezana-item-price-free">
-                                <span class="khezana-price-label">مجاني</span>
+                                <span class="khezana-price-label">{{ __('common.ui.free') }}</span>
                             </div>
                         @elseif($item->price)
                             <div class="khezana-item-price">
                                 <span class="khezana-price-amount">{{ number_format($item->price, 0) }}</span>
-                                <span class="khezana-price-currency">ل.س</span>
+                                <span class="khezana-price-currency">{{ __('common.ui.currency') }}</span>
                                 @if ($item->operation_type->value == 'rent')
-                                    <span class="khezana-price-unit">/يوم</span>
+                                    <span class="khezana-price-unit">{{ __('common.ui.per_day') }}</span>
                                 @endif
                             </div>
                             @if ($item->operation_type->value == 'rent' && $item->deposit_amount)
                                 <div class="khezana-item-deposit">
-                                    <span class="khezana-deposit-label">عربون:</span>
+                                    <span class="khezana-deposit-label">{{ __('common.ui.deposit') }}:</span>
                                     <span class="khezana-deposit-amount">{{ number_format($item->deposit_amount, 0) }}
-                                        ل.س</span>
+                                        {{ __('common.ui.currency') }}</span>
                                 </div>
                             @endif
                         @endif
@@ -110,23 +104,23 @@
                     <!-- Category -->
                     @if ($item->category)
                         <div class="khezana-item-meta">
-                            <span class="khezana-meta-label">الفئة:</span>
+                            <span class="khezana-meta-label">{{ __('common.ui.category') }}:</span>
                             <span class="khezana-meta-value">{{ $item->category->name }}</span>
                         </div>
                     @endif
 
                     <!-- Availability -->
                     <div class="khezana-item-meta">
-                        <span class="khezana-meta-label">الحالة:</span>
+                        <span class="khezana-meta-label">{{ __('common.ui.status') }}:</span>
                         <span class="khezana-meta-value">
-                            {{ $item->is_available ? 'متاح' : 'غير متاح' }}
+                            {{ $item->is_available ? __('common.ui.available') : __('common.ui.unavailable') }}
                         </span>
                     </div>
 
                     <!-- Attributes -->
                     @if ($item->itemAttributes->count() > 0)
                         <div class="khezana-item-attributes">
-                            <h3 class="khezana-section-title-small">المواصفات</h3>
+                            <h3 class="khezana-section-title-small">{{ __('items.fields.attributes') }}</h3>
                             <div class="khezana-attributes-grid">
                                 @foreach ($item->itemAttributes as $itemAttribute)
                                     <div class="khezana-attribute-item">
@@ -141,7 +135,7 @@
                     <!-- Description -->
                     @if ($item->description)
                         <div class="khezana-item-description">
-                            <h3 class="khezana-section-title-small">الوصف</h3>
+                            <h3 class="khezana-section-title-small">{{ __('items.fields.description') }}</h3>
                             <p class="khezana-description-text">{{ $item->description }}</p>
                         </div>
                     @endif
@@ -151,21 +145,22 @@
                         <div class="khezana-approval-info">
                             @if ($item->approvalRelation->status->value == 'pending')
                                 <div class="khezana-info-box khezana-info-box-warning">
-                                    <strong>⏳ قيد المراجعة:</strong> إعلانك قيد المراجعة من قبل فريقنا. سيتم إشعارك عند
-                                    الموافقة أو الرفض.
+                                    <strong>⏳ {{ __('common.ui.pending_review') }}:</strong>
+                                    {{ __('common.ui.pending_review_message') }}
                                 </div>
                             @elseif($item->approvalRelation->status->value == 'rejected')
                                 <div class="khezana-info-box khezana-info-box-error">
-                                    <strong>❌ تم الرفض:</strong>
+                                    <strong>❌ {{ __('common.ui.rejected') }}:</strong>
                                     @if ($item->approvalRelation->rejection_reason)
                                         {{ $item->approvalRelation->rejection_reason }}
                                     @else
-                                        تم رفض إعلانك. يمكنك تعديله وإعادة الإرسال للمراجعة.
+                                        {{ __('common.ui.rejected_message') }}
                                     @endif
                                 </div>
                             @elseif($item->approvalRelation->status->value == 'approved')
                                 <div class="khezana-info-box khezana-info-box-success">
-                                    <strong>✅ تمت الموافقة:</strong> إعلانك معروض الآن للجمهور.
+                                    <strong>✅ {{ __('common.ui.approved') }}:</strong>
+                                    {{ __('common.ui.approved_message') }}
                                 </div>
                             @endif
                         </div>
@@ -178,24 +173,24 @@
                                 style="display: inline;">
                                 @csrf
                                 <button type="submit" class="khezana-btn khezana-btn-primary">
-                                    إرسال للمراجعة
+                                    {{ __('common.ui.submit_for_approval') }}
                                 </button>
                             </form>
                         @endif
 
                         @if (!$item->isPending())
                             <a href="{{ route('items.edit', $item) }}" class="khezana-btn khezana-btn-secondary">
-                                تعديل
+                                {{ __('common.ui.edit') }}
                             </a>
                         @endif
 
                         <form method="POST" action="{{ route('items.destroy', $item) }}" style="display: inline;"
-                            onsubmit="return confirm('هل أنت متأكد من حذف هذا الإعلان؟');">
+                            onsubmit="return confirm('{{ __('common.ui.delete_confirmation') }}');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="khezana-btn khezana-btn-ghost"
                                 style="color: var(--khezana-danger);">
-                                حذف
+                                {{ __('common.ui.delete') }}
                             </button>
                         </form>
                     </div>
@@ -204,12 +199,14 @@
                     <div class="khezana-item-additional-info">
                         <div class="khezana-info-item">
                             <span class="khezana-info-icon">📅</span>
-                            <span class="khezana-info-text">نُشر {{ $item->created_at->diffForHumans() }}</span>
+                            <span class="khezana-info-text">{{ __('common.ui.published') }}
+                                {{ $item->created_at->diffForHumans() }}</span>
                         </div>
                         @if ($item->updated_at != $item->created_at)
                             <div class="khezana-info-item">
                                 <span class="khezana-info-icon">🔄</span>
-                                <span class="khezana-info-text">آخر تحديث {{ $item->updated_at->diffForHumans() }}</span>
+                                <span class="khezana-info-text">{{ __('common.ui.last_updated') }}
+                                    {{ $item->updated_at->diffForHumans() }}</span>
                             </div>
                         @endif
                     </div>

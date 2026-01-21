@@ -4,9 +4,9 @@ return [
     'title' => 'الطلبات',
     'singular' => 'طلب',
     'plural' => 'طلبات',
-    
+
     'fields' => [
-        'title' => 'العنوان',
+        'title' => 'عنوان الطلب',
         'description' => 'الوصف',
         'status' => 'الحالة',
         'category' => 'الفئة',
@@ -15,13 +15,13 @@ return [
         'owner' => 'المالك',
         'attributes' => 'الخصائص',
     ],
-    
+
     'status' => [
         'open' => 'مفتوح',
         'fulfilled' => 'مكتمل',
         'closed' => 'مغلق',
     ],
-    
+
     'messages' => [
         'created_successfully' => 'تم إنشاء الطلب بنجاح',
         'updated_successfully' => 'تم تحديث الطلب بنجاح',
@@ -35,20 +35,78 @@ return [
         'no_description' => 'لا يوجد وصف',
         'cannot_edit_closed' => 'لا يمكن تعديل طلب مغلق أو مكتمل',
     ],
-    
+
     'placeholders' => [
         'title' => 'أدخل عنوان الطلب',
         'description' => 'أدخل وصف الطلب',
         'category_id' => 'اختر الفئة',
     ],
-    
+
+    'hints' => [
+        'category' => 'اختر الفئة المناسبة لتسهيل العثور على طلبك',
+        'title' => 'كن محدداً: اذكر النوع والمقاس والحالة إن أمكن',
+        'description' => 'كلما كان الوصف أوضح، زادت فرصة وصول العروض المناسبة',
+    ],
+
     'actions' => [
-        'create' => 'إنشاء طلب',
+        'create' => 'إنشاء طلب جديد',
         'edit' => 'تعديل الطلب',
         'delete' => 'حذف الطلب',
-        'submit_for_approval' => 'إرسال للموافقة',
+        'submit_for_approval' => 'إرسال الطلب',
         'view' => 'عرض الطلب',
         'update' => 'تحديث',
         'close' => 'إغلاق الطلب',
+    ],
+
+    'info_page' => [
+        'title' => 'طلب مخصص',
+        'hero_title' => 'طلب مخصص',
+        'hero_subtitle' => 'حدّد ما تبحث عنه وسنوصلك بالعروض المناسبة',
+        'how_it_works_title' => 'كيف يعمل الطلب المخصص؟',
+        'step1_title' => 'حدّد متطلباتك',
+        'step1_description' => 'صف ما تبحث عنه: النوع، المقاس، والحالة',
+        'step2_title' => 'المراجعة',
+        'step2_description' => 'فريقنا يراجع طلبك قبل النشر',
+        'step3_title' => 'استقبل العروض',
+        'step3_description' => 'استقبل عروض بيع، إيجار، أو مشاركة',
+        'benefits_title' => 'لماذا الطلب المخصص؟',
+        'benefit1_title' => 'وفر الوقت',
+        'benefit1_text' => 'حدّد متطلباتك وستصل إليك العروض المناسبة',
+        'benefit2_title' => 'خيارات متعددة',
+        'benefit2_text' => 'بيع، إيجار، أو مشاركة',
+        'benefit3_title' => 'مجتمع متصل',
+        'benefit3_text' => 'انضم لمجتمع يربط بين الباحثين عن ملابس محددة ومقدمي العروض',
+        'examples_title' => 'أمثلة على الطلبات',
+        'example1_text' => 'أبحث عن حذاء رجالي، مقاس 42، بحالة جيدة',
+        'example2_text' => 'أبحث عن فستان زفاف، مقاس M، للإيجار أو الشراء',
+        'example3_text' => 'أبحث عن قميص رسمي، مقاس L',
+        'example4_text' => 'أبحث عن ملابس أطفال، مقاسات مختلفة',
+        'response_types_title' => 'كيف يمكن للآخرين الرد على طلبك؟',
+        'response_sell_title' => 'عرض بيع',
+        'response_sell_text' => 'بيع بسعر مناسب',
+        'response_rent_title' => 'عرض إيجار',
+        'response_rent_text' => 'إيجار للمناسبات',
+        'response_donate_title' => 'عرض مشاركة',
+        'response_donate_text' => 'بدون مقابل مادي',
+        'cta_title' => 'ابدأ الآن',
+        'cta_text' => 'حدّد متطلباتك واستقبل العروض',
+        'cta_button_auth' => 'إنشاء طلب مخصص',
+        'cta_button_guest' => 'سجّل وإنشئ طلبك',
+        'browse_title' => 'تصفح الطلبات الحالية',
+        'browse_button' => 'عرض جميع الطلبات',
+    ],
+
+    'detail' => [
+        'next_steps_title' => 'ماذا بعد؟',
+        'next_steps_open' => 'طلبك نشط الآن. سيتمكن الآخرون من رؤيته وتقديم عروضهم.',
+        'next_steps_open_hint' => 'ستصلك إشعارات عند وصول عروض جديدة.',
+        'next_steps_fulfilled' => 'تم إكمال طلبك بنجاح. نتمنى أن تكون قد وجدت ما تبحث عنه.',
+        'next_steps_closed' => 'تم إغلاق هذا الطلب. لم يعد يقبل عروضاً جديدة.',
+        'status_explanation_open' => 'الطلب نشط ويقبل عروضاً جديدة',
+        'status_explanation_fulfilled' => 'تم إكمال الطلب بنجاح',
+        'status_explanation_closed' => 'الطلب مغلق ولا يقبل عروضاً جديدة',
+        'offers_coming' => 'ستصلك العروض قريباً',
+        'review_offers' => 'راجع العروض واختر ما يناسبك',
+        'contact_offerer' => 'تواصل مع مقدم العرض واتفق على التفاصيل',
     ],
 ];

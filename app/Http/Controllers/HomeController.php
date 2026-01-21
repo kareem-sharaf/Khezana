@@ -21,6 +21,12 @@ class HomeController extends Controller
     {
         $locale = app()->getLocale();
 
+        // Check if user is new visitor (first time on home page)
+        $isNewVisitor = !$request->session()->has('visited_home');
+        if ($isNewVisitor) {
+            $request->session()->put('visited_home', true);
+        }
+
         // Get featured items for each operation type (cached)
         $featuredSell = \Illuminate\Support\Facades\Cache::remember(
             'home_featured_sell_' . $locale,
@@ -44,6 +50,7 @@ class HomeController extends Controller
             'featuredSell' => $featuredSell,
             'featuredRent' => $featuredRent,
             'featuredDonate' => $featuredDonate,
+            'isNewVisitor' => $isNewVisitor,
         ]);
     }
 

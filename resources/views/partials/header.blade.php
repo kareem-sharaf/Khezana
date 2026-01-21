@@ -4,27 +4,27 @@
         <div class="khezana-container">
             <div class="khezana-nav-content">
                 <!-- Logo -->
-                <a href="{{ route('home') }}" class="khezana-logo" aria-label="العودة للصفحة الرئيسية">
-                    <span class="khezana-logo-text">خزانة</span>
+                <a href="{{ route('home') }}" class="khezana-logo" aria-label="{{ __('common.ui.main_navigation') }}">
+                    <span class="khezana-logo-text">{{ config('app.name') }}</span>
                 </a>
 
                 <!-- Navigation Links -->
                 <div class="khezana-nav-links" aria-label="التنقل الرئيسي">
                     <a href="{{ route('public.items.index') }}" class="khezana-nav-link">
-                        {{ __('common.ui.offers') ?? 'العروض' }}
+                        {{ __('common.ui.offers') }}
                     </a>
                     <a href="{{ route('public.items.index', ['operation_type' => 'sell']) }}" class="khezana-nav-link">
-                        {{ __('items.operation_types.sell') ?? 'بيع' }}
+                        {{ __('items.operation_types.sell') }}
                     </a>
                     <a href="{{ route('public.items.index', ['operation_type' => 'rent']) }}" class="khezana-nav-link">
-                        {{ __('items.operation_types.rent') ?? 'إيجار' }}
+                        {{ __('items.operation_types.rent') }}
                     </a>
                     <a href="{{ route('public.items.index', ['operation_type' => 'donate']) }}"
                         class="khezana-nav-link">
-                        {{ __('items.operation_types.donate') ?? 'تبرع' }}
+                        {{ __('items.operation_types.donate') }}
                     </a>
                     <a href="{{ route('public.requests.index') }}" class="khezana-nav-link">
-                        {{ __('requests.title') ?? 'طلبات' }}
+                        {{ __('requests.title') }}
                     </a>
                 </div>
 
@@ -38,18 +38,18 @@
                             </div>
                             <div class="khezana-user-actions">
                                 <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn-secondary">
-                                    عروضي
+                                    {{ __('common.ui.my_items') }}
                                 </a>
                                 <a href="{{ route('requests.index') }}" class="khezana-btn khezana-btn-secondary">
-                                    طلباتي
+                                    {{ __('common.ui.my_requests') }}
                                 </a>
                                 <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary">
-                                    {{ __('common.ui.add_item') ?? 'أضف غرض' }}
+                                    {{ __('common.ui.add_item') }}
                                 </a>
                                 <form method="POST" action="{{ route('logout') }}" class="khezana-logout-form">
                                     @csrf
                                     <button type="submit" class="khezana-btn khezana-btn-ghost">
-                                        {{ __('common.ui.logout') ?? 'تسجيل الخروج' }}
+                                        {{ __('common.ui.logout') }}
                                     </button>
                                 </form>
                             </div>
@@ -57,14 +57,14 @@
                     @else
                         <div class="khezana-guest-actions">
                             <a href="{{ route('login') }}" class="khezana-btn khezana-btn-secondary">
-                                {{ __('common.ui.login') ?? 'تسجيل الدخول' }}
+                                {{ __('common.ui.login') }}
                             </a>
                             <a href="{{ route('register') }}" class="khezana-btn khezana-btn-primary">
-                                {{ __('common.ui.register') ?? 'إنشاء حساب' }}
+                                {{ __('common.ui.register') }}
                             </a>
                             <a href="{{ route('items.create') }}"
                                 class="khezana-btn khezana-btn-primary khezana-btn-outline">
-                                {{ __('common.ui.add_item') ?? 'أضف غرض' }}
+                                {{ __('common.ui.add_item') }}
                             </a>
                         </div>
                     @endauth

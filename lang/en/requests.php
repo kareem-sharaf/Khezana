@@ -4,7 +4,7 @@ return [
     'title' => 'Requests',
     'singular' => 'Request',
     'plural' => 'Requests',
-    
+
     'fields' => [
         'title' => 'Title',
         'description' => 'Description',
@@ -15,13 +15,13 @@ return [
         'owner' => 'Owner',
         'attributes' => 'Attributes',
     ],
-    
+
     'status' => [
         'open' => 'Open',
         'fulfilled' => 'Fulfilled',
         'closed' => 'Closed',
     ],
-    
+
     'messages' => [
         'created_successfully' => 'Request created successfully',
         'updated_successfully' => 'Request updated successfully',
@@ -35,20 +35,78 @@ return [
         'no_description' => 'No description',
         'cannot_edit_closed' => 'Cannot edit a closed or fulfilled request',
     ],
-    
+
     'placeholders' => [
         'title' => 'Enter request title',
         'description' => 'Enter request description',
         'category_id' => 'Select category',
     ],
-    
+
+    'hints' => [
+        'category' => 'Choose the appropriate category to make your request easier to find',
+        'title' => 'Be specific: mention type, size, and condition if possible',
+        'description' => 'The clearer the description, the better the chance of receiving suitable offers',
+    ],
+
     'actions' => [
-        'create' => 'Create Request',
+        'create' => 'Create New Request',
         'edit' => 'Edit Request',
         'delete' => 'Delete Request',
-        'submit_for_approval' => 'Submit for Approval',
+        'submit_for_approval' => 'Submit Request',
         'view' => 'View Request',
         'update' => 'Update',
         'close' => 'Close Request',
+    ],
+
+    'info_page' => [
+        'title' => 'Request Clothing',
+        'hero_title' => 'Request Clothing',
+        'hero_subtitle' => 'Write your request and others will find you',
+        'how_it_works_title' => 'How does requesting work?',
+        'step1_title' => 'Write Your Request',
+        'step1_description' => 'Describe what you need: Type, Size, and Condition',
+        'step2_title' => 'Review',
+        'step2_description' => 'Our team reviews your request before publishing',
+        'step3_title' => 'Receive Offers',
+        'step3_description' => 'Receive offers for sale, rent, or donation',
+        'benefits_title' => 'Why Request?',
+        'benefit1_title' => 'Save Time',
+        'benefit1_text' => 'Write your request and let others find you',
+        'benefit2_title' => 'Multiple Options',
+        'benefit2_text' => 'Sale, rent, or donation',
+        'benefit3_title' => 'Cooperative Community',
+        'benefit3_text' => 'Join a community that helps each other',
+        'examples_title' => 'Request Examples',
+        'example1_text' => 'I need men\'s shoes, size 42, in good condition',
+        'example2_text' => 'Looking for wedding dress, size M, for rent or purchase',
+        'example3_text' => 'I need formal shirt, size L, urgent',
+        'example4_text' => 'Looking for children\'s clothes for donation, various sizes',
+        'response_types_title' => 'How can others respond to your request?',
+        'response_sell_title' => 'Sale Offer',
+        'response_sell_text' => 'Sale at reasonable price',
+        'response_rent_title' => 'Rental Offer',
+        'response_rent_text' => 'Rent for occasions',
+        'response_donate_title' => 'Donation Offer',
+        'response_donate_text' => 'No monetary cost',
+        'cta_title' => 'Start Now',
+        'cta_text' => 'Write your request and receive offers',
+        'cta_button_auth' => 'Write Your Request Now',
+        'cta_button_guest' => 'Register and Request Clothing',
+        'browse_title' => 'Browse Current Requests',
+        'browse_button' => 'View All Requests',
+    ],
+
+    'detail' => [
+        'next_steps_title' => 'What\'s Next?',
+        'next_steps_open' => 'Your request is now active. Others can see it and submit their offers.',
+        'next_steps_open_hint' => 'You\'ll receive notifications when new offers arrive.',
+        'next_steps_fulfilled' => 'Your request has been fulfilled successfully. We hope you found what you were looking for.',
+        'next_steps_closed' => 'This request has been closed. It no longer accepts new offers.',
+        'status_explanation_open' => 'Request is active and accepting new offers',
+        'status_explanation_fulfilled' => 'Request has been fulfilled successfully',
+        'status_explanation_closed' => 'Request is closed and not accepting new offers',
+        'offers_coming' => 'Offers will arrive soon',
+        'review_offers' => 'Review offers and choose what suits you',
+        'contact_offerer' => 'Contact the offer provider and agree on details',
     ],
 ];
