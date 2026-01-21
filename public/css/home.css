@@ -16,7 +16,7 @@
     --khezana-bg: #f9fafb;
     --khezana-white: #ffffff;
     --khezana-border: #e5e7eb;
-    
+
     /* Spacing */
     --khezana-spacing-xs: 0.5rem;
     --khezana-spacing-sm: 1rem;
@@ -24,7 +24,7 @@
     --khezana-spacing-lg: 2rem;
     --khezana-spacing-xl: 3rem;
     --khezana-spacing-2xl: 4rem;
-    
+
     /* Typography */
     --khezana-font-size-base: 1rem;
     --khezana-font-size-sm: 0.875rem;
@@ -33,18 +33,18 @@
     --khezana-font-size-2xl: 1.5rem;
     --khezana-font-size-3xl: 1.875rem;
     --khezana-font-size-4xl: 2.25rem;
-    
+
     /* Shadows */
     --khezana-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --khezana-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     --khezana-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --khezana-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    
+
     /* Border Radius */
     --khezana-radius: 0.5rem;
     --khezana-radius-lg: 0.75rem;
     --khezana-radius-xl: 1rem;
-    
+
     /* Transitions */
     --khezana-transition: all 0.2s ease;
 }
@@ -207,6 +207,29 @@ body {
     background: var(--khezana-bg);
     border-color: var(--khezana-primary);
     color: var(--khezana-primary);
+}
+
+.khezana-btn-ghost {
+    background: transparent;
+    color: var(--khezana-text);
+    border: 1px solid var(--khezana-border);
+}
+
+.khezana-btn-ghost:hover {
+    background: var(--khezana-bg);
+    border-color: var(--khezana-primary);
+    color: var(--khezana-primary);
+}
+
+.khezana-btn-outline {
+    background: transparent;
+    border: 1px dashed var(--khezana-primary);
+    color: var(--khezana-primary);
+}
+
+.khezana-btn-outline:hover {
+    border-style: solid;
+    box-shadow: var(--khezana-shadow);
 }
 
 .khezana-btn-ghost {
@@ -520,24 +543,24 @@ body {
     .khezana-hero-title {
         font-size: var(--khezana-font-size-3xl);
     }
-    
+
     .khezana-hero-subtitle {
         font-size: var(--khezana-font-size-lg);
     }
-    
+
     .khezana-nav-content {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .khezana-nav-links {
         justify-content: center;
     }
-    
+
     .khezana-nav-actions {
         justify-content: center;
     }
-    
+
     .khezana-services-grid,
     .khezana-steps,
     .khezana-items-grid {

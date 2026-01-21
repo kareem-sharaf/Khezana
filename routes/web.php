@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['cache.headers:300', 'throttle:60,1'])->group(function () {
     Route::get('/items', [\App\Http\Controllers\Public\ItemController::class, 'index'])->name('public.items.index');
     Route::get('/items/{id}/{slug?}', [\App\Http\Controllers\Public\ItemController::class, 'show'])->name('public.items.show');
-    
+
     Route::get('/request-clothing', [\App\Http\Controllers\Public\RequestController::class, 'createInfo'])->name('public.requests.create-info');
     Route::get('/requests', [\App\Http\Controllers\Public\RequestController::class, 'index'])->name('public.requests.index');
     Route::get('/requests/{id}/{slug?}', [\App\Http\Controllers\Public\RequestController::class, 'show'])->name('public.requests.show');
@@ -75,19 +75,19 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth.redirect')->group(function () {
     Route::post('/items/{item}/contact', [\App\Http\Controllers\Public\ItemController::class, 'contact'])
         ->name('public.items.contact');
-    
+
     Route::post('/items/{item}/favorite', [\App\Http\Controllers\FavoriteController::class, 'toggle'])
         ->name('public.items.favorite');
-    
+
     Route::post('/items/{item}/report', [\App\Http\Controllers\Public\ItemController::class, 'report'])
         ->name('public.items.report');
-    
+
     Route::post('/requests/{request}/offer', [\App\Http\Controllers\Public\RequestController::class, 'submitOffer'])
         ->name('public.requests.offer');
-    
+
     Route::post('/requests/{request}/contact', [\App\Http\Controllers\Public\RequestController::class, 'contact'])
         ->name('public.requests.contact');
-    
+
     Route::post('/requests/{request}/report', [\App\Http\Controllers\Public\RequestController::class, 'report'])
         ->name('public.requests.report');
 });

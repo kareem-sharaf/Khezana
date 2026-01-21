@@ -23,7 +23,7 @@ class RegisteredUserController extends Controller
     public function create(Request $request): View
     {
         $redirectUrl = $request->input('redirect');
-        
+
         return view('auth.register', [
             'redirect' => $redirectUrl,
         ]);
@@ -38,7 +38,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:20', 'unique:'.User::class],
+            'phone' => ['required', 'string', 'max:20', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -59,7 +59,7 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         $redirectUrl = $request->input('redirect');
-        
+
         if ($redirectUrl && filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
             return redirect($redirectUrl)
                 ->with('success', 'مرحباً بك! تم إنشاء حسابك بنجاح. يمكنك الآن إتمام العملية.');

@@ -19,7 +19,7 @@ class AuthenticatedSessionController extends Controller
         $redirectUrl = $request->input('redirect');
         $action = $request->input('action');
         $message = session('message') ?? ($redirectUrl ? 'يجب تسجيل الدخول لإتمام هذه العملية' : null);
-        
+
         return view('auth.login', [
             'redirect' => $redirectUrl,
             'action' => $action,
@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $redirectUrl = $request->input('redirect');
-        
+
         if ($redirectUrl && filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
             return redirect($redirectUrl)
                 ->with('success', 'مرحباً بك! يمكنك الآن إتمام العملية.');
