@@ -37,7 +37,7 @@ class ViewItemQuery
             $query->where('slug', $slug);
         }
 
-        $item = $query->select('id', 'title', 'slug', 'description', 'price', 'deposit_amount', 'operation_type', 'availability_status', 'user_id', 'category_id', 'created_at', 'updated_at')
+        $item = $query->select('id', 'title', 'slug', 'description', 'condition', 'price', 'deposit_amount', 'operation_type', 'availability_status', 'user_id', 'category_id', 'created_at', 'updated_at')
             ->with([
                 'user:id,name,created_at',
                 'category:id,name,slug,description',

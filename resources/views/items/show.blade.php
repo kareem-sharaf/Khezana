@@ -109,6 +109,14 @@
                         </div>
                     @endif
 
+                    <!-- Condition -->
+                    @if ($item->condition)
+                        <div class="khezana-item-meta">
+                            <span class="khezana-meta-label">🏷️ {{ __('items.fields.condition') }}:</span>
+                            <span class="khezana-meta-value">{{ __('items.conditions.' . $item->condition) }}</span>
+                        </div>
+                    @endif
+
                     <!-- Availability -->
                     <div class="khezana-item-meta">
                         <span class="khezana-meta-label">{{ __('common.ui.status') }}:</span>

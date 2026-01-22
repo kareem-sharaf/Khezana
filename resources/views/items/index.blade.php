@@ -20,8 +20,58 @@
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <main class="khezana-listing-main" style="max-width: 100%;">
+            <!-- Mobile Filters Toggle Button -->
+            <input type="checkbox" id="mobileFiltersToggle" class="khezana-mobile-toggle-checkbox">
+            <label for="mobileFiltersToggle" class="khezana-filters-toggle">
+                <span class="khezana-filters-toggle-icon">🔍</span>
+                <span class="khezana-filters-toggle-text">{{ __('common.ui.filters') }}</span>
+            </label>
+
+            <div class="khezana-listing-layout">
+                @include('partials.filters', [
+                    'type' => 'items',
+                    'route' => 'items.index',
+                    'resetRoute' => 'items.index',
+                    'showOperationType' => true,
+                    'showPriceRange' => false,
+                    'showStatus' => false,
+                    'showApprovalStatus' => true,
+                    'categories' => $categories,
+                ])
+
+                <!-- Main Content -->
+                <main class="khezana-listing-main">
+                    <!-- Active Filters Tags -->
+                    @if (request()->hasAny(['search', 'operation_type', 'category_id', 'approval_status']))
+                        <div class="khezana-active-filters">
+                            @if (request('search'))
+                                <span class="khezana-filter-tag">
+                                    {{ __('common.ui.search') }}: {{ request('search') }}
+                                    <a href="{{ route('items.index', array_merge(request()->except('search'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
+                                </span>
+                            @endif
+                            @if (request('operation_type'))
+                                <span class="khezana-filter-tag">
+                                    {{ __('items.operation_types.' . request('operation_type')) }}
+                                    <a href="{{ route('items.index', array_merge(request()->except('operation_type'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
+                                </span>
+                            @endif
+                            @if (request('category_id') && $categories->firstWhere('id', request('category_id')))
+                                <span class="khezana-filter-tag">
+                                    {{ $categories->firstWhere('id', request('category_id'))->name }}
+                                    <a href="{{ route('items.index', array_merge(request()->except('category_id'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
+                                </span>
+                            @endif
+                            @if (request('approval_status'))
+                                <span class="khezana-filter-tag">
+                                    {{ __('approvals.status.' . request('approval_status')) }}
+                                    <a href="{{ route('items.index', array_merge(request()->except('approval_status'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
+                                </span>
+                            @endif
+                            <a href="{{ route('items.index') }}" class="khezana-filter-clear-all">{{ __('common.ui.clear_all') }}</a>
+                        </div>
+                    @endif
+
                 @if ($items->count() > 0)
                     <!-- Items Grid -->
                     <div class="khezana-items-grid">
@@ -83,7 +133,7 @@
                     <!-- Pagination -->
                     @if ($items->hasPages())
                         <div class="khezana-pagination">
-                            {{ $items->links() }}
+                            {{ $items->appends(request()->query())->links() }}
                         </div>
                     @endif
                 @else
@@ -95,13 +145,20 @@
                             {{ __('common.ui.no_items_message') }}
                         </p>
                         <div class="khezana-empty-actions">
+                            @if (request()->hasAny(['search', 'operation_type', 'category_id', 'approval_status']))
+                                <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn-secondary">
+                                    {{ __('common.ui.clear_filters') }}
+                                </a>
+                            @endif
                             <a href="{{ route('items.create') }}" class="khezana-btn khezana-btn-primary khezana-btn-large">
                                 {{ __('common.ui.no_items_cta') }}
                             </a>
                         </div>
                     </div>
                 @endif
-            </main>
+                </main>
+            </div>
         </div>
     </div>
+
 @endsection

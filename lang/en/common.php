@@ -85,6 +85,8 @@ return [
         'showing_results' => 'Showing :from to :to of :total results',
         'all' => 'All',
         'all_categories' => 'All Categories',
+        'select_governorate' => 'Select Governorate',
+        'all_governorates' => 'All Governorates',
         'operation_type' => 'Operation Type',
         'category' => 'Category',
         'price_range' => 'Price Range',

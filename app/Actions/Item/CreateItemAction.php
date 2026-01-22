@@ -48,6 +48,8 @@ class CreateItemAction
                 'operation_type' => OperationType::from($data['operation_type']),
                 'title' => $data['title'],
                 'description' => $data['description'] ?? null,
+                'governorate' => $data['governorate'] ?? null,
+                'condition' => $data['condition'] ?? null,
                 'price' => $data['price'] ?? null,
                 'deposit_amount' => $data['deposit_amount'] ?? null,
                 'is_available' => $isAvailable,

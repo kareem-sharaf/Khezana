@@ -1,20 +1,21 @@
 @extends('layouts.app')
 
-@section('title', __('items.actions.create') . ' - ' . config('app.name'))
+@section('title', __('items.actions.edit') . ' - ' . config('app.name'))
 
 @section('content')
     <div class="khezana-create-page">
         <div class="khezana-container">
             <div class="khezana-page-header">
-                <h1 class="khezana-page-title">{{ __('items.actions.create') }}</h1>
+                <h1 class="khezana-page-title">{{ __('items.actions.edit') }}</h1>
                 <p class="khezana-page-subtitle">
                     {{ __('items.messages.create_help') }}
                 </p>
             </div>
 
             <div class="khezana-form-container">
-                <form method="POST" action="{{ route('items.store') }}" class="khezana-form">
+                <form method="POST" action="{{ route('items.update', $item) }}" class="khezana-form">
                     @csrf
+                    @method('PUT')
 
                     <div class="khezana-form-group">
                         <label for="category_id" class="khezana-form-label">
@@ -53,7 +54,9 @@
                                         })
                                         ->toJson();
                                 @endphp
-                                <option value="{{ $category->id }}" data-attributes="{{ $categoryAttributes }}">
+                                <option value="{{ $category->id }}" 
+                                    {{ old('category_id', $item->category_id) == $category->id ? 'selected' : '' }}
+                                    data-attributes="{{ $categoryAttributes }}">
                                     {{ $category->name }}
                                 </option>
                                 @if ($category->children->count() > 0)
@@ -86,7 +89,9 @@
                                                 })
                                                 ->toJson();
                                         @endphp
-                                        <option value="{{ $child->id }}" data-attributes="{{ $childAttributes }}">
+                                        <option value="{{ $child->id }}" 
+                                            {{ old('category_id', $item->category_id) == $child->id ? 'selected' : '' }}
+                                            data-attributes="{{ $childAttributes }}">
                                             &nbsp;&nbsp;{{ $child->name }}
                                         </option>
                                     @endforeach
@@ -108,17 +113,17 @@
                         <div class="khezana-filter-options">
                             <label class="khezana-filter-option">
                                 <input type="radio" name="operation_type" value="sell" required
-                                    {{ old('operation_type') === 'sell' ? 'checked' : '' }}>
+                                    {{ old('operation_type', $item->operation_type->value) === 'sell' ? 'checked' : '' }}>
                                 <span>{{ __('items.operation_types.sell') }}</span>
                             </label>
                             <label class="khezana-filter-option">
                                 <input type="radio" name="operation_type" value="rent" required
-                                    {{ old('operation_type') === 'rent' ? 'checked' : '' }}>
+                                    {{ old('operation_type', $item->operation_type->value) === 'rent' ? 'checked' : '' }}>
                                 <span>{{ __('items.operation_types.rent') }}</span>
                             </label>
                             <label class="khezana-filter-option">
                                 <input type="radio" name="operation_type" value="donate" required
-                                    {{ old('operation_type') === 'donate' ? 'checked' : '' }}>
+                                    {{ old('operation_type', $item->operation_type->value) === 'donate' ? 'checked' : '' }}>
                                 <span>{{ __('items.operation_types.donate') }}</span>
                             </label>
                         </div>
@@ -133,7 +138,7 @@
                             <span class="khezana-required">*</span>
                         </label>
                         <input type="text" name="title" id="title" class="khezana-form-input"
-                            value="{{ old('title') }}" placeholder="{{ __('items.placeholders.title') }}" required
+                            value="{{ old('title', $item->title) }}" placeholder="{{ __('items.placeholders.title') }}" required
                             maxlength="255">
                         @error('title')
                             <span class="khezana-form-error">{{ $message }}</span>
@@ -146,7 +151,7 @@
                         </label>
                         <p class="khezana-form-hint">{{ __('items.hints.description') }}</p>
                         <textarea name="description" id="description" class="khezana-form-input khezana-form-textarea" rows="5"
-                            placeholder="{{ __('items.placeholders.description') }}">{{ old('description') }}</textarea>
+                            placeholder="{{ __('items.placeholders.description') }}">{{ old('description', $item->description) }}</textarea>
                         @error('description')
                             <span class="khezana-form-error">{{ $message }}</span>
                         @enderror
@@ -163,13 +168,13 @@
                         <div class="khezana-filter-options">
                             <label class="khezana-filter-option">
                                 <input type="radio" name="condition" value="new" required
-                                    {{ old('condition') === 'new' ? 'checked' : '' }}>
+                                    {{ old('condition', $item->condition) === 'new' ? 'checked' : '' }}>
                                 <span>{{ __('items.conditions.new') }}</span>
                                 <small class="khezana-option-hint">{{ __('items.conditions.new_hint') }}</small>
                             </label>
                             <label class="khezana-filter-option">
                                 <input type="radio" name="condition" value="used" required
-                                    {{ old('condition') === 'used' ? 'checked' : '' }}>
+                                    {{ old('condition', $item->condition) === 'used' ? 'checked' : '' }}>
                                 <span>{{ __('items.conditions.used') }}</span>
                                 <small class="khezana-option-hint">{{ __('items.conditions.used_hint') }}</small>
                             </label>
@@ -186,7 +191,7 @@
                             </label>
                             <p class="khezana-form-hint">{{ __('items.hints.price') }}</p>
                             <input type="number" step="0.01" name="price" id="price" class="khezana-form-input"
-                                value="{{ old('price') }}" placeholder="{{ __('items.placeholders.price') }}">
+                                value="{{ old('price', $item->price) }}" placeholder="{{ __('items.placeholders.price') }}">
                             @error('price')
                                 <span class="khezana-form-error">{{ $message }}</span>
                             @enderror
@@ -198,7 +203,7 @@
                             </label>
                             <p class="khezana-form-hint">{{ __('items.hints.deposit_amount') }}</p>
                             <input type="number" step="0.01" name="deposit_amount" id="deposit_amount"
-                                class="khezana-form-input" value="{{ old('deposit_amount') }}"
+                                class="khezana-form-input" value="{{ old('deposit_amount', $item->deposit_amount) }}"
                                 placeholder="{{ __('items.placeholders.deposit_amount') }}">
                             @error('deposit_amount')
                                 <span class="khezana-form-error">{{ $message }}</span>
@@ -209,7 +214,7 @@
                     <div class="khezana-form-group khezana-form-checkbox">
                         <label class="khezana-form-label">
                             <input type="checkbox" name="is_available" value="1"
-                                {{ old('is_available', true) ? 'checked' : '' }}>
+                                {{ old('is_available', $item->is_available) ? 'checked' : '' }}>
                             {{ __('items.fields.is_available') }}
                         </label>
                         <p class="khezana-form-hint">{{ __('items.hints.is_available') }}</p>
@@ -234,9 +239,9 @@
 
                     <div class="khezana-form-actions">
                         <button type="submit" class="khezana-btn khezana-btn-primary khezana-btn-large">
-                            {{ __('items.actions.submit_for_approval') }}
+                            {{ __('common.actions.save') }}
                         </button>
-                        <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn-secondary">
+                        <a href="{{ route('items.show', $item) }}" class="khezana-btn khezana-btn-secondary">
                             {{ __('common.actions.cancel') }}
                         </a>
                     </div>
@@ -269,6 +274,9 @@
 
                 attributesContainer.style.display = 'block';
                 attributesFields.innerHTML = '';
+
+                // Get existing attribute values
+                const existingAttributes = @json($item->itemAttributes->pluck('value', 'attribute.slug')->toArray());
 
                 attributes.forEach(attribute => {
                     const attributeDiv = document.createElement('div');
@@ -303,6 +311,9 @@
                                 const option = document.createElement('option');
                                 option.value = value;
                                 option.textContent = value;
+                                if (existingAttributes[attribute.slug] === value) {
+                                    option.selected = true;
+                                }
                                 input.appendChild(option);
                             });
                         }
@@ -312,6 +323,7 @@
                         input.className = 'khezana-form-input';
                         input.name = `attributes[${attribute.slug}]`;
                         input.id = `attributes[${attribute.slug}]`;
+                        input.value = existingAttributes[attribute.slug] || '';
                         if (attribute.is_required) {
                             input.required = true;
                         }
@@ -321,6 +333,7 @@
                         input.className = 'khezana-form-input';
                         input.name = `attributes[${attribute.slug}]`;
                         input.id = `attributes[${attribute.slug}]`;
+                        input.value = existingAttributes[attribute.slug] || '';
                         if (attribute.is_required) {
                             input.required = true;
                         }
@@ -336,11 +349,12 @@
             }
         }
 
-        @if (old('category_id'))
-            document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById('category_id').value = {{ old('category_id') }};
-                loadCategoryAttributes({{ old('category_id') }});
-            });
-        @endif
+        // Load attributes on page load if category is selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryId = document.getElementById('category_id').value;
+            if (categoryId) {
+                loadCategoryAttributes(categoryId);
+            }
+        });
     </script>
 @endsection

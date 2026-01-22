@@ -86,6 +86,8 @@ return [
         'showing_results' => 'عرض :from إلى :to من :total نتيجة',
         'all' => 'الكل',
         'all_categories' => 'جميع الفئات',
+        'select_governorate' => 'اختر المحافظة',
+        'all_governorates' => 'جميع المحافظات',
         'operation_type' => 'نوع العملية',
         'category' => 'الفئة',
         'price_range' => 'نطاق السعر',

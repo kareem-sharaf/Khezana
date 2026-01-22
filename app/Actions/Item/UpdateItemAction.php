@@ -76,6 +76,8 @@ class UpdateItemAction
                     : $item->operation_type,
                 'title' => $data['title'] ?? $item->title,
                 'description' => $data['description'] ?? $item->description,
+                'governorate' => $data['governorate'] ?? $item->governorate,
+                'condition' => $data['condition'] ?? $item->condition,
                 'price' => $data['price'] ?? $item->price,
                 'deposit_amount' => $data['deposit_amount'] ?? $item->deposit_amount,
                 'is_available' => $isAvailable,

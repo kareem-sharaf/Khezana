@@ -30,6 +30,7 @@ class ItemController extends Controller
             'search' => $request->get('search'),
             'operation_type' => $request->get('operation_type'),
             'category_id' => $request->get('category_id') ? (int) $request->get('category_id') : null,
+            'condition' => $request->get('condition'),
             'price_min' => $request->get('price_min') ? (float) $request->get('price_min') : null,
             'price_max' => $request->get('price_max') ? (float) $request->get('price_max') : null,
         ];

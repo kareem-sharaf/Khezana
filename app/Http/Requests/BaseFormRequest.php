@@ -1,9 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Base Form Request
+ * 
+ * Provides common functionality for all form requests in the application
+ */
 abstract class BaseFormRequest extends FormRequest
 {
     /**

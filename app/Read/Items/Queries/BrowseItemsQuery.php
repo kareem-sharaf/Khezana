@@ -42,6 +42,10 @@ class BrowseItemsQuery
             $query->where('category_id', (int) $filters['category_id']);
         }
 
+        if (isset($filters['condition']) && $filters['condition']) {
+            $query->where('condition', $filters['condition']);
+        }
+
         if (isset($filters['price_min']) && $filters['price_min']) {
             $query->where('price', '>=', (float) $filters['price_min']);
         }
@@ -59,7 +63,7 @@ class BrowseItemsQuery
             default => $query->orderBy('created_at', 'desc'),
         };
 
-        $query->select('id', 'title', 'slug', 'description', 'price', 'operation_type', 'availability_status', 'user_id', 'category_id', 'created_at', 'updated_at');
+        $query->select('id', 'title', 'slug', 'description', 'condition', 'price', 'operation_type', 'availability_status', 'user_id', 'category_id', 'created_at', 'updated_at');
 
         $query->with([
             'user:id,name',

@@ -16,8 +16,16 @@
                     @endif
                 </a>
 
+                <!-- Mobile Menu Toggle -->
+                <input type="checkbox" id="mobileMenuToggle" class="khezana-mobile-menu-checkbox">
+                <label for="mobileMenuToggle" class="khezana-mobile-menu-toggle" aria-label="{{ __('common.ui.menu') }}">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </label>
+
                 <!-- Navigation Links -->
-                <div class="khezana-nav-links" aria-label="التنقل الرئيسي">
+                <div class="khezana-nav-links" aria-label="التنقل الرئيسي" id="navLinks">
                     <!-- Offers Dropdown -->
                     <div class="khezana-nav-dropdown">
                         <a href="{{ route('public.items.index') }}" class="khezana-nav-link khezana-nav-link-dropdown">

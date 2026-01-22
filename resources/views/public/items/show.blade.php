@@ -128,6 +128,14 @@
                         </div>
                     @endif
 
+                    <!-- Condition -->
+                    @if ($item->condition)
+                        <div class="khezana-item-meta">
+                            <span class="khezana-meta-label">🏷️ {{ __('items.fields.condition') }}:</span>
+                            <span class="khezana-meta-value">{{ __('items.conditions.' . $item->condition) }}</span>
+                        </div>
+                    @endif
+
                     <!-- Attributes -->
                     @if ($item->attributes->count() > 0)
                         <div class="khezana-item-attributes">

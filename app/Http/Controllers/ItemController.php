@@ -8,6 +8,8 @@ use App\Actions\Item\CreateItemAction;
 use App\Actions\Item\DeleteItemAction;
 use App\Actions\Item\SubmitItemForApprovalAction;
 use App\Actions\Item\UpdateItemAction;
+use App\Http\Requests\StoreItemRequest;
+use App\Http\Requests\UpdateItemRequest;
 use App\Models\Category;
 use App\Models\Item;
 use Illuminate\Http\RedirectResponse;
@@ -35,15 +37,59 @@ class ItemController extends Controller
     /**
      * Display a listing of user's items
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $items = Item::where('user_id', Auth::id())
-            ->with(['category', 'images', 'approvalRelation'])
-            ->latest()
-            ->paginate(12);
-        // Note: Soft deleted items are shown to their owners for restoration purposes
+        $filters = [
+            'search' => $request->get('search'),
+            'operation_type' => $request->get('operation_type'),
+            'category_id' => $request->get('category_id') ? (int) $request->get('category_id') : null,
+            'approval_status' => $request->get('approval_status'),
+        ];
 
-        return view('items.index', compact('items'));
+        $sort = $request->get('sort', 'created_at_desc');
+        $page = max(1, (int) $request->get('page', 1));
+        $perPage = min(50, max(1, (int) $request->get('per_page', 12)));
+
+        $query = Item::where('user_id', Auth::id())
+            ->with(['category', 'images', 'approvalRelation']);
+
+        // Apply filters
+        if (isset($filters['search']) && $filters['search']) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if (isset($filters['operation_type']) && $filters['operation_type']) {
+            $query->where('operation_type', $filters['operation_type']);
+        }
+
+        if (isset($filters['category_id']) && $filters['category_id']) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (isset($filters['approval_status']) && $filters['approval_status']) {
+            $query->whereHas('approvalRelation', fn($q) => $q->where('status', $filters['approval_status']));
+        }
+
+        // Apply sorting
+        match ($sort) {
+            'price_asc' => $query->orderBy('price', 'asc'),
+            'price_desc' => $query->orderBy('price', 'desc'),
+            'title_asc' => $query->orderBy('title', 'asc'),
+            'title_desc' => $query->orderBy('title', 'desc'),
+            'created_at_asc' => $query->orderBy('created_at', 'asc'),
+            default => $query->orderBy('created_at', 'desc'),
+        };
+
+        $items = $query->paginate($perPage, ['*'], 'page', $page);
+        $items->appends($request->query());
+
+        $categories = Category::active()->get();
+
+        return view('items.index', compact('items', 'filters', 'sort', 'categories'));
     }
 
     /**
@@ -58,22 +104,11 @@ class ItemController extends Controller
     /**
      * Store a newly created item
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreItemRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'operation_type' => 'required|in:sell,rent,donate',
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'nullable|numeric|min:0',
-            'deposit_amount' => 'nullable|numeric|min:0',
-            'is_available' => 'boolean',
-            'attributes' => 'nullable|array',
-            'images' => 'nullable|array',
-            'images.*' => 'string',
-        ]);
-
         try {
+            $validated = $request->validated();
+            
             $item = $this->createItemAction->execute(
                 $validated,
                 Auth::user(),
@@ -117,24 +152,13 @@ class ItemController extends Controller
     /**
      * Update the specified item
      */
-    public function update(Request $request, Item $item): RedirectResponse
+    public function update(UpdateItemRequest $request, Item $item): RedirectResponse
     {
         $this->authorize('update', $item);
 
-        $validated = $request->validate([
-            'category_id' => 'sometimes|exists:categories,id',
-            'operation_type' => 'sometimes|in:sell,rent,donate',
-            'title' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'nullable|numeric|min:0',
-            'deposit_amount' => 'nullable|numeric|min:0',
-            'is_available' => 'boolean',
-            'attributes' => 'nullable|array',
-            'images' => 'nullable|array',
-            'images.*' => 'string',
-        ]);
-
         try {
+            $validated = $request->validated();
+            
             $item = $this->updateItemAction->execute(
                 $item,
                 $validated,

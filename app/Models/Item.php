@@ -19,7 +19,7 @@ use Illuminate\Support\Str;
 
 /**
  * Item Model
- * 
+ *
  * Represents a unified item that can be sold, rented, or donated.
  * Uses:
  * - HasCategory trait for category relationship
@@ -37,6 +37,8 @@ class Item extends Model implements Approvable
         'title',
         'slug',
         'description',
+        'governorate',
+        'condition',
         'price',
         'deposit_amount',
         'is_available',
@@ -164,7 +166,7 @@ class Item extends Model implements Approvable
             throw new \Exception('Item must be approved to receive offers.');
         }
 
-        $isAvailable = $this->availability_status 
+        $isAvailable = $this->availability_status
             ? $this->availability_status === ItemAvailability::AVAILABLE
             : $this->is_available;
 
