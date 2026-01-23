@@ -270,17 +270,279 @@
     display: none;
 }
 
+/* New BEM-based Item Card Component (v2.0) */
+/* Base component - maintains compatibility with old classes */
+.khezana-item-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--khezana-border);
+    transition: var(--khezana-transition);
+    contain: layout style paint;
+    will-change: transform;
+}
+
+.khezana-item-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Variants */
+.khezana-item-card--public {
+    /* Public variant specific styles */
+}
+
+.khezana-item-card--user {
+    /* User variant specific styles */
+}
+
+.khezana-item-card--compact {
+    /* Compact variant - minimal padding */
+}
+
+.khezana-item-card--compact .khezana-item-card__content {
+    padding: var(--khezana-spacing-sm);
+}
+
+.khezana-item-card--compact .khezana-item-card__meta {
+    display: none;
+}
+
+/* Image Section (BEM) */
+.khezana-item-card__image {
+    position: relative;
+    width: 100%;
+    padding-top: 75%;
+    overflow: hidden;
+    background: #f3f4f6;
+}
+
+.khezana-item-card__image-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.khezana-item-card__image-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+}
+
+.khezana-item-card__image-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.khezana-item-card:hover .khezana-item-card__image-element {
+    transform: scale(1.05);
+}
+
+.khezana-item-card__image-element.loaded {
+    opacity: 1;
+}
+
+.khezana-item-card__image-skeleton {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: khezana-skeleton-shimmer 1.5s infinite;
+    display: block;
+    opacity: 1;
+}
+
+.khezana-item-card__image-skeleton[style*="display: none"] {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+.khezana-item-card__image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: #f3f4f6;
+    color: #9ca3af;
+}
+
+.khezana-item-card__placeholder-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--khezana-spacing-xs);
+}
+
+.khezana-item-card__placeholder-text {
+    font-size: var(--khezana-font-size-sm);
+    color: #6b7280;
+}
+
+.khezana-item-card__image-indicator {
+    position: absolute;
+    top: var(--khezana-spacing-sm);
+    left: var(--khezana-spacing-sm);
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--khezana-white);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-xs);
+    font-weight: 600;
+    z-index: 2;
+}
+
+.khezana-item-card__image-count {
+    /* Inherits from parent */
+}
+
+.khezana-item-card__image-preview {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.khezana-item-card:hover .khezana-item-card__image-preview {
+    opacity: 1;
+}
+
+.khezana-item-card__preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Content Section (BEM) */
+.khezana-item-card__content {
+    padding: var(--khezana-spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-sm);
+    flex: 1;
+}
+
+.khezana-item-card__title {
+    margin: 0;
+}
+
+.khezana-item-card__title-link {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 600;
+    color: var(--khezana-text);
+    text-decoration: none;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s ease;
+}
+
+.khezana-item-card__title-link:hover {
+    color: var(--khezana-primary);
+}
+
+.khezana-item-card__price-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--khezana-spacing-sm);
+    margin-top: var(--khezana-spacing-xs);
+}
+
+.khezana-item-card__price {
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 700;
+    color: var(--khezana-primary);
+}
+
+.khezana-item-card__price--free {
+    color: var(--khezana-success);
+}
+
+.khezana-item-card__price-unit {
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 400;
+    color: var(--khezana-text-light);
+    margin-right: var(--khezana-spacing-xs);
+}
+
+.khezana-item-card__badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.khezana-item-card__badge--sell {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+}
+
+.khezana-item-card__badge--rent {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+}
+
+.khezana-item-card__badge--donate {
+    background: rgba(236, 72, 153, 0.1);
+    color: #db2777;
+}
+
+.khezana-item-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--khezana-spacing-sm);
+    margin-top: var(--khezana-spacing-xs);
+}
+
+.khezana-item-card__meta-item {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+}
+
+.khezana-item-card__actions {
+    padding: var(--khezana-spacing-sm) var(--khezana-spacing-md);
+    border-top: 1px solid var(--khezana-border);
+    display: none;
+}
+
+.khezana-item-card--user .khezana-item-card__actions {
+    display: flex;
+    gap: var(--khezana-spacing-sm);
+    justify-content: flex-end;
+}
+
+/* Compatibility: Old classes still work (backward compatibility) */
+/* These classes are kept for existing code that might use them */
+
 @media (max-width: 640px) {
     .khezana-items-grid-modern {
         grid-template-columns: repeat(2, 1fr);
         gap: var(--khezana-spacing-sm);
     }
 
-    .khezana-item-content-section {
+    .khezana-item-content-section,
+    .khezana-item-card__content {
         padding: var(--khezana-spacing-sm);
     }
 
-    .khezana-item-price {
+    .khezana-item-price,
+    .khezana-item-card__price {
         font-size: var(--khezana-font-size-lg);
     }
 }
