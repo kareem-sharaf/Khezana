@@ -7,24 +7,37 @@ namespace App\Read\Items\Queries;
 use App\Enums\ApprovalStatus;
 use App\Enums\ItemAvailability;
 use App\Models\Item;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class BrowseItemsQuery
 {
-    public function execute(array $filters = [], ?string $sort = null, int $page = 1, int $perPage = 20): LengthAwarePaginator
+    public function execute(array $filters = [], ?string $sort = null, int $page = 1, int $perPage = 20, ?User $user = null): LengthAwarePaginator
     {
         $startTime = microtime(true);
         
         $query = Item::query()
-            ->whereHas('approvalRelation', fn($q) => $q->where('status', ApprovalStatus::APPROVED->value))
-            ->where(function($q) {
-                $q->where('availability_status', ItemAvailability::AVAILABLE->value)
-                  ->orWhere('is_available', true);
-            })
-            ->whereNull('deleted_at')
-            ->whereNull('archived_at');
+            ->where(function($q) use ($user) {
+                // Public items: only approved and available
+                $q->whereHas('approvalRelation', fn($a) => $a->where('status', ApprovalStatus::APPROVED->value))
+                  ->where(function($av) {
+                      $av->where('availability_status', ItemAvailability::AVAILABLE->value)
+                        ->orWhere('is_available', true);
+                  })
+                  ->whereNull('deleted_at')
+                  ->whereNull('archived_at');
+                
+                // If user is authenticated, also show their own items (regardless of approval status)
+                if ($user) {
+                    $q->orWhere(function($own) use ($user) {
+                        $own->where('user_id', $user->id)
+                            ->whereNull('deleted_at')
+                            ->whereNull('archived_at');
+                    });
+                }
+            });
 
         if (isset($filters['search']) && $filters['search']) {
             $search = $filters['search'];
@@ -68,7 +81,7 @@ class BrowseItemsQuery
         $query->with([
             'user:id,name',
             'category:id,name,slug',
-            'images' => fn($q) => $q->select('id', 'item_id', 'path', 'is_primary')
+            'images' => fn($q) => $q->select('id', 'item_id', 'path', 'disk', 'is_primary')
                                    ->orderBy('is_primary', 'desc')
                                    ->limit(1),
         ]);

@@ -3,6 +3,39 @@
 // Khezana Project - Web Routes
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+
+// Serve storage files (fallback route if .htaccess doesn't work)
+// This route only serves files from storage/app/public directory
+Route::get('/storage/{path}', function (string $path) {
+    // Security: Prevent directory traversal
+    $path = str_replace('..', '', $path);
+    $path = ltrim($path, '/');
+    
+    $filePath = storage_path('app/public/' . $path);
+    $storagePath = storage_path('app/public');
+    
+    // Security: Ensure file is within storage/app/public directory
+    $realFilePath = realpath($filePath);
+    $realStoragePath = realpath($storagePath);
+    
+    if (!$realFilePath || !$realStoragePath || !str_starts_with($realFilePath, $realStoragePath)) {
+        abort(404);
+    }
+    
+    if (!file_exists($realFilePath) || !is_file($realFilePath)) {
+        abort(404);
+    }
+    
+    $mimeType = mime_content_type($realFilePath) ?: 'application/octet-stream';
+    $fileSize = filesize($realFilePath);
+    
+    return response()->file($realFilePath, [
+        'Content-Type' => $mimeType,
+        'Content-Length' => $fileSize,
+        'Cache-Control' => 'public, max-age=31536000',
+    ]);
+})->where('path', '.*')->name('storage.serve');
 
 // Public Routes (No Authentication Required) - Must be before auth routes
 Route::middleware(['cache.headers:300', 'throttle:60,1'])->group(function () {

@@ -26,12 +26,12 @@ class ItemCardHelper
                 'id' => $item->id,
                 'slug' => $item->slug ?? null
             ]),
-            'primaryImagePath' => $item->primaryImage->path ?? null,
+            'primaryImagePath' => $item->primaryImage ? self::getImageUrl($item->primaryImage) : null,
             'images' => $item->images ?? collect(),
             'title' => $item->title ?? '',
-            'price' => $item->price ?? null,
+            'price' => $item->price ? (is_numeric($item->price) ? (float) $item->price : null) : null,
             'displayPrice' => $item->price 
-                ? price_with_fee((float) $item->price, $item->operationType ?? 'sell')
+                ? (is_numeric($item->price) ? (float) price_with_fee((float) $item->price, $item->operationType ?? 'sell') : null)
                 : null,
             'operationType' => $item->operationType ?? 'sell',
             'condition' => $item->condition ?? null,
@@ -58,12 +58,12 @@ class ItemCardHelper
             'itemId' => $item->id,
             'variant' => $overrides['variant'] ?? 'user',
             'url' => route('items.show', $item),
-            'primaryImagePath' => $primaryImage->path ?? null,
+            'primaryImagePath' => $primaryImage ? self::getImageUrl($primaryImage) : null,
             'images' => $item->images ?? collect(),
             'title' => $item->title ?? '',
-            'price' => $item->price ?? null,
+            'price' => $item->price ? (is_numeric($item->price) ? (float) $item->price : null) : null,
             'displayPrice' => $item->price 
-                ? price_with_fee((float) $item->price, $item->operation_type->value ?? 'sell')
+                ? (is_numeric($item->price) ? (float) price_with_fee((float) $item->price, $item->operation_type->value ?? 'sell') : null)
                 : null,
             'operationType' => $item->operation_type->value ?? 'sell',
             'condition' => $item->condition ?? null,
@@ -91,5 +91,25 @@ class ItemCardHelper
             'showMeta' => false,
             'showImagePreview' => false,
         ], $overrides);
+    }
+
+    /**
+     * Get image URL from ItemImage or ImageReadModel
+     */
+    private static function getImageUrl($image): ?string
+    {
+        if (!$image) {
+            return null;
+        }
+
+        $path = $image->path ?? null;
+        $disk = $image->disk ?? 'public';
+
+        if (!$path) {
+            return null;
+        }
+
+        // Use asset() for better compatibility with different hosts
+        return asset('storage/' . $path);
     }
 }

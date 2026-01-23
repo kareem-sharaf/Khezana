@@ -21,6 +21,7 @@
                         alt="{{ $title }}"
                         class="khezana-item-card__image-element"
                         loading="lazy"
+                        decoding="async"
                         data-primary-image="{{ $getImageUrl }}"
                         onload="this.classList.add('loaded'); const skeleton = document.getElementById('skeleton-{{ $itemId }}'); if(skeleton) { skeleton.style.display = 'none'; }"
                         onerror="this.classList.add('loaded'); const skeleton = document.getElementById('skeleton-{{ $itemId }}'); if(skeleton) { skeleton.style.display = 'none'; }">

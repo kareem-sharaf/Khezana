@@ -23,11 +23,21 @@ class ItemDeletionService
 {
     /**
      * Check if a regular user can delete an item
+     * 
+     * Rules:
+     * - Can delete only if NOT approved (pending, rejected, or draft)
+     * - Cannot delete if approved (even if available)
+     * - Cannot delete if has active relationships
      */
     public function canUserDelete(User $user, Item $item): bool
     {
         // Must be the owner
         if ($user->id !== $item->user_id) {
+            return false;
+        }
+
+        // Cannot delete if item is approved
+        if ($item->isApproved()) {
             return false;
         }
 
@@ -39,23 +49,13 @@ class ItemDeletionService
         // Check approval status
         $approvalStatus = $item->approvalRelation?->status;
 
-        // Can delete if: Draft, Pending, Rejected
+        // Can delete if: Pending, Rejected, or Draft (null)
         if (in_array($approvalStatus, [
             ApprovalStatus::PENDING,
             ApprovalStatus::REJECTED,
+            null, // Draft (no approval record yet)
         ])) {
             return true;
-        }
-
-        // Can delete if Approved + Available + No active relationships
-        if ($approvalStatus === ApprovalStatus::APPROVED) {
-            $isAvailable = $item->availability_status
-                ? $item->availability_status === ItemAvailability::AVAILABLE
-                : $item->is_available;
-
-            if ($isAvailable && !$this->hasActiveRelationships($item)) {
-                return true;
-            }
         }
 
         return false;
@@ -98,20 +98,13 @@ class ItemDeletionService
             return __('items.deletion.not_owner');
         }
 
-        if ($this->hasActiveRelationships($item)) {
-            return __('items.deletion.has_active_relationships');
+        // Cannot delete if approved
+        if ($item->isApproved()) {
+            return __('items.deletion.cannot_delete_approved');
         }
 
-        $approvalStatus = $item->approvalRelation?->status;
-
-        if ($approvalStatus === ApprovalStatus::APPROVED) {
-            $isAvailable = $item->availability_status
-                ? $item->availability_status === ItemAvailability::AVAILABLE
-                : $item->is_available;
-
-            if (!$isAvailable) {
-                return __('items.deletion.not_available');
-            }
+        if ($this->hasActiveRelationships($item)) {
+            return __('items.deletion.has_active_relationships');
         }
 
         return null;

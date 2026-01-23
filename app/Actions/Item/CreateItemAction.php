@@ -9,7 +9,10 @@ use App\Enums\ItemAvailability;
 use App\Enums\OperationType;
 use App\Models\Item;
 use App\Models\User;
+use App\Services\Cache\CacheService;
+use App\Services\ImageOptimizationService;
 use App\Services\ItemService;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -19,7 +22,9 @@ class CreateItemAction
 {
     public function __construct(
         private readonly ItemService $itemService,
-        private readonly SubmitForApprovalAction $submitForApprovalAction
+        private readonly SubmitForApprovalAction $submitForApprovalAction,
+        private readonly ImageOptimizationService $imageService,
+        private readonly CacheService $cacheService
     ) {
     }
 
@@ -29,7 +34,7 @@ class CreateItemAction
      * @param array $data Item data
      * @param User $user The user creating the item
      * @param array|null $attributes Dynamic attributes
-     * @param array|null $images Image paths
+     * @param array|null $images UploadedFile instances
      * @return Item
      * @throws \Exception If validation fails
      */
@@ -62,13 +67,16 @@ class CreateItemAction
                 $item->setAttributeValues($attributes);
             }
 
-            // Attach images if provided
-            if ($images) {
+            // Process and attach images if provided
+            if ($images && is_array($images)) {
                 $this->attachImages($item, $images);
             }
 
             // Create approval automatically
             $this->submitForApprovalAction->execute($item, $user);
+
+            // Invalidate cache to show new item immediately
+            $this->cacheService->invalidateItem($item->id);
 
             return $item->fresh(['user', 'category', 'images']);
         });
@@ -76,16 +84,39 @@ class CreateItemAction
 
     /**
      * Attach images to item
+     * 
+     * @param Item $item The item to attach images to
+     * @param array $images Array of UploadedFile instances
      */
     private function attachImages(Item $item, array $images): void
     {
         $isFirst = true;
-        foreach ($images as $imagePath) {
-            $item->images()->create([
-                'path' => $imagePath,
-                'is_primary' => $isFirst,
-            ]);
-            $isFirst = false;
+        $disk = 'public'; // Default disk, can be configured via env
+        
+        foreach ($images as $file) {
+            if (!($file instanceof UploadedFile)) {
+                continue;
+            }
+            
+            try {
+                // Process and store image using ImageOptimizationService
+                $imageData = $this->imageService->processAndStore($file, $item->id, $disk);
+                
+                // Save image record in database
+                $item->images()->create([
+                    'path' => $imageData['path'],
+                    'disk' => $imageData['disk'],
+                    'is_primary' => $isFirst,
+                ]);
+                
+                $isFirst = false;
+            } catch (\Exception $e) {
+                // Log error but continue with other images
+                \Illuminate\Support\Facades\Log::error('Failed to process image', [
+                    'item_id' => $item->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'المنتجات',
-    'singular' => 'منتج',
-    'plural' => 'منتجات',
+    'title' => 'الإعلانات',
+    'singular' => 'إعلان',
+    'plural' => 'إعلانات',
 
     'fields' => [
         'title' => 'العنوان',
@@ -19,20 +19,20 @@ return [
     'types' => [
         'sell' => 'بيع',
         'rent' => 'إيجار',
-        'donate' => 'مشاركة',
+        'donate' => 'هدية',
     ],
 
     'messages' => [
-        'created' => 'تم إنشاء المنتج بنجاح',
-        'updated' => 'تم تحديث المنتج بنجاح',
-        'deleted' => 'تم حذف المنتج بنجاح',
+        'created' => 'تم إنشاء الإعلان بنجاح',
+        'updated' => 'تم تحديث الإعلان بنجاح',
+        'deleted' => 'تم حذف الإعلان بنجاح',
         'category_required' => 'يجب اختيار الفئة',
         'attributes_required' => 'يجب ملء جميع الخصائص المطلوبة',
     ],
 
     'placeholders' => [
-        'title' => 'أدخل عنوان المنتج',
-        'description' => 'أدخل وصف المنتج',
+        'title' => 'أدخل عنوان الإعلان',
+        'description' => 'أدخل وصف الإعلان',
         'price' => 'أدخل السعر',
         'category_id' => 'اختر الفئة',
     ],

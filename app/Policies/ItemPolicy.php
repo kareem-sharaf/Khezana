@@ -45,20 +45,34 @@ class ItemPolicy
 
     /**
      * Determine if the user can update the item.
+     * 
+     * Rules:
+     * - Regular users: Can update own items only if NOT approved (pending, rejected, or draft)
+     * - Super admin: Can update any item
+     * - Regular admin: Cannot edit item content (only approve/reject)
      */
     public function update(User $user, Item $item): bool
     {
-        // User can update their own items
-        if ($user->id === $item->user_id) {
-            return true;
-        }
-
         // Super admin can update any item
         if ($user->hasRole('super_admin')) {
             return true;
         }
 
         // Regular admin cannot edit item content
+        if ($user->hasRole('admin')) {
+            return false;
+        }
+
+        // User can update their own items only if NOT approved
+        if ($user->id === $item->user_id) {
+            // Cannot update if item is approved
+            if ($item->isApproved()) {
+                return false;
+            }
+            // Can update if pending, rejected, or draft
+            return true;
+        }
+
         return false;
     }
 

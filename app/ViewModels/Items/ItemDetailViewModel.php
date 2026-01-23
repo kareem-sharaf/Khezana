@@ -72,6 +72,20 @@ class ItemDetailViewModel
      */
     public static function fromItem($item, string $type = 'user'): self
     {
+        // Get user name for public items
+        $userName = null;
+        if ($type === 'public') {
+            if ($item instanceof \App\Read\Items\Models\ItemReadModel) {
+                $userName = $item->user?->name ?? null;
+            } elseif (isset($item->user)) {
+                if ($item->user instanceof \App\Read\Shared\Models\UserReadModel) {
+                    $userName = $item->user->name;
+                } elseif (is_object($item->user) && isset($item->user->name)) {
+                    $userName = $item->user->name;
+                }
+            }
+        }
+
         $operationType = $type === 'public'
             ? ($item->operationType ?? 'sell')
             : ($item->operation_type->value ?? 'sell');
@@ -91,9 +105,22 @@ class ItemDetailViewModel
             ? ($item->images ?? collect())
             : ($item->images ?? collect());
 
-        $primaryImage = $type === 'public'
-            ? ($item->primaryImage ?? null)
-            : ($images->where('is_primary', true)->first() ?? $images->first());
+        // Get primary image - handle both ItemReadModel and Item model
+        $primaryImage = null;
+        if ($type === 'public') {
+            // For ItemReadModel, primaryImage is ImageReadModel
+            if ($item instanceof \App\Read\Items\Models\ItemReadModel) {
+                $primaryImage = $item->primaryImage;
+            } elseif (isset($item->primaryImage)) {
+                $primaryImage = $item->primaryImage;
+            } else {
+                // Fallback: get first image from images collection
+                $primaryImage = $images->first();
+            }
+        } else {
+            // For Item model, get primary from images collection
+            $primaryImage = $images->where('is_primary', true)->first() ?? $images->first();
+        }
 
         $approvalRelation = $type === 'user' ? ($item->approvalRelation ?? null) : null;
         $approvalStatus = $approvalRelation?->status?->value ?? null;
@@ -126,8 +153,11 @@ class ItemDetailViewModel
         $isPending = $type === 'user' && method_exists($item, 'isPending') ? $item->isPending() : ($approvalStatus === 'pending');
         $isApproved = $type === 'user' && method_exists($item, 'isApproved') ? $item->isApproved() : ($approvalStatus === 'approved');
 
-        $canEdit = $type === 'user' && !$isPending;
-        $canDelete = $type === 'user';
+        // Can edit only if NOT approved and NOT pending (or if pending, can edit before approval)
+        // Actually: can edit if pending or rejected, but NOT if approved
+        $canEdit = $type === 'user' && !$isApproved;
+        // Can delete only if NOT approved (regular users cannot delete approved items)
+        $canDelete = $type === 'user' && !$isApproved;
         $canSubmitForApproval = $type === 'user' && !$isPending && !$isApproved;
 
         return new self(
@@ -158,19 +188,41 @@ class ItemDetailViewModel
             showPriceUnit: $isRent && $displayPrice !== null,
             images: $images,
             primaryImage: $primaryImage,
-            hasImages: $images->count() > 0,
-            hasMultipleImages: $images->count() > 1,
             imageUrls: $images->map(function ($img) {
-                $path = $img->path ?? null;
+                // Handle both ImageReadModel and ItemImage models
+                $path = null;
+                $disk = 'public';
+                $isPrimary = false;
+                
+                if ($img instanceof \App\Read\Shared\Models\ImageReadModel) {
+                    $path = $img->path ?? null;
+                    $disk = $img->disk ?? 'public';
+                    $isPrimary = $img->isPrimary ?? false;
+                } elseif (is_object($img)) {
+                    $path = $img->path ?? null;
+                    $disk = $img->disk ?? 'public';
+                    $isPrimary = $img->is_primary ?? false;
+                } else {
+                    return null;
+                }
+                
                 if (!$path) {
                     return null;
                 }
+                
+                // Generate URL using Storage facade
+                // Use asset() for better compatibility with different hosts
+                $url = asset('storage/' . $path);
+                
                 return [
                     'path' => $path,
-                    'url' => asset('storage/' . $path),
-                    'isPrimary' => $img->is_primary ?? false,
+                    'disk' => $disk,
+                    'url' => $url,
+                    'isPrimary' => $isPrimary,
                 ];
             })->filter()->values()->toArray(),
+            hasImages: $images->count() > 0,
+            hasMultipleImages: $images->count() > 1,
             category: $type === 'public'
                 ? ($item->category?->name ?? null)
                 : ($item->category?->name ?? null),
@@ -214,7 +266,7 @@ class ItemDetailViewModel
             editUrl: $type === 'user' ? route('items.edit', $item) : '#',
             deleteUrl: $type === 'user' ? route('items.destroy', $item) : '#',
             submitForApprovalUrl: $type === 'user' ? route('items.submit-for-approval', $item) : '#',
-            userName: $type === 'public' ? ($item->user?->name ?? null) : null,
+            userName: $userName,
         );
     }
 
@@ -231,7 +283,19 @@ class ItemDetailViewModel
             // Handle different attribute structures
             if (is_object($attribute)) {
                 $name = $attribute->name ?? $attribute->attribute->name ?? '';
-                $value = $attribute->value ?? $attribute->formattedValue ?? '';
+                
+                // Use formattedValue if available (already processed by AttributeReadModel)
+                // Otherwise use value and format it
+                if (isset($attribute->formattedValue) && $attribute->formattedValue !== '') {
+                    $value = $attribute->formattedValue;
+                } else {
+                    $value = $attribute->value ?? '';
+                    // If it's an AttributeReadModel, formattedValue should already be set
+                    // But if not, we need to format it here
+                    if ($attribute instanceof \App\Read\Shared\Models\AttributeReadModel) {
+                        $value = $attribute->formattedValue;
+                    }
+                }
 
                 // Translate attribute name
                 $translatedName = translate_attribute_name($name);

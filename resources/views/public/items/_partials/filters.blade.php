@@ -171,32 +171,18 @@
                 <label class="khezana-filter-group__label" for="filter_category">
                     {{ __('items.fields.category') }}
                 </label>
-                <select 
-                    name="category_id" 
-                    id="filter_category" 
-                    class="khezana-filter-group__select"
-                    onchange="this.form.submit()"
-                >
-                    <option value="">{{ __('common.ui.all_categories') }}</option>
-                    @foreach($categories as $category)
-                        <option 
-                            value="{{ $category->id }}"
-                            {{ (isset($currentFilters['category_id']) && $currentFilters['category_id'] == $category->id) ? 'selected' : '' }}
-                        >
-                            {{ $category->name }}
-                        </option>
-                        @if($category->children->count() > 0)
-                            @foreach($category->children as $child)
-                                <option 
-                                    value="{{ $child->id }}"
-                                    {{ (isset($currentFilters['category_id']) && $currentFilters['category_id'] == $child->id) ? 'selected' : '' }}
-                                >
-                                    &nbsp;&nbsp;{{ $child->name }}
-                                </option>
-                            @endforeach
-                        @endif
-                    @endforeach
-                </select>
+                @include('components.category-select', [
+                    'categories' => $categories,
+                    'name' => 'category_id',
+                    'id' => 'filter_category',
+                    'selected' => $currentFilters['category_id'] ?? null,
+                    'required' => false,
+                    'showAllOption' => true,
+                    'allOptionLabel' => __('common.ui.all_categories'),
+                    'attributes' => false,
+                    'onchange' => 'this.form.submit()',
+                    'class' => 'khezana-filter-group__select',
+                ])
             </div>
 
             {{-- Condition Filter --}}

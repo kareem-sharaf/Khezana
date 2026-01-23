@@ -1,0 +1,484 @@
+/**
+ * Khezana Design System - Advanced Image Gallery Component
+ * World-class image gallery with hover zoom, magnifier, and smooth transitions
+ * Single Responsibility: Professional image gallery component
+ */
+
+/* ============================================
+   GALLERY CONTAINER
+   ============================================ */
+.khezana-image-gallery {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    gap: var(--khezana-spacing-md);
+    width: 100%;
+}
+
+/* ============================================
+   HERO VIEWPORT (Golden Ratio 1.618:1)
+   ============================================ */
+.khezana-image-gallery__hero {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    padding-top: 61.8%; /* Golden Ratio: 1 / 1.618 ≈ 0.618 */
+    background: var(--khezana-bg);
+    border-radius: var(--khezana-radius-xl);
+    overflow: hidden;
+    cursor: zoom-in;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.khezana-image-gallery__hero:hover {
+    transform: scale(1.01);
+}
+
+/* Main Image Container */
+.khezana-image-gallery__hero-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Main Image with Smooth Transitions */
+.khezana-image-gallery__hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+}
+
+/* Image States */
+.khezana-image-gallery__hero-img--fade-out {
+    opacity: 0;
+    transform: scale(0.98);
+}
+
+.khezana-image-gallery__hero-img--fade-in {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ============================================
+   HOVER ZOOM EFFECT
+   ============================================ */
+.khezana-image-gallery__hero--zoom-enabled {
+    cursor: zoom-in;
+}
+
+.khezana-image-gallery__hero--zoom-enabled:hover .khezana-image-gallery__hero-img {
+    transform: scale(1.1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   MAGNIFIER LENS
+   ============================================ */
+.khezana-image-gallery__magnifier {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 3px solid var(--khezana-white);
+    border-radius: 50%;
+    pointer-events: none;
+    display: none;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    background: var(--khezana-white);
+}
+
+.khezana-image-gallery__magnifier--active {
+    display: block;
+}
+
+.khezana-image-gallery__magnifier-img {
+    width: 300%;
+    height: 300%;
+    object-fit: none;
+    position: absolute;
+    transform-origin: 0 0;
+}
+
+/* ============================================
+   THUMBNAILS - VERTICAL SIDEBAR
+   ============================================ */
+.khezana-image-gallery__thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-xs);
+    width: 100px;
+    min-width: 100px;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--khezana-spacing-xs);
+    scrollbar-width: thin;
+    scrollbar-color: var(--khezana-border) transparent;
+}
+
+.khezana-image-gallery__thumbnails::-webkit-scrollbar {
+    width: 4px;
+}
+
+.khezana-image-gallery__thumbnails::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.khezana-image-gallery__thumbnails::-webkit-scrollbar-thumb {
+    background: var(--khezana-border);
+    border-radius: 2px;
+}
+
+.khezana-image-gallery__thumbnails::-webkit-scrollbar-thumb:hover {
+    background: var(--khezana-text-light);
+}
+
+/* Thumbnail Item */
+.khezana-image-gallery__thumbnail {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* Square */
+    background: var(--khezana-bg);
+    border-radius: var(--khezana-radius);
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.7;
+}
+
+.khezana-image-gallery__thumbnail:hover {
+    opacity: 1;
+    border-color: var(--khezana-primary);
+    transform: scale(1.05);
+}
+
+.khezana-image-gallery__thumbnail--active {
+    opacity: 1;
+    border-color: var(--khezana-primary);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.khezana-image-gallery__thumbnail img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.khezana-image-gallery__thumbnail:hover img {
+    transform: scale(1.1);
+}
+
+/* Thumbnail Preview Overlay */
+.khezana-image-gallery__thumbnail-preview {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.2s ease;
+    pointer-events: none;
+}
+
+.khezana-image-gallery__thumbnail:hover .khezana-image-gallery__thumbnail-preview {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Thumbnail Type Icons */
+.khezana-image-gallery__thumbnail-icon {
+    position: absolute;
+    top: var(--khezana-spacing-xs);
+    inset-inline-end: var(--khezana-spacing-xs);
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--khezana-white);
+    font-size: 10px;
+    z-index: 5;
+}
+
+/* ============================================
+   NAVIGATION ARROWS
+   ============================================ */
+.khezana-image-gallery__navigation {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 var(--khezana-spacing-md);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.khezana-image-gallery__nav-btn {
+    pointer-events: all;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--khezana-text);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.khezana-image-gallery__nav-btn:hover {
+    background: var(--khezana-white);
+    transform: scale(1.15);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.khezana-image-gallery__nav-btn:active {
+    transform: scale(1.05);
+}
+
+.khezana-image-gallery__nav-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2.5;
+}
+
+.khezana-image-gallery__nav-btn--prev {
+    inset-inline-start: var(--khezana-spacing-md);
+}
+
+.khezana-image-gallery__nav-btn--next {
+    inset-inline-end: var(--khezana-spacing-md);
+}
+
+/* ============================================
+   ZOOM TRIGGER BUTTON
+   ============================================ */
+.khezana-image-gallery__zoom-trigger {
+    position: absolute;
+    top: var(--khezana-spacing-md);
+    inset-inline-end: var(--khezana-spacing-md);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: none;
+    border-radius: var(--khezana-radius-lg);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: var(--khezana-text);
+}
+
+.khezana-image-gallery__zoom-trigger:hover {
+    background: var(--khezana-white);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.khezana-image-gallery__zoom-trigger svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+}
+
+/* ============================================
+   IMAGE COUNTER
+   ============================================ */
+.khezana-image-gallery__counter {
+    position: absolute;
+    bottom: var(--khezana-spacing-md);
+    inset-inline-end: var(--khezana-spacing-md);
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    color: var(--khezana-white);
+    padding: 0.5rem 1rem;
+    border-radius: var(--khezana-radius-lg);
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 600;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+.khezana-image-gallery__loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--khezana-bg);
+    z-index: 5;
+    transition: opacity 0.3s ease;
+}
+
+.khezana-image-gallery__loader--hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.khezana-image-gallery__skeleton {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        var(--khezana-bg) 0%,
+        rgba(255, 255, 255, 0.5) 50%,
+        var(--khezana-bg) 100%
+    );
+    background-size: 200% 100%;
+    animation: khezana-skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes khezana-skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ============================================
+   NO IMAGE STATE
+   ============================================ */
+.khezana-image-gallery__hero--no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0;
+    min-height: 400px;
+    background: var(--khezana-bg);
+}
+
+.khezana-image-gallery__placeholder {
+    text-align: center;
+    color: var(--khezana-text-light);
+}
+
+.khezana-image-gallery__placeholder-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--khezana-spacing-md);
+    opacity: 0.4;
+}
+
+.khezana-image-gallery__placeholder-text {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 500;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 1024px) {
+    .khezana-image-gallery {
+        flex-direction: column;
+    }
+    
+    .khezana-image-gallery__thumbnails {
+        flex-direction: row;
+        width: 100%;
+        max-height: 120px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: var(--khezana-spacing-xs);
+    }
+    
+    .khezana-image-gallery__thumbnail {
+        min-width: 80px;
+        width: 80px;
+    }
+    
+    .khezana-image-gallery__hero {
+        padding-top: 100%; /* Square on mobile */
+    }
+}
+
+@media (max-width: 768px) {
+    .khezana-image-gallery__hero {
+        padding-top: 100%;
+        border-radius: var(--khezana-radius);
+    }
+    
+    .khezana-image-gallery__nav-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .khezana-image-gallery__nav-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .khezana-image-gallery__zoom-trigger {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .khezana-image-gallery__zoom-trigger svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .khezana-image-gallery__thumbnails {
+        max-height: 100px;
+    }
+    
+    .khezana-image-gallery__thumbnail {
+        min-width: 60px;
+        width: 60px;
+    }
+}
+
+/* ============================================
+   HIGH DPI / RETINA DISPLAYS
+   ============================================ */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .khezana-image-gallery__hero-img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* ============================================
+   REDUCED MOTION (Accessibility)
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    .khezana-image-gallery__hero-img,
+    .khezana-image-gallery__thumbnail,
+    .khezana-image-gallery__nav-btn,
+    .khezana-image-gallery__zoom-trigger {
+        transition: none;
+        animation: none;
+    }
+    
+    .khezana-image-gallery__hero:hover {
+        transform: none;
+    }
+    
+    .khezana-image-gallery__hero--zoom-enabled:hover .khezana-image-gallery__hero-img {
+        transform: none;
+    }
+}

@@ -68,8 +68,13 @@ class RequestController extends Controller
     public function create(): View
     {
         $categories = Category::active()
-            ->with(['attributes.values', 'children.attributes.values'])
+            ->with([
+                'attributes.values',
+                'children' => fn($q) => $q->where('is_active', true)->orderBy('name'),
+                'children.attributes.values'
+            ])
             ->whereNull('parent_id')
+            ->orderBy('name')
             ->get();
 
         return view('requests.create', compact('categories'));

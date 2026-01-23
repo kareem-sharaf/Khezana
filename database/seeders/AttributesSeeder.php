@@ -18,126 +18,148 @@ class AttributesSeeder extends Seeder
     {
         $attributeService = app(AttributeService::class);
 
-        // Size Attribute
-        $size = Attribute::firstOrCreate(
+        // Size Attribute (TEXT type to support all size formats: S, M, L, 42, 45, 38, etc.)
+        $size = Attribute::updateOrCreate(
             ['slug' => 'size'],
             [
-                'name' => 'Size',
-                'type' => AttributeType::SELECT,
+                'name' => 'المقاس',
+                'type' => AttributeType::TEXT,
                 'is_required' => true,
             ]
         );
 
-        // Size Values
-        $sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
-        foreach ($sizes as $sizeValue) {
-            AttributeValue::firstOrCreate(
-                [
-                    'attribute_id' => $size->id,
-                    'value' => $sizeValue,
-                ]
-            );
-        }
+        // Remove all predefined size values since we're using TEXT type now
+        AttributeValue::where('attribute_id', $size->id)->delete();
 
         // Color Attribute
-        $color = Attribute::firstOrCreate(
+        $color = Attribute::updateOrCreate(
             ['slug' => 'color'],
             [
-                'name' => 'Color',
+                'name' => 'اللون',
                 'type' => AttributeType::SELECT,
                 'is_required' => false,
             ]
         );
 
-        // Color Values
-        $colors = ['Black', 'White', 'Red', 'Blue', 'Green', 'Yellow', 'Brown', 'Gray', 'Beige', 'Pink'];
-        foreach ($colors as $colorValue) {
-            AttributeValue::firstOrCreate(
+        // Color Values (Arabic)
+        $colors = [
+            'أسود' => 'Black',
+            'أبيض' => 'White',
+            'أحمر' => 'Red',
+            'أزرق' => 'Blue',
+            'أخضر' => 'Green',
+            'أصفر' => 'Yellow',
+            'بني' => 'Brown',
+            'رمادي' => 'Gray',
+            'بيج' => 'Beige',
+            'وردي' => 'Pink',
+        ];
+        foreach ($colors as $colorValueAr => $colorValueEn) {
+            AttributeValue::updateOrCreate(
                 [
                     'attribute_id' => $color->id,
-                    'value' => $colorValue,
+                    'value' => $colorValueAr,
                 ]
             );
         }
 
         // Fabric Attribute
-        $fabric = Attribute::firstOrCreate(
+        $fabric = Attribute::updateOrCreate(
             ['slug' => 'fabric'],
             [
-                'name' => 'Fabric',
+                'name' => 'نوع القماش',
                 'type' => AttributeType::SELECT,
                 'is_required' => false,
             ]
         );
 
-        // Fabric Values
-        $fabrics = ['Cotton', 'Polyester', 'Wool', 'Silk', 'Linen', 'Denim', 'Leather', 'Synthetic'];
-        foreach ($fabrics as $fabricValue) {
-            AttributeValue::firstOrCreate(
+        // Fabric Values (Arabic)
+        $fabrics = [
+            'قطن' => 'Cotton',
+            'بوليستر' => 'Polyester',
+            'صوف' => 'Wool',
+            'حرير' => 'Silk',
+            'كتان' => 'Linen',
+            'دنيم' => 'Denim',
+            'جلد' => 'Leather',
+            'صناعي' => 'Synthetic',
+        ];
+        foreach ($fabrics as $fabricValueAr => $fabricValueEn) {
+            AttributeValue::updateOrCreate(
                 [
                     'attribute_id' => $fabric->id,
-                    'value' => $fabricValue,
+                    'value' => $fabricValueAr,
                 ]
             );
         }
 
         // Condition Attribute
-        $condition = Attribute::firstOrCreate(
+        $condition = Attribute::updateOrCreate(
             ['slug' => 'condition'],
             [
-                'name' => 'Condition',
+                'name' => 'الحالة',
                 'type' => AttributeType::SELECT,
                 'is_required' => true,
             ]
         );
 
-        // Condition Values
-        $conditions = ['New', 'Like New', 'Good', 'Fair', 'Poor'];
-        foreach ($conditions as $conditionValue) {
-            AttributeValue::firstOrCreate(
+        // Condition Values (Arabic)
+        $conditions = [
+            'جديد' => 'New',
+            'كالجديد' => 'Like New',
+            'جيد' => 'Good',
+            'مقبول' => 'Fair',
+            'سيء' => 'Poor',
+        ];
+        foreach ($conditions as $conditionValueAr => $conditionValueEn) {
+            AttributeValue::updateOrCreate(
                 [
                     'attribute_id' => $condition->id,
-                    'value' => $conditionValue,
+                    'value' => $conditionValueAr,
                 ]
             );
         }
 
         // Gender Attribute (for unisex items)
-        $gender = Attribute::firstOrCreate(
+        $gender = Attribute::updateOrCreate(
             ['slug' => 'gender'],
             [
-                'name' => 'Gender',
+                'name' => 'الجنس',
                 'type' => AttributeType::SELECT,
                 'is_required' => false,
             ]
         );
 
-        // Gender Values
-        $genders = ['Male', 'Female', 'Unisex'];
-        foreach ($genders as $genderValue) {
-            AttributeValue::firstOrCreate(
+        // Gender Values (Arabic)
+        $genders = [
+            'ذكر' => 'Male',
+            'أنثى' => 'Female',
+            'للجنسين' => 'Unisex',
+        ];
+        foreach ($genders as $genderValueAr => $genderValueEn) {
+            AttributeValue::updateOrCreate(
                 [
                     'attribute_id' => $gender->id,
-                    'value' => $genderValue,
+                    'value' => $genderValueAr,
                 ]
             );
         }
 
         // Brand Attribute (Text)
-        Attribute::firstOrCreate(
+        Attribute::updateOrCreate(
             ['slug' => 'brand'],
             [
-                'name' => 'Brand',
+                'name' => 'العلامة التجارية',
                 'type' => AttributeType::TEXT,
                 'is_required' => false,
             ]
         );
 
         // Material Attribute (Text)
-        Attribute::firstOrCreate(
+        Attribute::updateOrCreate(
             ['slug' => 'material'],
             [
-                'name' => 'Material',
+                'name' => 'المادة',
                 'type' => AttributeType::TEXT,
                 'is_required' => false,
             ]

@@ -2,7 +2,7 @@
 {{-- Usage: @include('public.items._partials.detail.images', ['viewModel' => $viewModel]) --}}
 
 <div class="khezana-item-images" id="itemGallery">
-    @if ($viewModel->hasImages)
+    @if ($viewModel->hasImages && !empty($viewModel->imageUrls) && isset($viewModel->imageUrls[0]))
         <div class="khezana-item-main-image" id="mainImageContainer">
             <button type="button" class="khezana-image-zoom-trigger" id="zoomTrigger" aria-label="{{ __('common.ui.zoom_image') }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -18,8 +18,10 @@
                 alt="{{ $viewModel->title }}"
                 class="khezana-main-img"
                 loading="eager"
+                decoding="async"
                 data-image-index="0"
-                data-full-image="{{ $viewModel->imageUrls[0]['url'] ?? '' }}">
+                data-full-image="{{ $viewModel->imageUrls[0]['url'] ?? '' }}"
+                onerror="this.onerror=null; this.style.display='none';">
             
             @if ($viewModel->hasMultipleImages)
                 <div class="khezana-image-navigation">
@@ -53,7 +55,9 @@
                         <img 
                             src="{{ $image['url'] }}"
                             alt="{{ $viewModel->title }} - {{ __('common.ui.image') }} {{ $loop->iteration }}"
-                            loading="lazy">
+                            loading="lazy"
+                            decoding="async"
+                            onerror="this.onerror=null; this.parentElement.style.display='none';">
                         <span class="khezana-thumbnail-overlay"></span>
                     </button>
                 @endforeach

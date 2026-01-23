@@ -10,7 +10,9 @@ use App\Enums\ItemAvailability;
 use App\Enums\OperationType;
 use App\Models\Item;
 use App\Services\Cache\CacheService;
+use App\Services\ImageOptimizationService;
 use App\Services\ItemService;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -23,7 +25,8 @@ class UpdateItemAction
     public function __construct(
         private readonly ItemService $itemService,
         private readonly SubmitForApprovalAction $submitForApprovalAction,
-        private readonly CacheService $cacheService
+        private readonly CacheService $cacheService,
+        private readonly ImageOptimizationService $imageService
     ) {}
 
     /**
@@ -32,7 +35,7 @@ class UpdateItemAction
      * @param Item $item The item to update
      * @param array $data Updated data
      * @param array|null $attributes Updated attributes
-     * @param array|null $images New image paths (will replace existing)
+     * @param array|null $images New uploaded files (UploadedFile instances, will replace existing)
      * @return Item
      * @throws \Exception If validation fails
      */
@@ -93,8 +96,14 @@ class UpdateItemAction
             }
 
             // Update images if provided
-            if ($images !== null) {
+            if ($images !== null && is_array($images)) {
+                // Delete old images from storage
+                $this->deleteOldImages($item);
+                
+                // Delete old image records
                 $item->images()->delete();
+                
+                // Attach new images
                 $this->attachImages($item, $images);
             }
 
@@ -114,17 +123,52 @@ class UpdateItemAction
     }
 
     /**
+     * Delete old images from storage
+     */
+    private function deleteOldImages(Item $item): void
+    {
+        foreach ($item->images as $oldImage) {
+            if ($oldImage->path && $oldImage->disk) {
+                $this->imageService->delete($oldImage->path, $oldImage->disk);
+            }
+        }
+    }
+
+    /**
      * Attach images to item
+     * 
+     * @param Item $item The item to attach images to
+     * @param array $images Array of UploadedFile instances
      */
     private function attachImages(Item $item, array $images): void
     {
         $isFirst = true;
-        foreach ($images as $imagePath) {
-            $item->images()->create([
-                'path' => $imagePath,
-                'is_primary' => $isFirst,
-            ]);
-            $isFirst = false;
+        $disk = 'public'; // Default disk, can be configured via env
+        
+        foreach ($images as $file) {
+            if (!($file instanceof UploadedFile)) {
+                continue;
+            }
+            
+            try {
+                // Process and store image using ImageOptimizationService
+                $imageData = $this->imageService->processAndStore($file, $item->id, $disk);
+                
+                // Save image record in database
+                $item->images()->create([
+                    'path' => $imageData['path'],
+                    'disk' => $imageData['disk'],
+                    'is_primary' => $isFirst,
+                ]);
+                
+                $isFirst = false;
+            } catch (\Exception $e) {
+                // Log error but continue with other images
+                \Illuminate\Support\Facades\Log::error('Failed to process image', [
+                    'item_id' => $item->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
     }
 }

@@ -8,7 +8,7 @@
             @include('public.items._partials.detail.breadcrumb', ['viewModel' => $viewModel])
 
             <div class="khezana-item-detail-layout">
-                @include('public.items._partials.detail.images', ['viewModel' => $viewModel])
+                @include('public.items._partials.detail.images-enhanced', ['viewModel' => $viewModel])
 
                 <div class="khezana-item-details">
                     @include('public.items._partials.detail.header', ['viewModel' => $viewModel])
@@ -25,5 +25,5 @@
     </div>
 
     @include('public.items._partials.detail.image-modal', ['viewModel' => $viewModel])
-    @include('public.items._partials.detail.scripts', ['viewModel' => $viewModel])
+    @include('public.items._partials.detail.scripts-enhanced', ['viewModel' => $viewModel])
 @endsection

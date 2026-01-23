@@ -20,6 +20,7 @@ class ItemImage extends Model
     protected $fillable = [
         'item_id',
         'path',
+        'disk',
         'is_primary',
     ];
 

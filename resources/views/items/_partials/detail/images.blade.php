@@ -7,8 +7,8 @@
         <div class="khezana-item-main-image">
             @if (!empty($viewModel->imageUrls[0]['url']))
                 <img id="mainImage" src="{{ $viewModel->imageUrls[0]['url'] }}" alt="{{ $viewModel->title }}"
-                    class="khezana-main-img" loading="eager"
-                    onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
+                    class="khezana-main-img" loading="eager" decoding="async"
+                    onerror="this.onerror=null; this.style.display='none';">
             @else
                 <div class="khezana-no-image-placeholder">
                     {{ __('common.ui.no_image') }}
@@ -23,7 +23,7 @@
                     @if (!empty($image['url']))
                         <button type="button" class="khezana-thumbnail {{ $loop->first ? 'active' : '' }}"
                             onclick="changeMainImage('{{ $image['url'] }}', this)">
-                            <img src="{{ $image['url'] }}" alt="{{ $viewModel->title }}" loading="lazy"
+                            <img src="{{ $image['url'] }}" alt="{{ $viewModel->title }}" loading="lazy" decoding="async"
                                 onerror="this.onerror=null; this.parentElement.style.display='none';">
                         </button>
                     @endif

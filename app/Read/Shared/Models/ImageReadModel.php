@@ -11,6 +11,7 @@ class ImageReadModel
     public function __construct(
         public readonly int $id,
         public readonly string $path,
+        public readonly string $disk,
         public readonly bool $isPrimary,
         public readonly ?string $alt,
     ) {
@@ -21,6 +22,7 @@ class ImageReadModel
         return new self(
             id: $image->id,
             path: $image->path,
+            disk: $image->disk ?? 'public',
             isPrimary: $image->is_primary ?? false,
             alt: $image->alt ?? null,
         );

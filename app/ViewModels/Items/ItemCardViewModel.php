@@ -149,7 +149,8 @@ class ItemCardViewModel
      */
     public function getImageUrl(): ?string
     {
-        return $this->primaryImagePath ? asset('storage/' . $this->primaryImagePath) : null;
+        // primaryImagePath now contains the full URL from Storage
+        return $this->primaryImagePath;
     }
 
     /**

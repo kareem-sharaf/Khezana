@@ -26,10 +26,10 @@
 
                 <!-- Navigation Links -->
                 <div class="khezana-nav-links" aria-label="التنقل الرئيسي" id="navLinks">
-                    <!-- Offers Dropdown -->
+                    <!-- Items Dropdown -->
                     <div class="khezana-nav-dropdown">
                         <a href="{{ route('public.items.index') }}" class="khezana-nav-link khezana-nav-link-dropdown">
-                            {{ __('common.ui.offers') }}
+                            {{ __('items.title') }}
                             <span class="khezana-dropdown-icon">▼</span>
                         </a>
                         <div class="khezana-dropdown-menu">

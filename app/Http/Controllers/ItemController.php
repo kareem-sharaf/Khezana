@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateItemRequest;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Setting;
+use App\Services\ImageOptimizationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,8 @@ class ItemController extends Controller
         private readonly CreateItemAction $createItemAction,
         private readonly UpdateItemAction $updateItemAction,
         private readonly DeleteItemAction $deleteItemAction,
-        private readonly SubmitItemForApprovalAction $submitForApprovalAction
+        private readonly SubmitItemForApprovalAction $submitForApprovalAction,
+        private readonly ImageOptimizationService $imageService
     ) {
         // Middleware is applied in routes/web.php
     }
@@ -120,7 +122,11 @@ class ItemController extends Controller
      */
     public function create(): View
     {
-        $categories = Category::active()->get();
+        $categories = Category::active()
+            ->with(['children' => fn($q) => $q->where('is_active', true)->orderBy('name')])
+            ->whereNull('parent_id')
+            ->orderBy('name')
+            ->get();
         $feePercent = (float) Setting::deliveryServiceFeePercent();
         $preCreationRules = [
             ['icon' => '💰', 'text' => __('items.pre_creation_notice.rule_fee', ['percent' => (string) (int) $feePercent])],
@@ -138,21 +144,19 @@ class ItemController extends Controller
         try {
             $validated = $request->validated();
 
-            // Handle image uploads
-            $imagePaths = [];
+            // Handle image uploads - Store in filesystem
+            $imageData = [];
             if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $filename = 'items/' . Str::uuid() . '.' . $image->getClientOriginalExtension();
-                    $image->storeAs('public', $filename);
-                    $imagePaths[] = $filename;
-                }
+                // We'll get item ID after creation, so we'll process images in the Action
+                // For now, just pass the files
+                $imageData = $request->file('images');
             }
 
             $item = $this->createItemAction->execute(
                 $validated,
                 Auth::user(),
                 $validated['attributes'] ?? null,
-                !empty($imagePaths) ? $imagePaths : null
+                !empty($imageData) ? $imageData : null
             );
 
             return redirect()->route('items.show', $item)
@@ -184,7 +188,11 @@ class ItemController extends Controller
     {
         $this->authorize('update', $item);
 
-        $categories = Category::active()->get();
+        $categories = Category::active()
+            ->with(['children' => fn($q) => $q->where('is_active', true)->orderBy('name')])
+            ->whereNull('parent_id')
+            ->orderBy('name')
+            ->get();
         $item->load(['category', 'images', 'itemAttributes.attribute']);
 
         return view('items.edit', compact('item', 'categories'));
@@ -200,22 +208,18 @@ class ItemController extends Controller
         try {
             $validated = $request->validated();
 
-            // Handle image uploads
-            $imagePaths = null;
+            // Handle image uploads - Store in filesystem
+            $imageData = null;
             if ($request->hasFile('images')) {
-                $imagePaths = [];
-                foreach ($request->file('images') as $image) {
-                    $filename = 'items/' . Str::uuid() . '.' . $image->getClientOriginalExtension();
-                    $image->storeAs('public', $filename);
-                    $imagePaths[] = $filename;
-                }
+                // Pass files to Action for processing
+                $imageData = $request->file('images');
             }
 
             $item = $this->updateItemAction->execute(
                 $item,
                 $validated,
                 $validated['attributes'] ?? null,
-                $imagePaths
+                $imageData
             );
 
             return redirect()->route('items.show', $item)

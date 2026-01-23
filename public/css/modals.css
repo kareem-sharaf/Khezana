@@ -124,17 +124,44 @@
     min-width: 100px;
 }
 
-/* Image Modal */
+/* Image Modal - Enhanced */
 .khezana-image-modal {
-    max-width: 90vw;
-    max-height: 90vh;
-    padding: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: var(--khezana-spacing-md);
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: khezana-modal-fade-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.khezana-image-modal[style*="flex"] {
+    display: flex;
+}
+
+.khezana-image-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    cursor: pointer;
 }
 
 .khezana-image-modal-content {
+    position: relative;
+    width: 90vw;
+    max-width: 1400px;
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.khezana-image-modal-image-container {
     position: relative;
     width: 100%;
     height: 100%;
@@ -143,11 +170,13 @@
     justify-content: center;
 }
 
-.khezana-image-modal-content img {
+.khezana-image-modal-img {
     max-width: 100%;
     max-height: 90vh;
     object-fit: contain;
     border-radius: var(--khezana-radius-lg);
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
 .khezana-image-modal-close {
@@ -170,6 +199,135 @@
 
 .khezana-image-modal-close:hover {
     background: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+}
+
+/* Modal Navigation Arrows */
+.khezana-image-modal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    color: var(--khezana-white);
+    border: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 20;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.khezana-image-modal-nav:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+}
+
+.khezana-image-modal-nav:active {
+    transform: translateY(-50%) scale(1.05);
+}
+
+.khezana-image-modal-nav svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2.5;
+}
+
+.khezana-image-modal-prev {
+    left: var(--khezana-spacing-lg);
+}
+
+.khezana-image-modal-next {
+    right: var(--khezana-spacing-lg);
+}
+
+/* Modal Counter */
+.khezana-image-modal-counter {
+    position: absolute;
+    bottom: var(--khezana-spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    color: var(--khezana-white);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--khezana-radius-xl);
+    font-size: var(--khezana-font-size-base);
+    font-weight: 600;
+    z-index: 20;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal Loader */
+.khezana-image-modal-loader {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 15;
+}
+
+.khezana-modal-skeleton {
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.1) 100%
+    );
+    background-size: 200% 100%;
+    border-radius: var(--khezana-radius-lg);
+    animation: khezana-skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes khezana-skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .khezana-image-modal-content {
+        width: 95vw;
+        max-height: 85vh;
+    }
+    
+    .khezana-image-modal-nav {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .khezana-image-modal-nav svg {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .khezana-image-modal-prev {
+        left: var(--khezana-spacing-sm);
+    }
+    
+    .khezana-image-modal-next {
+        right: var(--khezana-spacing-sm);
+    }
+    
+    .khezana-image-modal-counter {
+        bottom: var(--khezana-spacing-md);
+        padding: 0.5rem 1rem;
+        font-size: var(--khezana-font-size-sm);
+    }
 }
 
 /* Delete Confirmation Modal */

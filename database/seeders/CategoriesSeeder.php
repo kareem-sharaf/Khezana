@@ -13,112 +13,112 @@ class CategoriesSeeder extends Seeder
     public function run(): void
     {
         // Root Categories
-        $men = Category::firstOrCreate(
+        $men = Category::updateOrCreate(
             ['slug' => 'men'],
             [
-                'name' => 'Men',
-                'description' => 'Men\'s clothing and accessories',
+                'name' => 'رجال',
+                'description' => 'ملابس وإكسسوارات رجالية',
                 'is_active' => true,
             ]
         );
 
-        $women = Category::firstOrCreate(
+        $women = Category::updateOrCreate(
             ['slug' => 'women'],
             [
-                'name' => 'Women',
-                'description' => 'Women\'s clothing and accessories',
+                'name' => 'نساء',
+                'description' => 'ملابس وإكسسوارات نسائية',
                 'is_active' => true,
             ]
         );
 
-        $kids = Category::firstOrCreate(
+        $kids = Category::updateOrCreate(
             ['slug' => 'kids'],
             [
-                'name' => 'Kids',
-                'description' => 'Children\'s clothing and accessories',
+                'name' => 'أطفال',
+                'description' => 'ملابس وإكسسوارات للأطفال',
                 'is_active' => true,
             ]
         );
 
         // Men Subcategories
-        $menSuits = Category::firstOrCreate(
+        $menSuits = Category::updateOrCreate(
             ['slug' => 'men-suits'],
             [
-                'name' => 'Suits',
+                'name' => 'بدلات',
                 'parent_id' => $men->id,
-                'description' => 'Men\'s suits and formal wear',
+                'description' => 'بدلات وملابس رسمية رجالية',
                 'is_active' => true,
             ]
         );
 
-        $menShoes = Category::firstOrCreate(
+        $menShoes = Category::updateOrCreate(
             ['slug' => 'men-shoes'],
             [
-                'name' => 'Shoes',
+                'name' => 'أحذية',
                 'parent_id' => $men->id,
-                'description' => 'Men\'s footwear',
+                'description' => 'أحذية رجالية',
                 'is_active' => true,
             ]
         );
 
-        $menShirts = Category::firstOrCreate(
+        $menShirts = Category::updateOrCreate(
             ['slug' => 'men-shirts'],
             [
-                'name' => 'Shirts',
+                'name' => 'قمصان',
                 'parent_id' => $men->id,
-                'description' => 'Men\'s shirts and tops',
+                'description' => 'قمصان وبلوزات رجالية',
                 'is_active' => true,
             ]
         );
 
         // Women Subcategories
-        $womenDresses = Category::firstOrCreate(
+        $womenDresses = Category::updateOrCreate(
             ['slug' => 'women-dresses'],
             [
-                'name' => 'Dresses',
+                'name' => 'فساتين',
                 'parent_id' => $women->id,
-                'description' => 'Women\'s dresses',
+                'description' => 'فساتين نسائية',
                 'is_active' => true,
             ]
         );
 
-        $womenAbayas = Category::firstOrCreate(
+        $womenAbayas = Category::updateOrCreate(
             ['slug' => 'women-abayas'],
             [
-                'name' => 'Abayas',
+                'name' => 'عباءات',
                 'parent_id' => $women->id,
-                'description' => 'Traditional abayas',
+                'description' => 'عباءات تقليدية',
                 'is_active' => true,
             ]
         );
 
-        $womenShoes = Category::firstOrCreate(
+        $womenShoes = Category::updateOrCreate(
             ['slug' => 'women-shoes'],
             [
-                'name' => 'Shoes',
+                'name' => 'أحذية',
                 'parent_id' => $women->id,
-                'description' => 'Women\'s footwear',
+                'description' => 'أحذية نسائية',
                 'is_active' => true,
             ]
         );
 
         // Kids Subcategories
-        $kidsBoys = Category::firstOrCreate(
+        $kidsBoys = Category::updateOrCreate(
             ['slug' => 'kids-boys'],
             [
-                'name' => 'Boys',
+                'name' => 'أولاد',
                 'parent_id' => $kids->id,
-                'description' => 'Boys\' clothing',
+                'description' => 'ملابس أولاد',
                 'is_active' => true,
             ]
         );
 
-        $kidsGirls = Category::firstOrCreate(
+        $kidsGirls = Category::updateOrCreate(
             ['slug' => 'kids-girls'],
             [
-                'name' => 'Girls',
+                'name' => 'بنات',
                 'parent_id' => $kids->id,
-                'description' => 'Girls\' clothing',
+                'description' => 'ملابس بنات',
                 'is_active' => true,
             ]
         );

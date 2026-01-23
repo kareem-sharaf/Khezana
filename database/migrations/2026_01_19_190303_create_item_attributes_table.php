@@ -14,12 +14,12 @@ return new class extends Migration
         if (!Schema::hasTable('item_attributes')) {
             Schema::create('item_attributes', function (Blueprint $table) {
                 $table->id();
-                $table->morphs('attributable'); // attributable_type, attributable_id
+                $table->morphs('attributable'); // attributable_type, attributable_id (morphs already creates index)
                 $table->foreignId('attribute_id')->constrained()->onDelete('cascade');
                 $table->string('value');
                 $table->timestamps();
 
-                $table->index(['attributable_type', 'attributable_id']);
+                // morphs() already creates index for attributable_type and attributable_id
                 $table->index('attribute_id');
             });
         }

@@ -44,15 +44,18 @@ class ItemController extends Controller
         // Remove empty filters
         $filters = array_filter($filters, fn($value) => $value !== null && $value !== '');
 
+        $user = $request->user();
+        
         $items = $this->cacheService->rememberItemsIndex(
-            function () use ($filters, $sort, $page, $perPage) {
-                $itemsPaginator = $this->browseItemsQuery->execute($filters, $sort, $page, $perPage);
+            function () use ($filters, $sort, $page, $perPage, $user) {
+                $itemsPaginator = $this->browseItemsQuery->execute($filters, $sort, $page, $perPage, $user);
                 return $itemsPaginator->through(fn($item) => ItemReadModel::fromModel($item));
             },
             $filters,
             $sort,
             $page,
-            $locale
+            $locale,
+            $user?->id
         );
 
         // Ensure pagination preserves all query parameters (filters, sort, etc.)

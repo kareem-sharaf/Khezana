@@ -9,15 +9,16 @@ use Illuminate\Support\Facades\Log;
 
 class CacheService
 {
-    private const TTL_INDEX = 300; // 5 minutes
+    private const TTL_INDEX = 60; // 1 minute (reduced for fresh content)
     private const TTL_SHOW = 600; // 10 minutes
     private const TTL_CATEGORIES = 3600; // 1 hour
     private const TTL_ATTRIBUTES = 3600; // 1 hour
 
-    public function getItemsIndexKey(array $filters, ?string $sort, int $page, string $locale): string
+    public function getItemsIndexKey(array $filters, ?string $sort, int $page, string $locale, ?int $userId = null): string
     {
+        $userPart = $userId ? ":user:{$userId}" : ":guest";
         $filterHash = md5(json_encode($filters) . $sort . $page);
-        return "items:index:{$locale}:page:{$page}:filters:{$filterHash}";
+        return "items:index:{$locale}{$userPart}:page:{$page}:filters:{$filterHash}";
     }
 
     public function getItemShowKey(int $itemId, ?string $slug, ?int $userId, string $locale): string
@@ -50,9 +51,9 @@ class CacheService
         return "category:{$categoryId}:attributes";
     }
 
-    public function rememberItemsIndex(callable $callback, array $filters, ?string $sort, int $page, string $locale)
+    public function rememberItemsIndex(callable $callback, array $filters, ?string $sort, int $page, string $locale, ?int $userId = null)
     {
-        $key = $this->getItemsIndexKey($filters, $sort, $page, $locale);
+        $key = $this->getItemsIndexKey($filters, $sort, $page, $locale, $userId);
         return $this->remember($key, self::TTL_INDEX, $callback, 'items_index');
     }
 
@@ -91,7 +92,7 @@ class CacheService
         $startTime = microtime(true);
         $cacheHit = Cache::has($key);
         
-        $result = Cache::remember($key, $ttl, function () use ($callback, $key, $context) {
+        $result = Cache::remember($key, $ttl, function () use ($callback, $key, $context, $ttl) {
             $result = $callback();
             
             if (config('app.log_cache_misses', false)) {
@@ -121,12 +122,24 @@ class CacheService
 
     public function invalidateItem(int $itemId): void
     {
+        // Invalidate specific item cache
         $patterns = [
             "item:{$itemId}:*",
-            "items:index:*",
         ];
-        
         $this->invalidatePatterns($patterns);
+        
+        // Invalidate all items index pages (to show new items immediately)
+        $this->invalidateItemsIndex();
+    }
+
+    /**
+     * Invalidate all items index cache
+     * This ensures new items appear immediately
+     */
+    public function invalidateItemsIndex(): void
+    {
+        $pattern = "items:index:*";
+        $this->invalidateByPrefix($pattern);
     }
 
     public function invalidateRequest(int $requestId): void
@@ -163,12 +176,29 @@ class CacheService
     private function invalidateByPrefix(string $prefix): void
     {
         try {
-            if (Cache::getStore() instanceof \Illuminate\Cache\RedisStore) {
-                $redis = Cache::getStore()->connection();
-                $keys = $redis->keys($prefix);
-                if (!empty($keys)) {
-                    $redis->del($keys);
+            $store = Cache::getStore();
+            if ($store instanceof \Illuminate\Cache\RedisStore) {
+                $redis = $store->getRedis();
+                // Use SCAN instead of KEYS for better performance in production
+                $cursor = 0;
+                $allKeys = [];
+                do {
+                    $result = $redis->scan($cursor, ['match' => $prefix, 'count' => 100]);
+                    $cursor = $result[0];
+                    $allKeys = array_merge($allKeys, $result[1]);
+                } while ($cursor !== 0);
+                
+                if (!empty($allKeys)) {
+                    $redis->del($allKeys);
                 }
+            } else {
+                // For file/database cache, try to use keys() if available
+                // Otherwise, we'll rely on TTL expiration
+                // Note: File cache doesn't support pattern matching efficiently
+                Log::debug('Cache invalidation by prefix not fully supported for this cache driver', [
+                    'prefix' => $prefix,
+                    'driver' => get_class($store),
+                ]);
             }
         } catch (\Exception $e) {
             Log::warning('Cache invalidation failed', [

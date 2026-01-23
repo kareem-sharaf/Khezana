@@ -21,84 +21,21 @@
                     <!-- Category -->
                     <div class="khezana-form-group">
                         <label for="category_id" class="khezana-form-label">
-                            {{ __('items.fields.category') }}
+                            {{ __('requests.fields.category') }}
                             <span class="khezana-required">*</span>
                         </label>
                         <p class="khezana-form-hint">{{ __('requests.hints.category') }}</p>
-                        <select name="category_id" id="category_id" class="khezana-form-input khezana-form-select" required
-                            onchange="loadCategoryAttributes(this.value)">
-                            <option value="">{{ __('common.ui.select_category') }}</option>
-                            @foreach ($categories as $category)
-                                @php
-                                    $allAttrs = $category->getAllAttributes();
-                                    // Load values for all attributes
-                                    $allAttrs->each(function ($attr) {
-                                        if (
-                                            $attr instanceof \App\Models\Attribute &&
-                                            !$attr->relationLoaded('values')
-                                        ) {
-                                            $attr->load('values');
-                                        }
-                                    });
-                                    $categoryAttributes = $allAttrs
-                                        ->filter(function ($attr) {
-                                            return $attr instanceof \App\Models\Attribute;
-                                        })
-                                        ->map(function ($attr) {
-                                            return [
-                                                'id' => $attr->id,
-                                                'name' => $attr->name,
-                                                'slug' => $attr->slug,
-                                                'type' => $attr->type->value,
-                                                'is_required' => $attr->is_required,
-                                                'values' => $attr->values
-                                                    ? $attr->values->pluck('value')->toArray()
-                                                    : [],
-                                            ];
-                                        })
-                                        ->toJson();
-                                @endphp
-                                <option value="{{ $category->id }}" data-attributes="{{ $categoryAttributes }}">
-                                    {{ $category->name }}
-                                </option>
-                                @if ($category->children->count() > 0)
-                                    @foreach ($category->children as $child)
-                                        @php
-                                            $childAllAttrs = $child->getAllAttributes();
-                                            // Load values for all attributes
-                                            $childAllAttrs->each(function ($attr) {
-                                                if (
-                                                    $attr instanceof \App\Models\Attribute &&
-                                                    !$attr->relationLoaded('values')
-                                                ) {
-                                                    $attr->load('values');
-                                                }
-                                            });
-                                            $childAttributes = $childAllAttrs
-                                                ->filter(function ($attr) {
-                                                    return $attr instanceof \App\Models\Attribute;
-                                                })
-                                                ->map(function ($attr) {
-                                                    return [
-                                                        'id' => $attr->id,
-                                                        'name' => $attr->name,
-                                                        'slug' => $attr->slug,
-                                                        'type' => $attr->type->value,
-                                                        'is_required' => $attr->is_required,
-                                                        'values' => $attr->values
-                                                            ? $attr->values->pluck('value')->toArray()
-                                                            : [],
-                                                    ];
-                                                })
-                                                ->toJson();
-                                        @endphp
-                                        <option value="{{ $child->id }}" data-attributes="{{ $childAttributes }}">
-                                            &nbsp;&nbsp;{{ $child->name }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            @endforeach
-                        </select>
+                        @include('components.category-select', [
+                            'categories' => $categories,
+                            'name' => 'category_id',
+                            'id' => 'category_id',
+                            'selected' => old('category_id'),
+                            'required' => true,
+                            'placeholder' => __('common.ui.select_category'),
+                            'showAllOption' => false,
+                            'attributes' => true,
+                            'onchange' => 'loadCategoryAttributes(this.value)',
+                        ])
                         @error('category_id')
                             <span class="khezana-form-error">{{ $message }}</span>
                         @enderror

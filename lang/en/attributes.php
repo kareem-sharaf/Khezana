@@ -36,6 +36,7 @@ return [
         'slug' => 'Will be auto-generated from name',
         'type' => 'Select attribute type',
         'value' => 'Enter value',
+        'size' => 'e.g., S, M, L, 42, 45, 38',
     ],
     
     'helpers' => [
@@ -44,6 +45,7 @@ return [
         'type_number' => 'Number: numeric value only',
         'is_required' => 'This attribute must be filled when creating items',
         'values' => 'Add predefined values for select type attributes',
+        'size' => 'Enter the appropriate size: for clothing (S, M, L, XL), for shoes (42, 43, 45), for pants (38, 40, 42)',
     ],
     
     'common_names' => [

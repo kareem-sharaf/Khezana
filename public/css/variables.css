@@ -49,4 +49,11 @@
 
     /* Transitions */
     --khezana-transition: all 0.2s ease;
+    --khezana-transition-fast: all 0.15s ease;
+    --khezana-transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --khezana-transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Golden Ratio */
+    --khezana-golden-ratio: 1.618;
+    --khezana-golden-ratio-inverse: 0.618; /* 1 / 1.618 */
 }
