@@ -1,0 +1,400 @@
+/**
+ * Khezana Design System - Profile Pages
+ * Single Responsibility: User profile pages layout and styles
+ * Page-based architecture with full RTL support
+ */
+
+/* ============================================
+   PROFILE PAGE CONTAINER
+   ============================================ */
+
+.khezana-profile-page {
+    padding: var(--khezana-spacing-xl) 0;
+    min-height: 60vh;
+    background: var(--khezana-bg);
+}
+
+/* ============================================
+   PROFILE HEADER
+   ============================================ */
+
+.khezana-profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--khezana-spacing-lg);
+    padding: var(--khezana-spacing-xl);
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    box-shadow: var(--khezana-shadow);
+    margin-bottom: var(--khezana-spacing-xl);
+}
+
+.khezana-profile-header__content {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-lg);
+    flex: 1;
+}
+
+[dir="rtl"] .khezana-profile-header__content {
+    flex-direction: row-reverse;
+}
+
+.khezana-profile-avatar {
+    flex-shrink: 0;
+}
+
+.khezana-profile-avatar__image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--khezana-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--khezana-white);
+    box-shadow: var(--khezana-shadow-md);
+}
+
+.khezana-profile-avatar__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.khezana-profile-avatar__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--khezana-font-size-2xl);
+    font-weight: 700;
+    color: var(--khezana-white);
+}
+
+.khezana-profile-header__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.khezana-profile-header__name {
+    font-size: var(--khezana-font-size-2xl);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin: 0 0 var(--khezana-spacing-xs);
+}
+
+.khezana-profile-header__email {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text-light);
+    margin: 0 0 var(--khezana-spacing-xs);
+}
+
+.khezana-profile-header__actions {
+    flex-shrink: 0;
+}
+
+/* ============================================
+   PROFILE CONTENT LAYOUT
+   ============================================ */
+
+.khezana-profile-content {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: var(--khezana-spacing-xl);
+}
+
+[dir="rtl"] .khezana-profile-content {
+    direction: rtl;
+}
+
+/* ============================================
+   PROFILE SIDEBAR (NAVIGATION)
+   ============================================ */
+
+.khezana-profile-sidebar {
+    position: sticky;
+    top: var(--khezana-spacing-lg);
+    height: fit-content;
+}
+
+.khezana-profile-nav {
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    box-shadow: var(--khezana-shadow);
+    padding: var(--khezana-spacing-sm);
+}
+
+.khezana-profile-nav__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-xs);
+}
+
+.khezana-profile-nav__item {
+    margin: 0;
+}
+
+.khezana-profile-nav__link {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-sm);
+    padding: var(--khezana-spacing-sm) var(--khezana-spacing-md);
+    color: var(--khezana-text);
+    text-decoration: none;
+    border-radius: var(--khezana-radius);
+    transition: var(--khezana-transition);
+    font-weight: 500;
+}
+
+.khezana-profile-nav__link:hover {
+    background: var(--khezana-bg);
+    color: var(--khezana-primary);
+}
+
+.khezana-profile-nav__link--active {
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+}
+
+.khezana-profile-nav__link--active:hover {
+    background: var(--khezana-primary-dark);
+    color: var(--khezana-white);
+}
+
+.khezana-profile-nav__icon {
+    font-size: var(--khezana-font-size-lg);
+}
+
+/* ============================================
+   PROFILE MAIN CONTENT
+   ============================================ */
+
+.khezana-profile-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-lg);
+}
+
+/* ============================================
+   PROFILE CARD
+   ============================================ */
+
+.khezana-profile-card {
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    box-shadow: var(--khezana-shadow);
+    padding: var(--khezana-spacing-xl);
+}
+
+.khezana-profile-card__title {
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin: 0 0 var(--khezana-spacing-lg);
+}
+
+.khezana-profile-card__description {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text-light);
+    margin: 0 0 var(--khezana-spacing-lg);
+    line-height: 1.6;
+}
+
+.khezana-profile-card__content {
+    margin-top: var(--khezana-spacing-md);
+}
+
+/* ============================================
+   PROFILE INFO
+   ============================================ */
+
+.khezana-profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-md);
+}
+
+.khezana-profile-info__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-xs);
+    padding-bottom: var(--khezana-spacing-md);
+    border-bottom: 1px solid var(--khezana-border);
+}
+
+.khezana-profile-info__item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.khezana-profile-info__label {
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 600;
+    color: var(--khezana-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.khezana-profile-info__value {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text);
+    font-weight: 500;
+}
+
+.khezana-profile-bio {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text);
+    line-height: 1.8;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+/* ============================================
+   FORM ACTIONS
+   ============================================ */
+
+.khezana-form-actions {
+    display: flex;
+    gap: var(--khezana-spacing-md);
+    margin-top: var(--khezana-spacing-lg);
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid var(--khezana-border);
+}
+
+[dir="rtl"] .khezana-form-actions {
+    flex-direction: row-reverse;
+}
+
+/* ============================================
+   ALERTS
+   ============================================ */
+
+.khezana-alert {
+    padding: var(--khezana-spacing-md);
+    border-radius: var(--khezana-radius);
+    margin-bottom: var(--khezana-spacing-lg);
+}
+
+.khezana-alert--success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #10b981;
+}
+
+.khezana-alert p {
+    margin: 0;
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+
+.khezana-badge {
+    display: inline-block;
+    padding: var(--khezana-spacing-xs) var(--khezana-spacing-sm);
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 600;
+}
+
+.khezana-badge--success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.khezana-badge--warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* ============================================
+   LIST
+   ============================================ */
+
+.khezana-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.khezana-list--bulleted {
+    list-style: disc;
+    padding-inline-start: var(--khezana-spacing-lg);
+}
+
+.khezana-list li {
+    margin-bottom: var(--khezana-spacing-sm);
+    line-height: 1.6;
+}
+
+.khezana-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .khezana-profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .khezana-profile-header__content {
+        width: 100%;
+    }
+
+    .khezana-profile-header__actions {
+        width: 100%;
+    }
+
+    .khezana-profile-header__actions .khezana-btn {
+        width: 100%;
+    }
+
+    .khezana-profile-content {
+        grid-template-columns: 1fr;
+    }
+
+    .khezana-profile-sidebar {
+        position: static;
+    }
+
+    .khezana-profile-nav__list {
+        flex-direction: row;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .khezana-profile-nav__item {
+        flex-shrink: 0;
+    }
+
+    .khezana-form-actions {
+        flex-direction: column;
+    }
+
+    [dir="rtl"] .khezana-form-actions {
+        flex-direction: column;
+    }
+}
+
+/* ============================================
+   RTL SUPPORT
+   ============================================ */
+
+[dir="rtl"] .khezana-profile-header__content {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .khezana-profile-nav__link {
+    flex-direction: row-reverse;
+}

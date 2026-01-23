@@ -92,6 +92,17 @@
     font-weight: 400;
 }
 
+.khezana-form-help {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    margin-top: var(--khezana-spacing-xs);
+    line-height: 1.6;
+}
+
+.khezana-form-help--warning {
+    color: var(--khezana-danger);
+}
+
 .khezana-attributes-container {
     margin-top: var(--khezana-spacing-md);
     padding-top: var(--khezana-spacing-lg);
