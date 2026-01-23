@@ -17,6 +17,7 @@ return [
         'deactivate' => 'تعطيل',
         'approve' => 'موافقة',
         'reject' => 'رفض',
+        'remove' => 'إزالة',
     ],
 
     'status' => [

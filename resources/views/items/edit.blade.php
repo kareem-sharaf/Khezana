@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('title', __('items.actions.edit') . ' - ' . config('app.name'))
 
 @section('content')
@@ -13,7 +17,8 @@
             </div>
 
             <div class="khezana-form-container">
-                <form method="POST" action="{{ route('items.update', $item) }}" class="khezana-form">
+                <form method="POST" action="{{ route('items.update', $item) }}" class="khezana-form"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -54,7 +59,7 @@
                                         })
                                         ->toJson();
                                 @endphp
-                                <option value="{{ $category->id }}" 
+                                <option value="{{ $category->id }}"
                                     {{ old('category_id', $item->category_id) == $category->id ? 'selected' : '' }}
                                     data-attributes="{{ $categoryAttributes }}">
                                     {{ $category->name }}
@@ -89,7 +94,7 @@
                                                 })
                                                 ->toJson();
                                         @endphp
-                                        <option value="{{ $child->id }}" 
+                                        <option value="{{ $child->id }}"
                                             {{ old('category_id', $item->category_id) == $child->id ? 'selected' : '' }}
                                             data-attributes="{{ $childAttributes }}">
                                             &nbsp;&nbsp;{{ $child->name }}
@@ -138,8 +143,8 @@
                             <span class="khezana-required">*</span>
                         </label>
                         <input type="text" name="title" id="title" class="khezana-form-input"
-                            value="{{ old('title', $item->title) }}" placeholder="{{ __('items.placeholders.title') }}" required
-                            maxlength="255">
+                            value="{{ old('title', $item->title) }}" placeholder="{{ __('items.placeholders.title') }}"
+                            required maxlength="255">
                         @error('title')
                             <span class="khezana-form-error">{{ $message }}</span>
                         @enderror
@@ -191,7 +196,8 @@
                             </label>
                             <p class="khezana-form-hint">{{ __('items.hints.price') }}</p>
                             <input type="number" step="0.01" name="price" id="price" class="khezana-form-input"
-                                value="{{ old('price', $item->price) }}" placeholder="{{ __('items.placeholders.price') }}">
+                                value="{{ old('price', $item->price) }}"
+                                placeholder="{{ __('items.placeholders.price') }}">
                             @error('price')
                                 <span class="khezana-form-error">{{ $message }}</span>
                             @enderror
@@ -226,6 +232,49 @@
                     <div id="attributesContainer" class="khezana-attributes-container" style="display: none;">
                         <h3 class="khezana-section-title-small">{{ __('items.fields.attributes') }}</h3>
                         <div id="attributesFields"></div>
+                    </div>
+
+                    <div class="khezana-form-group">
+                        <label for="images" class="khezana-form-label">
+                            {{ __('items.fields.images') }}
+                        </label>
+                        <p class="khezana-form-hint">{{ __('items.hints.images') }}</p>
+                        <input type="file" name="images[]" id="images" class="khezana-form-input"
+                            accept="image/jpeg,image/jpg,image/png" multiple>
+                        @error('images')
+                            <span class="khezana-form-error">{{ $message }}</span>
+                        @enderror
+                        @error('images.*')
+                            <span class="khezana-form-error">{{ $message }}</span>
+                        @enderror
+
+                        {{-- Show existing images --}}
+                        @if ($item->images->count() > 0)
+                            <div class="khezana-existing-images" style="margin-top: var(--khezana-spacing-md);">
+                                <p
+                                    style="font-size: var(--khezana-font-size-sm); color: var(--khezana-text-light); margin-bottom: var(--khezana-spacing-sm);">
+                                    {{ __('items.messages.existing_images') }}
+                                </p>
+                                <div class="khezana-image-preview-grid">
+                                    @foreach ($item->images as $image)
+                                        <div class="khezana-image-preview-item">
+                                            <img src="{{ Storage::url($image->path) }}"
+                                                alt="Image {{ $loop->index + 1 }}">
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Image Preview Container for new uploads --}}
+                        <div id="imagePreviewContainer" class="khezana-image-preview-container"
+                            style="display: none; margin-top: var(--khezana-spacing-md);">
+                            <p
+                                style="font-size: var(--khezana-font-size-sm); color: var(--khezana-text-light); margin-bottom: var(--khezana-spacing-sm);">
+                                {{ __('items.messages.new_images') }}
+                            </p>
+                            <div id="imagePreviewGrid" class="khezana-image-preview-grid"></div>
+                        </div>
                     </div>
 
                     <div class="khezana-info-box">
@@ -372,9 +421,9 @@
             const operationTypeRadios = document.querySelectorAll('input[name="operation_type"]');
             const depositAmountGroup = document.getElementById('deposit_amount_group');
             const depositAmountInput = document.getElementById('deposit_amount');
-            
+
             if (!depositAmountGroup || !depositAmountInput) return;
-            
+
             // Check which operation type is selected
             let selectedOperationType = null;
             operationTypeRadios.forEach(radio => {
@@ -382,7 +431,7 @@
                     selectedOperationType = radio.value;
                 }
             });
-            
+
             // Show deposit amount only for rent operation
             if (selectedOperationType === 'rent') {
                 depositAmountGroup.style.display = 'block';
@@ -393,22 +442,97 @@
                 // Don't clear value on edit, just hide the field
             }
         }
-        
+
         // Load attributes on page load if category is selected
         document.addEventListener('DOMContentLoaded', function() {
             const categoryId = document.getElementById('category_id').value;
             if (categoryId) {
                 loadCategoryAttributes(categoryId);
             }
-            
+
             // Add event listeners to operation type radios
             const operationTypeRadios = document.querySelectorAll('input[name="operation_type"]');
             operationTypeRadios.forEach(radio => {
                 radio.addEventListener('change', toggleDepositAmountField);
             });
-            
+
             // Check initial state based on current item operation type
             toggleDepositAmountField();
         });
+
+        // Image upload preview
+        (function() {
+            let imageInput, previewContainer, previewGrid;
+
+            function updatePreview() {
+                if (!imageInput || !previewContainer || !previewGrid) return;
+
+                const files = Array.from(imageInput.files);
+                previewGrid.innerHTML = '';
+
+                if (files.length === 0) {
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+
+                previewContainer.style.display = 'block';
+
+                files.forEach((file, index) => {
+                    // Validate file type
+                    if (!file.type.match('image.*')) {
+                        return;
+                    }
+
+                    // Validate file size (5MB max)
+                    if (file.size > 5 * 1024 * 1024) {
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'khezana-image-preview-item';
+                        previewItem.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview ${index + 1}">
+                            <button type="button" class="khezana-image-remove-btn" data-index="${index}" aria-label="{{ __('common.actions.remove') }}">
+                                <span>×</span>
+                            </button>
+                        `;
+                        previewGrid.appendChild(previewItem);
+
+                        // Add remove button functionality
+                        const removeBtn = previewItem.querySelector('.khezana-image-remove-btn');
+                        removeBtn.addEventListener('click', function() {
+                            removeImage(index);
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            function removeImage(index) {
+                const dt = new DataTransfer();
+                const files = Array.from(imageInput.files);
+
+                files.forEach((file, i) => {
+                    if (i !== index) {
+                        dt.items.add(file);
+                    }
+                });
+
+                imageInput.files = dt.files;
+                updatePreview();
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                imageInput = document.getElementById('images');
+                previewContainer = document.getElementById('imagePreviewContainer');
+                previewGrid = document.getElementById('imagePreviewGrid');
+
+                if (!imageInput || !previewContainer || !previewGrid) return;
+
+                imageInput.addEventListener('change', updatePreview);
+            });
+        })();
     </script>
 @endsection

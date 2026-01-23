@@ -59,7 +59,7 @@
 @endphp
 
 {{-- Mobile Filter Toggle Button --}}
-<div x-data="{ filtersOpen: false }" x-cloak>
+<div x-data="{ filtersOpen: false }">
     <button 
         type="button" 
         class="khezana-filters-toggle" 
@@ -80,10 +80,10 @@
         x-show="filtersOpen"
         x-transition:opacity.duration.300ms
         @click="filtersOpen = false"
-        style="display: none;"
     ></div>
 
     {{-- Filters Sidebar --}}
+    {{-- Desktop: Always visible, Mobile: Controlled by Alpine.js --}}
     <aside 
         class="khezana-filters" 
         x-bind:class="{ 'is-active': filtersOpen }"
@@ -94,7 +94,6 @@
         x-transition:leave="transition ease-in duration-300"
         x-transition:leave-start="translate-y-0"
         x-transition:leave-end="translate-y-full"
-        style="display: none;"
         @keydown.escape.window="filtersOpen = false"
     >
         <div class="khezana-filters__header">

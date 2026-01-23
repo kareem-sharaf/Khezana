@@ -1,7 +1,361 @@
 /**
  * Khezana Design System - Authentication Pages
  * Single Responsibility: Login, register, password reset pages
+ * Full RTL support using logical properties
  */
+
+/* ============================================
+   AUTH HEADER (Logo)
+   ============================================ */
+
+.khezana-auth-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--khezana-spacing-lg) var(--khezana-spacing-md);
+    background: var(--khezana-white);
+    border-bottom: 1px solid var(--khezana-border);
+}
+
+.khezana-auth-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-sm);
+    text-decoration: none;
+    color: var(--khezana-text);
+    transition: var(--khezana-transition);
+}
+
+.khezana-auth-logo:hover {
+    opacity: 0.8;
+}
+
+.khezana-logo-img {
+    height: 40px;
+    width: auto;
+}
+
+.khezana-logo-text {
+    font-size: var(--khezana-font-size-2xl);
+    font-weight: 700;
+    color: var(--khezana-primary);
+}
+
+/* ============================================
+   AUTH MAIN CONTAINER
+   ============================================ */
+
+.khezana-auth-main {
+    min-height: calc(100vh - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--khezana-spacing-xl) var(--khezana-spacing-md);
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+/* ============================================
+   LOGIN/REGISTER PAGE
+   ============================================ */
+
+.khezana-login-page {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.khezana-login-container {
+    width: 100%;
+}
+
+/* ============================================
+   LOGIN HEADER (Title & Subtitle)
+   ============================================ */
+
+.khezana-login-header {
+    text-align: center;
+    margin-bottom: var(--khezana-spacing-xl);
+}
+
+.khezana-login-title {
+    font-size: var(--khezana-font-size-3xl);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin: 0 0 var(--khezana-spacing-sm);
+}
+
+.khezana-login-subtitle {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text-light);
+    margin: 0;
+}
+
+/* ============================================
+   AUTH MESSAGE (Info/Alert)
+   ============================================ */
+
+.khezana-auth-message {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-sm);
+    padding: var(--khezana-spacing-md);
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: var(--khezana-radius);
+    margin-top: var(--khezana-spacing-md);
+}
+
+.khezana-auth-message-icon {
+    font-size: var(--khezana-font-size-xl);
+    flex-shrink: 0;
+}
+
+.khezana-auth-message-text {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text);
+    margin: 0;
+}
+
+/* ============================================
+   LOGIN CARD (Form Container)
+   ============================================ */
+
+.khezana-login-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border-radius: var(--khezana-radius-xl);
+    padding: var(--khezana-spacing-2xl);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================
+   LOGIN FORM
+   ============================================ */
+
+.khezana-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-lg);
+}
+
+/* ============================================
+   FORM GROUP (Reused from forms.css but ensure compatibility)
+   ============================================ */
+
+.khezana-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-xs);
+}
+
+.khezana-form-label {
+    font-weight: 600;
+    color: var(--khezana-text);
+    font-size: var(--khezana-font-size-sm);
+}
+
+.khezana-form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-base);
+    font-family: inherit;
+    transition: var(--khezana-transition);
+    background: var(--khezana-white);
+    color: var(--khezana-text);
+}
+
+.khezana-form-input:focus {
+    outline: none;
+    border-color: var(--khezana-primary);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.khezana-form-input.khezana-input-error {
+    border-color: var(--khezana-danger);
+}
+
+.khezana-form-input.khezana-input-error:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.khezana-form-error {
+    color: var(--khezana-danger);
+    font-size: var(--khezana-font-size-sm);
+    margin-top: var(--khezana-spacing-xs);
+}
+
+/* ============================================
+   OTP CONTAINER
+   ============================================ */
+
+.khezana-otp-container {
+    display: flex;
+    gap: var(--khezana-spacing-xs);
+}
+
+.khezana-otp-input {
+    text-align: center;
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 600;
+    letter-spacing: 0.5rem;
+    font-family: 'Courier New', monospace;
+}
+
+.khezana-otp-hint {
+    font-size: var(--khezana-font-size-xs);
+    color: var(--khezana-text-light);
+    margin-top: var(--khezana-spacing-xs);
+    text-align: center;
+}
+
+/* ============================================
+   FORM ACTIONS
+   ============================================ */
+
+.khezana-form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-sm);
+    margin-top: var(--khezana-spacing-md);
+}
+
+/* ============================================
+   BUTTONS (Reused from buttons.css)
+   ============================================ */
+
+.khezana-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: var(--khezana-font-size-base);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--khezana-radius);
+    cursor: pointer;
+    transition: var(--khezana-transition);
+    text-decoration: none;
+    font-family: inherit;
+}
+
+.khezana-btn-primary {
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+}
+
+.khezana-btn-primary:hover:not(:disabled) {
+    background: var(--khezana-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.khezana-btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.khezana-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.khezana-btn-block {
+    width: 100%;
+}
+
+/* ============================================
+   LINK BUTTON
+   ============================================ */
+
+.khezana-link-button {
+    background: none;
+    border: none;
+    color: var(--khezana-primary);
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: var(--khezana-transition);
+    padding: 0;
+}
+
+.khezana-link-button:hover {
+    color: var(--khezana-primary-dark);
+    text-decoration: underline;
+}
+
+.khezana-link {
+    color: var(--khezana-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--khezana-transition);
+}
+
+.khezana-link:hover {
+    color: var(--khezana-primary-dark);
+    text-decoration: underline;
+}
+
+/* ============================================
+   TRUST MESSAGES
+   ============================================ */
+
+.khezana-trust-messages {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-sm);
+    margin-top: var(--khezana-spacing-xl);
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid var(--khezana-border);
+}
+
+.khezana-trust-item {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-sm);
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+}
+
+.khezana-trust-icon {
+    font-size: var(--khezana-font-size-base);
+    flex-shrink: 0;
+}
+
+.khezana-trust-text {
+    margin: 0;
+}
+
+/* ============================================
+   AUTH FOOTER
+   ============================================ */
+
+.khezana-auth-footer {
+    text-align: center;
+    margin-top: var(--khezana-spacing-lg);
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid var(--khezana-border);
+}
+
+.khezana-auth-footer-text {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    margin: 0;
+}
+
+.khezana-auth-footer-hint {
+    font-size: var(--khezana-font-size-xs);
+    color: var(--khezana-text-light);
+    margin-top: var(--khezana-spacing-sm);
+    font-style: italic;
+}
+
+/* ============================================
+   BACKWARD COMPATIBILITY (Old Classes)
+   ============================================ */
 
 .khezana-auth-page {
     min-height: calc(100vh - 200px);
@@ -22,11 +376,6 @@
     padding: var(--khezana-spacing-2xl);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.khezana-auth-header {
-    text-align: center;
-    margin-bottom: var(--khezana-spacing-xl);
 }
 
 .khezana-auth-title {
@@ -88,15 +437,6 @@
     width: 100%;
 }
 
-.khezana-auth-footer {
-    text-align: center;
-    margin-top: var(--khezana-spacing-lg);
-    padding-top: var(--khezana-spacing-lg);
-    border-top: 1px solid var(--khezana-border);
-    font-size: var(--khezana-font-size-sm);
-    color: var(--khezana-text-light);
-}
-
 .khezana-auth-footer-link {
     color: var(--khezana-primary);
     text-decoration: none;
@@ -108,12 +448,50 @@
     color: var(--khezana-primary-dark);
 }
 
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
 @media (max-width: 640px) {
+    .khezana-auth-main {
+        padding: var(--khezana-spacing-md);
+    }
+
+    .khezana-login-card,
     .khezana-auth-container {
         padding: var(--khezana-spacing-xl);
     }
 
+    .khezana-login-title,
     .khezana-auth-title {
+        font-size: var(--khezana-font-size-2xl);
+    }
+
+    .khezana-auth-header {
+        padding: var(--khezana-spacing-md);
+    }
+
+    .khezana-logo-img {
+        height: 32px;
+    }
+
+    .khezana-logo-text {
         font-size: var(--khezana-font-size-xl);
     }
+}
+
+/* ============================================
+   RTL SUPPORT
+   ============================================ */
+
+[dir="rtl"] .khezana-auth-logo {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .khezana-trust-item {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .khezana-otp-container {
+    flex-direction: row-reverse;
 }

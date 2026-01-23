@@ -39,7 +39,8 @@
             </div>
 
             <div class="khezana-form-container">
-                <form method="POST" action="{{ route('items.store') }}" class="khezana-form" id="itemCreateForm">
+                <form method="POST" action="{{ route('items.store') }}" class="khezana-form" id="itemCreateForm"
+                    enctype="multipart/form-data">
                     @csrf
 
                     <div class="khezana-form-group">
@@ -250,6 +251,26 @@
                         <div id="attributesFields"></div>
                     </div>
 
+                    <div class="khezana-form-group">
+                        <label for="images" class="khezana-form-label">
+                            {{ __('items.fields.images') }}
+                        </label>
+                        <p class="khezana-form-hint">{{ __('items.hints.images') }}</p>
+                        <input type="file" name="images[]" id="images" class="khezana-form-input"
+                            accept="image/jpeg,image/jpg,image/png" multiple>
+                        @error('images')
+                            <span class="khezana-form-error">{{ $message }}</span>
+                        @enderror
+                        @error('images.*')
+                            <span class="khezana-form-error">{{ $message }}</span>
+                        @enderror
+
+                        {{-- Image Preview Container --}}
+                        <div id="imagePreviewContainer" class="khezana-image-preview-container" style="display: none;">
+                            <div id="imagePreviewGrid" class="khezana-image-preview-grid"></div>
+                        </div>
+                    </div>
+
                     <div class="khezana-info-box">
                         <div class="khezana-info-icon">ℹ️</div>
                         <div class="khezana-info-content">
@@ -393,9 +414,9 @@
             const operationTypeRadios = document.querySelectorAll('input[name="operation_type"]');
             const depositAmountGroup = document.getElementById('deposit_amount_group');
             const depositAmountInput = document.getElementById('deposit_amount');
-            
+
             if (!depositAmountGroup || !depositAmountInput) return;
-            
+
             // Check which operation type is selected
             let selectedOperationType = null;
             operationTypeRadios.forEach(radio => {
@@ -403,7 +424,7 @@
                     selectedOperationType = radio.value;
                 }
             });
-            
+
             // Show deposit amount only for rent operation
             if (selectedOperationType === 'rent') {
                 depositAmountGroup.style.display = 'block';
@@ -414,17 +435,92 @@
                 depositAmountInput.value = '';
             }
         }
-        
+
         // Add event listeners to operation type radios
         document.addEventListener('DOMContentLoaded', function() {
             const operationTypeRadios = document.querySelectorAll('input[name="operation_type"]');
             operationTypeRadios.forEach(radio => {
                 radio.addEventListener('change', toggleDepositAmountField);
             });
-            
+
             // Check initial state (in case of old input or default value)
             toggleDepositAmountField();
         });
+
+        // Image upload preview
+        (function() {
+            let imageInput, previewContainer, previewGrid;
+
+            function updatePreview() {
+                if (!imageInput || !previewContainer || !previewGrid) return;
+
+                const files = Array.from(imageInput.files);
+                previewGrid.innerHTML = '';
+
+                if (files.length === 0) {
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+
+                previewContainer.style.display = 'block';
+
+                files.forEach((file, index) => {
+                    // Validate file type
+                    if (!file.type.match('image.*')) {
+                        return;
+                    }
+
+                    // Validate file size (5MB max)
+                    if (file.size > 5 * 1024 * 1024) {
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'khezana-image-preview-item';
+                        previewItem.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview ${index + 1}">
+                            <button type="button" class="khezana-image-remove-btn" data-index="${index}" aria-label="{{ __('common.actions.remove') }}">
+                                <span>×</span>
+                            </button>
+                        `;
+                        previewGrid.appendChild(previewItem);
+
+                        // Add remove button functionality
+                        const removeBtn = previewItem.querySelector('.khezana-image-remove-btn');
+                        removeBtn.addEventListener('click', function() {
+                            removeImage(index);
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            function removeImage(index) {
+                const dt = new DataTransfer();
+                const files = Array.from(imageInput.files);
+
+                files.forEach((file, i) => {
+                    if (i !== index) {
+                        dt.items.add(file);
+                    }
+                });
+
+                imageInput.files = dt.files;
+                updatePreview();
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                imageInput = document.getElementById('images');
+                previewContainer = document.getElementById('imagePreviewContainer');
+                previewGrid = document.getElementById('imagePreviewGrid');
+
+                if (!imageInput || !previewContainer || !previewGrid) return;
+
+                imageInput.addEventListener('change', updatePreview);
+            });
+        })();
 
         (function() {
             var overlay = document.getElementById('preCreationNotice');

@@ -2,30 +2,31 @@
 {{-- Usage: @include('items._partials.detail.images', ['viewModel' => $viewModel]) --}}
 
 <div class="khezana-item-images">
-    @if ($viewModel->hasImages)
+    @if ($viewModel->hasImages && !empty($viewModel->imageUrls))
         {{-- Main Image --}}
         <div class="khezana-item-main-image">
-            <img 
-                id="mainImage" 
-                src="{{ $viewModel->imageUrls[0]['url'] ?? '' }}" 
-                alt="{{ $viewModel->title }}"
-                class="khezana-main-img" 
-                loading="eager">
+            @if (!empty($viewModel->imageUrls[0]['url']))
+                <img id="mainImage" src="{{ $viewModel->imageUrls[0]['url'] }}" alt="{{ $viewModel->title }}"
+                    class="khezana-main-img" loading="eager"
+                    onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
+            @else
+                <div class="khezana-no-image-placeholder">
+                    {{ __('common.ui.no_image') }}
+                </div>
+            @endif
         </div>
 
         {{-- Thumbnails --}}
-        @if ($viewModel->hasMultipleImages)
+        @if ($viewModel->hasMultipleImages && count($viewModel->imageUrls) > 1)
             <div class="khezana-item-thumbnails">
                 @foreach ($viewModel->imageUrls as $image)
-                    <button 
-                        type="button" 
-                        class="khezana-thumbnail {{ $loop->first ? 'active' : '' }}"
-                        onclick="changeMainImage('{{ $image['url'] }}', this)">
-                        <img 
-                            src="{{ $image['url'] }}" 
-                            alt="{{ $viewModel->title }}"
-                            loading="lazy">
-                    </button>
+                    @if (!empty($image['url']))
+                        <button type="button" class="khezana-thumbnail {{ $loop->first ? 'active' : '' }}"
+                            onclick="changeMainImage('{{ $image['url'] }}', this)">
+                            <img src="{{ $image['url'] }}" alt="{{ $viewModel->title }}" loading="lazy"
+                                onerror="this.onerror=null; this.parentElement.style.display='none';">
+                        </button>
+                    @endif
                 @endforeach
             </div>
         @endif

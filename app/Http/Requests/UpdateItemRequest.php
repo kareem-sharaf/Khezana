@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * Form Request for updating an existing item
- * 
+ *
  * Handles validation for item updates with proper error messages
  */
 class UpdateItemRequest extends BaseFormRequest
@@ -27,8 +27,18 @@ class UpdateItemRequest extends BaseFormRequest
                 'nullable',
                 'string',
                 Rule::in([
-                    'damascus', 'aleppo', 'homs', 'hama', 'latakia', 'tartus',
-                    'daraa', 'sweida', 'hasakah', 'deir_ezzor', 'raqqa', 'idlib'
+                    'damascus',
+                    'aleppo',
+                    'homs',
+                    'hama',
+                    'latakia',
+                    'tartus',
+                    'daraa',
+                    'sweida',
+                    'hasakah',
+                    'deir_ezzor',
+                    'raqqa',
+                    'idlib'
                 ])
             ],
             'condition' => ['sometimes', Rule::in(['new', 'used'])],
@@ -37,7 +47,7 @@ class UpdateItemRequest extends BaseFormRequest
             'is_available' => ['sometimes', 'boolean'],
             'attributes' => ['nullable', 'array'],
             'images' => ['nullable', 'array'],
-            'images.*' => ['string'],
+            'images.*' => ['image', 'mimes:jpeg,jpg,png', 'max:5120'], // Max 5MB per image
         ];
     }
 
@@ -56,6 +66,9 @@ class UpdateItemRequest extends BaseFormRequest
             'price.min' => __('items.messages.price_min'),
             'deposit_amount.numeric' => __('items.messages.deposit_numeric'),
             'deposit_amount.min' => __('items.messages.deposit_min'),
+            'images.*.image' => __('items.messages.invalid_image_type'),
+            'images.*.mimes' => __('items.messages.invalid_image_format'),
+            'images.*.max' => __('items.messages.image_too_large'),
         ];
     }
 }

@@ -346,6 +346,31 @@
     backdrop-filter: blur(2px);
 }
 
+/* Show overlay when filters are open on mobile */
+@media (max-width: 1023px) {
+    .khezana-filters-overlay[x-show] {
+        display: block;
+    }
+}
+
+/* ============================================
+   DESKTOP: Always show filters
+   ============================================ */
+
+@media (min-width: 1024px) {
+    /* Force show filters on desktop (override Alpine.js x-show) */
+    .khezana-filters {
+        display: flex !important;
+        position: sticky;
+        top: calc(var(--khezana-spacing-xl) + 20px);
+    }
+
+    /* Hide overlay on desktop */
+    .khezana-filters-overlay {
+        display: none !important;
+    }
+}
+
 /* ============================================
    RESPONSIVE: MOBILE
    ============================================ */
@@ -353,7 +378,7 @@
 @media (max-width: 1023px) {
     /* Show toggle button on mobile */
     .khezana-filters-toggle {
-        display: flex;
+        display: flex !important;
     }
 
     /* Hide filters by default on mobile */
@@ -371,6 +396,20 @@
         transition: transform 0.3s ease;
         z-index: 999;
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        /* Ensure filters are hidden by default on mobile */
+        display: none;
+    }
+
+    /* Show filters when active on mobile (Alpine.js x-show + is-active class) */
+    .khezana-filters.is-active,
+    .khezana-filters[x-show] {
+        display: flex !important;
+        transform: translateY(0);
+    }
+
+    /* Show overlay on mobile when filters are open */
+    .khezana-filters-overlay {
+        display: block;
     }
 
     /* Show close button on mobile */

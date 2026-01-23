@@ -16,6 +16,8 @@ use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 /**
@@ -50,9 +52,9 @@ class ItemController extends Controller
         // Apply filters
         if ($request->has('search') && $request->get('search')) {
             $search = $request->get('search');
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -135,12 +137,22 @@ class ItemController extends Controller
     {
         try {
             $validated = $request->validated();
-            
+
+            // Handle image uploads
+            $imagePaths = [];
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $filename = 'items/' . Str::uuid() . '.' . $image->getClientOriginalExtension();
+                    $image->storeAs('public', $filename);
+                    $imagePaths[] = $filename;
+                }
+            }
+
             $item = $this->createItemAction->execute(
                 $validated,
                 Auth::user(),
                 $validated['attributes'] ?? null,
-                $validated['images'] ?? null
+                !empty($imagePaths) ? $imagePaths : null
             );
 
             return redirect()->route('items.show', $item)
@@ -187,12 +199,23 @@ class ItemController extends Controller
 
         try {
             $validated = $request->validated();
-            
+
+            // Handle image uploads
+            $imagePaths = null;
+            if ($request->hasFile('images')) {
+                $imagePaths = [];
+                foreach ($request->file('images') as $image) {
+                    $filename = 'items/' . Str::uuid() . '.' . $image->getClientOriginalExtension();
+                    $image->storeAs('public', $filename);
+                    $imagePaths[] = $filename;
+                }
+            }
+
             $item = $this->updateItemAction->execute(
                 $item,
                 $validated,
                 $validated['attributes'] ?? null,
-                $validated['images'] ?? null
+                $imagePaths
             );
 
             return redirect()->route('items.show', $item)

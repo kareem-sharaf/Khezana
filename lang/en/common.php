@@ -17,6 +17,7 @@ return [
         'deactivate' => 'Deactivate',
         'approve' => 'Approve',
         'reject' => 'Reject',
+        'remove' => 'Remove',
     ],
 
     'status' => [

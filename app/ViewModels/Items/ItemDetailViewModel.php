@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 /**
  * Item Detail ViewModel
- * 
+ *
  * Prepares all data needed for item detail page
  * Removes all logic from Blade templates
  */
@@ -72,29 +72,32 @@ class ItemDetailViewModel
      */
     public static function fromItem($item, string $type = 'user'): self
     {
-        $operationType = $type === 'public' 
+        $operationType = $type === 'public'
             ? ($item->operationType ?? 'sell')
             : ($item->operation_type->value ?? 'sell');
-        
-        $price = $type === 'public' 
+
+        $price = $type === 'public'
             ? ($item->price ?? null)
             : ($item->price ?? null);
-        
-        $displayPrice = $price ? price_with_fee((float) $price, $operationType) : null;
+
+        // Convert price to float if it's not null
+        $price = $price !== null ? (float) $price : null;
+
+        $displayPrice = $price ? price_with_fee($price, $operationType) : null;
         $isFree = $operationType === 'donate' || $displayPrice === null;
         $isRent = $operationType === 'rent';
-        
+
         $images = $type === 'public'
             ? ($item->images ?? collect())
             : ($item->images ?? collect());
-        
+
         $primaryImage = $type === 'public'
             ? ($item->primaryImage ?? null)
             : ($images->where('is_primary', true)->first() ?? $images->first());
-        
+
         $approvalRelation = $type === 'user' ? ($item->approvalRelation ?? null) : null;
         $approvalStatus = $approvalRelation?->status?->value ?? null;
-        
+
         $statusClass = match ($approvalStatus) {
             'approved' => 'khezana-approval-badge-approved',
             'pending' => 'khezana-approval-badge-pending',
@@ -102,11 +105,11 @@ class ItemDetailViewModel
             'archived' => 'khezana-approval-badge-archived',
             default => null,
         };
-        
+
         $url = $type === 'public'
             ? route('public.items.show', ['id' => $item->id, 'slug' => $item->slug ?? null])
             : route('items.show', $item);
-        
+
         $breadcrumbs = $type === 'public'
             ? [
                 ['label' => __('common.ui.home'), 'url' => route('home')],
@@ -118,15 +121,15 @@ class ItemDetailViewModel
                 ['label' => __('common.ui.my_items_page'), 'url' => route('items.index')],
                 ['label' => $item->title, 'url' => null],
             ];
-        
+
         // Check permissions
         $isPending = $type === 'user' && method_exists($item, 'isPending') ? $item->isPending() : ($approvalStatus === 'pending');
         $isApproved = $type === 'user' && method_exists($item, 'isApproved') ? $item->isApproved() : ($approvalStatus === 'approved');
-        
+
         $canEdit = $type === 'user' && !$isPending;
         $canDelete = $type === 'user';
         $canSubmitForApproval = $type === 'user' && !$isPending && !$isApproved;
-        
+
         return new self(
             itemId: $item->id,
             title: $item->title ?? '',
@@ -136,16 +139,20 @@ class ItemDetailViewModel
             operationTypeBadgeClass: 'khezana-item-badge-' . $operationType,
             price: $price,
             displayPrice: $displayPrice,
-            depositAmount: $type === 'public' 
+            depositAmount: ($type === 'public'
                 ? ($item->depositAmount ?? null)
-                : ($item->deposit_amount ?? null),
+                : ($item->deposit_amount ?? null)) !== null
+                ? (float) ($type === 'public' ? $item->depositAmount : $item->deposit_amount)
+                : null,
             isFree: $isFree,
             isRent: $isRent,
             hasPrice: $displayPrice !== null,
-            hasDeposit: ($type === 'public' ? ($item->depositAmount ?? null) : ($item->deposit_amount ?? null)) !== null,
-            formattedPrice: $price ? number_format((float) $price, 0) : '',
-            formattedDisplayPrice: $displayPrice ? number_format($displayPrice, 0) : '',
-            formattedDeposit: ($type === 'public' ? ($item->depositAmount ?? null) : ($item->deposit_amount ?? null))
+            hasDeposit: ($type === 'public'
+                ? ($item->depositAmount ?? null)
+                : ($item->deposit_amount ?? null)) !== null,
+            formattedPrice: $price !== null ? number_format($price, 0) : '',
+            formattedDisplayPrice: $displayPrice !== null ? number_format($displayPrice, 0) : '',
+            formattedDeposit: ($type === 'public' ? ($item->depositAmount ?? null) : ($item->deposit_amount ?? null)) !== null
                 ? number_format((float) ($type === 'public' ? $item->depositAmount : $item->deposit_amount), 0)
                 : '',
             showPriceUnit: $isRent && $displayPrice !== null,
@@ -153,11 +160,17 @@ class ItemDetailViewModel
             primaryImage: $primaryImage,
             hasImages: $images->count() > 0,
             hasMultipleImages: $images->count() > 1,
-            imageUrls: $images->map(fn($img) => [
-                'path' => $img->path ?? null,
-                'url' => $img->path ? asset('storage/' . $img->path) : null,
-                'isPrimary' => $img->is_primary ?? false,
-            ])->toArray(),
+            imageUrls: $images->map(function ($img) {
+                $path = $img->path ?? null;
+                if (!$path) {
+                    return null;
+                }
+                return [
+                    'path' => $path,
+                    'url' => asset('storage/' . $path),
+                    'isPrimary' => $img->is_primary ?? false,
+                ];
+            })->filter()->values()->toArray(),
             category: $type === 'public'
                 ? ($item->category?->name ?? null)
                 : ($item->category?->name ?? null),
@@ -166,7 +179,7 @@ class ItemDetailViewModel
                 ? __('items.conditions.' . $item->condition)
                 : null,
             isAvailable: $type === 'public' ? true : ($item->is_available ?? true),
-            availabilityLabel: $type === 'public' 
+            availabilityLabel: $type === 'public'
                 ? __('common.ui.available')
                 : (($item->is_available ?? true) ? __('common.ui.available') : __('common.ui.unavailable')),
             attributes: self::prepareAttributes(
@@ -219,10 +232,10 @@ class ItemDetailViewModel
             if (is_object($attribute)) {
                 $name = $attribute->name ?? $attribute->attribute->name ?? '';
                 $value = $attribute->value ?? $attribute->formattedValue ?? '';
-                
+
                 // Translate attribute name
                 $translatedName = translate_attribute_name($name);
-                
+
                 // Create new object with translated name
                 return (object) [
                     'name' => $translatedName,
@@ -231,7 +244,7 @@ class ItemDetailViewModel
                     'formattedValue' => $value,
                 ];
             }
-            
+
             return $attribute;
         });
     }
