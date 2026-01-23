@@ -2,35 +2,38 @@
 {{-- Usage: @include('public.requests._partials.grid', ['requests' => $requests]) --}}
 
 @php
-    use Illuminate\Support\Str;
+    use App\ViewModels\Requests\RequestCardViewModel;
 @endphp
 
 <div class="khezana-requests-grid" role="list">
     @foreach ($requests as $request)
-        <a href="{{ $request->url }}" class="khezana-request-card" role="listitem">
+        @php
+            $viewModel = RequestCardViewModel::fromRequest($request, 'public');
+        @endphp
+        <a href="{{ $viewModel->url }}" class="khezana-request-card" role="listitem">
             <div class="khezana-request-content">
                 <div class="khezana-request-header">
-                    <h3 class="khezana-request-title">{{ $request->title }}</h3>
-                    <span class="khezana-request-badge khezana-request-badge-{{ $request->status }}">
-                        {{ $request->statusLabel }}
+                    <h3 class="khezana-request-title">{{ $viewModel->title }}</h3>
+                    <span class="khezana-request-badge {{ $viewModel->statusBadgeClass }}">
+                        {{ $viewModel->statusLabel }}
                     </span>
                 </div>
 
-                @if ($request->category)
-                    <p class="khezana-request-category">{{ $request->category->name }}</p>
+                @if ($viewModel->category)
+                    <p class="khezana-request-category">{{ $viewModel->category }}</p>
                 @endif
 
-                @if ($request->description)
+                @if ($viewModel->descriptionPreview)
                     <p class="khezana-request-description">
-                        {{ Str::limit($request->description, 120) }}
+                        {{ $viewModel->descriptionPreview }}
                     </p>
                 @endif
 
-                @if ($request->attributes->count() > 0)
+                @if ($viewModel->hasAttributes)
                     <div class="khezana-request-attributes">
-                        @foreach ($request->attributes->take(3) as $attr)
+                        @foreach ($viewModel->displayAttributes as $attr)
                             <span class="khezana-request-attribute">
-                                <strong>{{ $attr->name }}:</strong> {{ $attr->value }}
+                                <strong>{{ $attr['name'] }}:</strong> {{ $attr['value'] }}
                             </span>
                         @endforeach
                     </div>
@@ -38,18 +41,18 @@
 
                 <div class="khezana-request-footer">
                     <div class="khezana-request-meta">
-                        @if ($request->user)
+                        @if ($viewModel->hasUser)
                             <span class="khezana-request-user">
-                                {{ $request->user->name }}
+                                {{ $viewModel->userName }}
                             </span>
                         @endif
                         <span class="khezana-request-date">
-                            {{ __('common.ui.posted') }} {{ $request->createdAtFormatted }}
+                            {{ __('common.ui.posted') }} {{ $viewModel->createdAtFormatted }}
                         </span>
                     </div>
-                    @if ($request->offersCount > 0)
+                    @if ($viewModel->hasOffers)
                         <span class="khezana-request-offers">
-                            {{ $request->offersCount }} {{ __('common.ui.offers') }}
+                            {{ $viewModel->offersText }}
                         </span>
                     @endif
                 </div>
@@ -57,3 +60,4 @@
         </a>
     @endforeach
 </div>
+

@@ -4,26 +4,29 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
+use App\ViewModels\Items\ItemCardViewModel;
+
 /**
  * Item Card Helper
  * 
  * Static helper methods to prepare item card data
- * Can be used in controllers or view composers
+ * Now uses ViewModels for clean data preparation
  */
 class ItemCardHelper
 {
     /**
-     * Prepare item card data for public items (ItemReadModel)
+     * Prepare item card ViewModel for public items (ItemReadModel)
      */
     public static function preparePublicItem($item, array $overrides = []): array
     {
-        return array_merge([
-            'variant' => 'public',
+        $data = [
+            'itemId' => $item->id,
+            'variant' => $overrides['variant'] ?? 'public',
             'url' => route('public.items.show', [
                 'id' => $item->id,
                 'slug' => $item->slug ?? null
             ]),
-            'primaryImage' => $item->primaryImage ?? null,
+            'primaryImagePath' => $item->primaryImage->path ?? null,
             'images' => $item->images ?? collect(),
             'title' => $item->title ?? '',
             'price' => $item->price ?? null,
@@ -34,13 +37,16 @@ class ItemCardHelper
             'condition' => $item->condition ?? null,
             'category' => $item->category?->name ?? null,
             'createdAt' => $item->createdAtFormatted ?? null,
-            'showMeta' => true,
-            'showImagePreview' => true,
-        ], $overrides);
+            'showMeta' => $overrides['showMeta'] ?? true,
+            'showImagePreview' => $overrides['showImagePreview'] ?? true,
+        ];
+
+        $viewModel = ItemCardViewModel::fromArray(array_merge($data, $overrides));
+        return array_merge(['item' => $item], $viewModel->toArray());
     }
 
     /**
-     * Prepare item card data for user items (Item model)
+     * Prepare item card ViewModel for user items (Item model)
      */
     public static function prepareUserItem($item, array $overrides = []): array
     {
@@ -48,10 +54,11 @@ class ItemCardHelper
             ? ($item->images->where('is_primary', true)->first() ?? $item->images->first())
             : null;
 
-        return array_merge([
-            'variant' => 'user',
+        $data = [
+            'itemId' => $item->id,
+            'variant' => $overrides['variant'] ?? 'user',
             'url' => route('items.show', $item),
-            'primaryImage' => $primaryImage,
+            'primaryImagePath' => $primaryImage->path ?? null,
             'images' => $item->images ?? collect(),
             'title' => $item->title ?? '',
             'price' => $item->price ?? null,
@@ -62,13 +69,16 @@ class ItemCardHelper
             'condition' => $item->condition ?? null,
             'category' => $item->category?->name ?? null,
             'createdAt' => null, // User items don't show created date in card
-            'showMeta' => true,
-            'showImagePreview' => true,
-        ], $overrides);
+            'showMeta' => $overrides['showMeta'] ?? true,
+            'showImagePreview' => $overrides['showImagePreview'] ?? true,
+        ];
+
+        $viewModel = ItemCardViewModel::fromArray(array_merge($data, $overrides));
+        return array_merge(['item' => $item], $viewModel->toArray());
     }
 
     /**
-     * Prepare item card data for compact variant
+     * Prepare item card ViewModel for compact variant
      */
     public static function prepareCompactItem($item, string $type = 'public', array $overrides = []): array
     {

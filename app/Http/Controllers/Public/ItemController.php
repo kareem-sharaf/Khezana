@@ -71,8 +71,10 @@ class ItemController extends Controller
             return redirect()->route('public.items.show', ['id' => $item->id, 'slug' => $item->slug], 301);
         }
 
+        $viewModel = \App\ViewModels\Items\ItemDetailViewModel::fromItem($item, 'public');
+
         return view('public.items.show', [
-            'item' => $item,
+            'viewModel' => $viewModel,
         ]);
     }
 

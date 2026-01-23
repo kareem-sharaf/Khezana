@@ -1,49 +1,10 @@
 {{--
     Item Card Component - Clean UI Component (Dumb Component)
+    Uses ViewModel for all data preparation - No logic in Blade
     
-    Props:
-    - $item: Item model or ItemReadModel
-    - $variant: 'public' | 'user' | 'compact' (default: 'public')
-    - $url: Item detail URL (required)
-    - $primaryImage: Primary image object with 'path' property
-    - $images: Collection of images (optional, for multi-image indicator)
-    - $title: Item title (required)
-    - $price: Item price (float|null)
-    - $displayPrice: Final price with fees (float|null)
-    - $operationType: 'sell' | 'rent' | 'donate' (required)
-    - $condition: 'new' | 'used' (optional)
-    - $category: Category name (optional)
-    - $createdAt: Formatted created date (optional)
-    - $showMeta: Show secondary meta info (default: true)
-    - $showImagePreview: Show hover preview (default: true)
-    
-    Usage:
-    @include('partials.item-card', [
-        'item' => $item,
-        'variant' => 'public',
-        'url' => route('public.items.show', ['id' => $item->id]),
-        'primaryImage' => $item->primaryImage,
-        'images' => $item->images,
-        'title' => $item->title,
-        'price' => $item->price,
-        'displayPrice' => price_with_fee($item->price, $item->operationType),
-        'operationType' => $item->operationType,
-        'condition' => $item->condition,
-        'category' => $item->category?->name,
-        'createdAt' => $item->createdAtFormatted,
-    ])
+    All data is prepared in ItemCardViewModel via ItemCardHelper
+    This template only displays pre-calculated values
 --}}
-
-@php
-    // Default values
-    $variant = $variant ?? 'public';
-    $showMeta = $showMeta ?? true;
-    $showImagePreview = $showImagePreview ?? true;
-    $images = $images ?? collect();
-    $hasMultipleImages = $images->count() > 1;
-    $primaryImagePath = $primaryImage->path ?? null;
-    $itemId = $item->id ?? $item['id'] ?? uniqid();
-@endphp
 
 <article 
     class="khezana-item-card khezana-item-card--{{ $variant }}" 
@@ -52,34 +13,32 @@
     
     {{-- Image Section --}}
     <div class="khezana-item-card__image">
-        @if ($primaryImagePath)
+        @if ($hasImage)
             <a href="{{ $url }}" class="khezana-item-card__image-link" aria-label="{{ $title }}">
                 <div class="khezana-item-card__image-container">
                     <img 
-                        src="{{ asset('storage/' . $primaryImagePath) }}"
+                        src="{{ $getImageUrl }}"
                         alt="{{ $title }}"
                         class="khezana-item-card__image-element"
                         loading="lazy"
-                        data-primary-image="{{ asset('storage/' . $primaryImagePath) }}"
+                        data-primary-image="{{ $getImageUrl }}"
                         onload="this.classList.add('loaded'); const skeleton = document.getElementById('skeleton-{{ $itemId }}'); if(skeleton) { skeleton.style.display = 'none'; }"
                         onerror="this.classList.add('loaded'); const skeleton = document.getElementById('skeleton-{{ $itemId }}'); if(skeleton) { skeleton.style.display = 'none'; }">
                     
                     @if ($hasMultipleImages && $variant !== 'compact')
                         <div class="khezana-item-card__image-indicator">
-                            <span class="khezana-item-card__image-count">+{{ $images->count() - 1 }}</span>
+                            <span class="khezana-item-card__image-count">{{ $getAdditionalImagesCount }}</span>
                         </div>
                         
-                        @if ($showImagePreview)
-                            <div class="khezana-item-card__image-preview" data-images-count="{{ $images->count() }}">
-                                @foreach ($images->take(4) as $image)
-                                    @if($image->path ?? null)
-                                        <img 
-                                            src="{{ asset('storage/' . $image->path) }}"
-                                            alt="{{ $title }}"
-                                            class="khezana-item-card__preview-image"
-                                            data-image-index="{{ $loop->index }}"
-                                            loading="lazy">
-                                    @endif
+                        @if ($showImagePreview && !empty($previewImages))
+                            <div class="khezana-item-card__image-preview" data-images-count="{{ count($previewImages) }}">
+                                @foreach ($previewImages as $previewImage)
+                                    <img 
+                                        src="{{ $previewImage['url'] }}"
+                                        alt="{{ $title }}"
+                                        class="khezana-item-card__preview-image"
+                                        data-image-index="{{ $loop->index }}"
+                                        loading="lazy">
                                 @endforeach
                             </div>
                         @endif
@@ -116,14 +75,14 @@
 
         {{-- Price & Badge Section --}}
         <div class="khezana-item-card__price-section">
-            @if (isset($displayPrice) && $displayPrice !== null)
+            @if ($hasPrice)
                 <div class="khezana-item-card__price">
-                    {{ number_format($displayPrice, 0) }} {{ __('common.ui.currency') }}
-                    @if ($operationType === 'rent')
+                    {{ $formattedDisplayPrice }} {{ __('common.ui.currency') }}
+                    @if ($showPriceUnit)
                         <span class="khezana-item-card__price-unit">{{ __('common.ui.per_day') }}</span>
                     @endif
                 </div>
-            @elseif ($operationType === 'donate')
+            @elseif ($isFree)
                 <div class="khezana-item-card__price khezana-item-card__price--free">
                     {{ __('common.ui.free') }}
                 </div>
@@ -131,28 +90,28 @@
             
             {{-- Operation Type Badge --}}
             <span 
-                class="khezana-item-card__badge khezana-item-card__badge--{{ $operationType }}" 
-                aria-label="{{ __('items.operation_types.' . $operationType) }}">
-                {{ __('items.operation_types.' . $operationType) }}
+                class="khezana-item-card__badge {{ $operationTypeBadgeClass }}" 
+                aria-label="{{ $operationTypeLabel }}">
+                {{ $operationTypeLabel }}
             </span>
         </div>
 
         {{-- Secondary Meta Info --}}
         @if ($showMeta && $variant !== 'compact')
             <div class="khezana-item-card__meta">
-                @if (isset($condition) && $condition)
+                @if ($conditionLabel)
                     <span class="khezana-item-card__meta-item" aria-label="{{ __('items.fields.condition') }}">
-                        🏷️ {{ __('items.conditions.' . $condition) }}
+                        🏷️ {{ $conditionLabel }}
                     </span>
                 @endif
                 
-                @if (isset($category) && $category)
+                @if ($category)
                     <span class="khezana-item-card__meta-item" aria-label="{{ __('items.fields.category') }}">
                         {{ $category }}
                     </span>
                 @endif
                 
-                @if (isset($createdAt) && $createdAt)
+                @if ($createdAt)
                     <span class="khezana-item-card__meta-item" aria-label="{{ __('common.ui.posted') }}">
                         {{ __('common.ui.posted') }} {{ $createdAt }}
                     </span>

@@ -110,7 +110,9 @@ class ItemController extends Controller
 
         $item->load(['user', 'category', 'images', 'itemAttributes.attribute', 'approvalRelation']);
 
-        return view('items.show', compact('item'));
+        $viewModel = \App\ViewModels\Items\ItemDetailViewModel::fromItem($item, 'user');
+
+        return view('items.show', ['viewModel' => $viewModel]);
     }
 
     /**

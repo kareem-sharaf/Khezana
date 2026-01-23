@@ -2,54 +2,47 @@
 {{-- Usage: @include('requests._partials.grid', ['requests' => $requests]) --}}
 
 @php
-    use Illuminate\Support\Str;
+    use App\ViewModels\Requests\RequestCardViewModel;
 @endphp
 
 <div class="khezana-requests-grid" role="list">
     @foreach ($requests as $request)
-        <a href="{{ route('requests.show', $request) }}" class="khezana-request-card" role="listitem">
+        @php
+            $viewModel = RequestCardViewModel::fromRequest($request, 'user');
+        @endphp
+        <a href="{{ $viewModel->url }}" class="khezana-request-card" role="listitem">
             <div class="khezana-request-content">
                 <div class="khezana-request-header">
-                    <h3 class="khezana-request-title">{{ $request->title }}</h3>
+                    <h3 class="khezana-request-title">{{ $viewModel->title }}</h3>
                     <div style="display: flex; gap: var(--khezana-spacing-xs); flex-wrap: wrap;">
-                        <span class="khezana-request-badge khezana-request-badge-{{ $request->status->value }}">
-                            {{ $request->status->label() }}
+                        <span class="khezana-request-badge {{ $viewModel->statusBadgeClass }}">
+                            {{ $viewModel->statusLabel }}
                         </span>
 
-                        @if ($request->approvalRelation)
-                            @php
-                                $approvalStatus = $request->approvalRelation->status;
-                                $statusClass = match ($approvalStatus->value) {
-                                    'approved' => 'khezana-approval-badge-approved',
-                                    'pending' => 'khezana-approval-badge-pending',
-                                    'rejected' => 'khezana-approval-badge-rejected',
-                                    'archived' => 'khezana-approval-badge-archived',
-                                    default => 'khezana-approval-badge-pending',
-                                };
-                            @endphp
-                            <span class="khezana-approval-badge {{ $statusClass }}" style="font-size: 0.75rem;">
-                                {{ $approvalStatus->label() }}
+                        @if ($viewModel->hasApprovalStatus)
+                            <span class="khezana-approval-badge {{ $viewModel->approvalStatusClass }}" style="font-size: 0.75rem;">
+                                {{ $viewModel->approvalStatusLabel }}
                             </span>
                         @endif
                     </div>
                 </div>
 
-                @if ($request->category)
-                    <p class="khezana-request-category">{{ $request->category->name }}</p>
+                @if ($viewModel->category)
+                    <p class="khezana-request-category">{{ $viewModel->category }}</p>
                 @endif
 
-                @if ($request->description)
+                @if ($viewModel->descriptionPreview)
                     <p class="khezana-request-description">
-                        {{ Str::limit($request->description, 120) }}
+                        {{ $viewModel->descriptionPreview }}
                     </p>
                 @endif
 
-                @if ($request->itemAttributes->count() > 0)
+                @if ($viewModel->hasAttributes)
                     <div class="khezana-request-attributes">
-                        @foreach ($request->itemAttributes->take(3) as $itemAttr)
+                        @foreach ($viewModel->displayAttributes as $attr)
                             <span class="khezana-request-attribute">
-                                <strong>{{ $itemAttr->attribute->name }}:</strong>
-                                {{ $itemAttr->value }}
+                                <strong>{{ $attr['name'] }}:</strong>
+                                {{ $attr['value'] }}
                             </span>
                         @endforeach
                     </div>
@@ -58,12 +51,12 @@
                 <div class="khezana-request-footer">
                     <div class="khezana-request-meta">
                         <span class="khezana-request-date">
-                            {{ $request->created_at->diffForHumans() }}
+                            {{ $viewModel->createdAtFormatted }}
                         </span>
                     </div>
-                    @if ($request->offers->count() > 0)
+                    @if ($viewModel->hasOffers)
                         <span class="khezana-request-offers">
-                            {{ $request->offers->count() }} {{ __('common.ui.offers') }}
+                            {{ $viewModel->offersText }}
                         </span>
                     @endif
                 </div>
