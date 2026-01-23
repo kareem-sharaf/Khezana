@@ -1,0 +1,72 @@
+/**
+ * Khezana Design System - Footer
+ * Single Responsibility: Footer layout, links, copyright
+ */
+
+.khezana-footer {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    color: rgba(255, 255, 255, 0.9);
+    padding: var(--khezana-spacing-2xl) 0 var(--khezana-spacing-lg);
+    margin-top: var(--khezana-spacing-2xl);
+}
+
+.khezana-footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--khezana-spacing-md);
+}
+
+.khezana-footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--khezana-spacing-xl);
+    margin-bottom: var(--khezana-spacing-xl);
+}
+
+.khezana-footer-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-md);
+}
+
+.khezana-footer-title {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 600;
+    color: var(--khezana-white);
+    margin: 0 0 var(--khezana-spacing-sm);
+}
+
+.khezana-footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-xs);
+}
+
+.khezana-footer-link {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: var(--khezana-font-size-sm);
+    transition: color 0.2s ease;
+}
+
+.khezana-footer-link:hover {
+    color: var(--khezana-primary);
+}
+
+.khezana-footer-bottom {
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    font-size: var(--khezana-font-size-sm);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 768px) {
+    .khezana-footer-grid {
+        grid-template-columns: 1fr;
+        gap: var(--khezana-spacing-lg);
+    }
+}

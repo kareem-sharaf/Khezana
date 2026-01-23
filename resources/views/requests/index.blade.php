@@ -11,7 +11,8 @@
         <div class="khezana-container">
             <!-- Page Header -->
             <div class="khezana-page-header">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--khezana-spacing-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--khezana-spacing-md);">
                     <div>
                         <h1 class="khezana-page-title">{{ __('common.ui.my_requests_page') }}</h1>
                         <p class="khezana-page-subtitle">
@@ -24,57 +25,8 @@
                 </div>
             </div>
 
-            <!-- Mobile Filters Toggle Button -->
-            <input type="checkbox" id="mobileFiltersToggle" class="khezana-mobile-toggle-checkbox">
-            <label for="mobileFiltersToggle" class="khezana-filters-toggle">
-                <span class="khezana-filters-toggle-icon">🔍</span>
-                <span class="khezana-filters-toggle-text">{{ __('common.ui.filters') }}</span>
-            </label>
-
-            <div class="khezana-listing-layout">
-                @include('partials.filters', [
-                    'type' => 'requests',
-                    'route' => 'requests.index',
-                    'resetRoute' => 'requests.index',
-                    'showOperationType' => false,
-                    'showPriceRange' => false,
-                    'showStatus' => true,
-                    'showApprovalStatus' => true,
-                    'categories' => $categories ?? collect(),
-                ])
-
-                <!-- Main Content -->
-                <main class="khezana-listing-main">
-                    <!-- Active Filters Tags -->
-                    @if (request()->hasAny(['search', 'status', 'category_id', 'approval_status']))
-                        <div class="khezana-active-filters">
-                            @if (request('search'))
-                                <span class="khezana-filter-tag">
-                                    {{ __('common.ui.search') }}: {{ request('search') }}
-                                    <a href="{{ route('requests.index', array_merge(request()->except('search'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
-                                </span>
-                            @endif
-                            @if (request('status'))
-                                <span class="khezana-filter-tag">
-                                    {{ __('requests.status.' . request('status')) }}
-                                    <a href="{{ route('requests.index', array_merge(request()->except('status'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
-                                </span>
-                            @endif
-                            @if (request('category_id') && isset($categories) && $categories->firstWhere('id', request('category_id')))
-                                <span class="khezana-filter-tag">
-                                    {{ $categories->firstWhere('id', request('category_id'))->name }}
-                                    <a href="{{ route('requests.index', array_merge(request()->except('category_id'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
-                                </span>
-                            @endif
-                            @if (request('approval_status'))
-                                <span class="khezana-filter-tag">
-                                    {{ __('approvals.status.' . request('approval_status')) }}
-                                    <a href="{{ route('requests.index', array_merge(request()->except('approval_status'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
-                                </span>
-                            @endif
-                            <a href="{{ route('requests.index') }}" class="khezana-filter-clear-all">{{ __('common.ui.clear_all') }}</a>
-                        </div>
-                    @endif
+            <!-- Main Content -->
+            <main class="khezana-listing-main">
 
                 @if ($requests->count() > 0)
                     <!-- Requests Grid -->
@@ -90,10 +42,10 @@
                                                 {{ $request->status->label() }}
                                             </span>
 
-                                            @if($request->approvalRelation)
+                                            @if ($request->approvalRelation)
                                                 @php
                                                     $approvalStatus = $request->approvalRelation->status;
-                                                    $statusClass = match($approvalStatus->value) {
+                                                    $statusClass = match ($approvalStatus->value) {
                                                         'approved' => 'khezana-approval-badge-approved',
                                                         'pending' => 'khezana-approval-badge-pending',
                                                         'rejected' => 'khezana-approval-badge-rejected',
@@ -101,7 +53,8 @@
                                                         default => 'khezana-approval-badge-pending',
                                                     };
                                                 @endphp
-                                                <span class="khezana-approval-badge {{ $statusClass }}" style="font-size: 0.75rem;">
+                                                <span class="khezana-approval-badge {{ $statusClass }}"
+                                                    style="font-size: 0.75rem;">
                                                     {{ $approvalStatus->label() }}
                                                 </span>
                                             @endif
@@ -122,7 +75,8 @@
                                         <div class="khezana-request-attributes">
                                             @foreach ($request->itemAttributes->take(3) as $itemAttr)
                                                 <span class="khezana-request-attribute">
-                                                    <strong>{{ $itemAttr->attribute->name }}:</strong> {{ $itemAttr->value }}
+                                                    <strong>{{ $itemAttr->attribute->name }}:</strong>
+                                                    {{ $itemAttr->value }}
                                                 </span>
                                             @endforeach
                                         </div>
@@ -160,20 +114,16 @@
                             {{ __('common.ui.no_requests_message') }}
                         </p>
                         <div class="khezana-empty-actions">
-                            @if (request()->hasAny(['search', 'status', 'category_id', 'approval_status']))
-                                <a href="{{ route('requests.index') }}" class="khezana-btn khezana-btn-secondary">
-                                    {{ __('common.ui.clear_filters') }}
-                                </a>
-                            @endif
-                            <a href="{{ route('requests.create') }}" class="khezana-btn khezana-btn-primary khezana-btn-large">
+                            <a href="{{ route('requests.create') }}"
+                                class="khezana-btn khezana-btn-primary khezana-btn-large">
                                 {{ __('common.ui.no_requests_cta') }}
                             </a>
                         </div>
                     </div>
                 @endif
-                </main>
-            </div>
+            </main>
         </div>
+    </div>
     </div>
 
 @endsection

@@ -29,51 +29,8 @@
                 </div>
             </div>
 
-            <!-- Mobile Filters Toggle Button -->
-            <input type="checkbox" id="mobileFiltersToggle" class="khezana-mobile-toggle-checkbox">
-            <label for="mobileFiltersToggle" class="khezana-filters-toggle">
-                <span class="khezana-filters-toggle-icon">🔍</span>
-                <span class="khezana-filters-toggle-text">{{ __('common.ui.filters') }}</span>
-            </label>
-
-            <div class="khezana-listing-layout">
-                @include('partials.filters', [
-                    'type' => 'requests',
-                    'route' => 'public.requests.index',
-                    'resetRoute' => 'public.requests.index',
-                    'showOperationType' => false,
-                    'showPriceRange' => false,
-                    'showStatus' => true,
-                    'showApprovalStatus' => false,
-                    'categories' => $categories ?? collect(),
-                ])
-
-                <!-- Main Content -->
-                <main class="khezana-listing-main">
-                    <!-- Active Filters Tags -->
-                    @if (request()->hasAny(['search', 'status', 'category_id']))
-                        <div class="khezana-active-filters">
-                            @if (request('search'))
-                                <span class="khezana-filter-tag">
-                                    {{ __('common.ui.search') }}: {{ request('search') }}
-                                    <a href="{{ route('public.requests.index', array_merge(request()->except('search'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
-                                </span>
-                            @endif
-                            @if (request('status'))
-                                <span class="khezana-filter-tag">
-                                    {{ __('requests.status.' . request('status')) }}
-                                    <a href="{{ route('public.requests.index', array_merge(request()->except('status'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
-                                </span>
-                            @endif
-                            @if (request('category_id') && isset($categories) && $categories->firstWhere('id', request('category_id')))
-                                <span class="khezana-filter-tag">
-                                    {{ $categories->firstWhere('id', request('category_id'))->name }}
-                                    <a href="{{ route('public.requests.index', array_merge(request()->except('category_id'), ['page' => 1])) }}" class="khezana-filter-tag-remove">×</a>
-                                </span>
-                            @endif
-                            <a href="{{ route('public.requests.index') }}" class="khezana-filter-clear-all">{{ __('common.ui.clear_all') }}</a>
-                        </div>
-                    @endif
+            <!-- Main Content -->
+            <main class="khezana-listing-main">
 
                     @if ($requests->count() > 0)
                         <!-- Requests Grid -->
@@ -146,11 +103,6 @@
                                 {{ __('common.ui.no_results_message') }}
                             </p>
                             <div class="khezana-empty-actions">
-                                @if (request()->hasAny(['search', 'status', 'category_id']))
-                                    <a href="{{ route('public.requests.index') }}" class="khezana-btn khezana-btn-secondary">
-                                        {{ __('common.ui.clear_filters') }}
-                                    </a>
-                                @endif
                                 @auth
                                     <a href="{{ route('requests.create') }}" class="khezana-btn khezana-btn-primary">
                                         {{ __('common.ui.no_results_cta_request') }}
@@ -164,7 +116,6 @@
                         </div>
                     @endif
                 </main>
-            </div>
         </div>
     </div>
 

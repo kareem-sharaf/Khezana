@@ -148,8 +148,9 @@
                             @endif
                             <div class="khezana-item-content">
                                 <h3 class="khezana-item-title">{{ $item->title }}</h3>
-                                @if ($item->price)
-                                    <div class="khezana-item-price">{{ number_format($item->price, 0) }}
+                                @php $displayPrice = price_with_fee($item->price ? (float) $item->price : null, 'sell'); @endphp
+                                @if ($displayPrice !== null)
+                                    <div class="khezana-item-price">{{ number_format($displayPrice, 0) }}
                                         {{ __('common.ui.currency') }}</div>
                                 @endif
                                 <span class="khezana-item-badge">{{ __('items.operation_types.sell') }}</span>
@@ -200,8 +201,9 @@
                             @endif
                             <div class="khezana-item-content">
                                 <h3 class="khezana-item-title">{{ $item->title }}</h3>
-                                @if ($item->price)
-                                    <div class="khezana-item-price">{{ number_format($item->price, 0) }}
+                                @php $displayPrice = price_with_fee($item->price ? (float) $item->price : null, 'rent'); @endphp
+                                @if ($displayPrice !== null)
+                                    <div class="khezana-item-price">{{ number_format($displayPrice, 0) }}
                                         {{ __('common.ui.currency') }}{{ __('common.ui.per_day') }}</div>
                                 @endif
                                 <span class="khezana-item-badge">{{ __('items.operation_types.rent') }}</span>

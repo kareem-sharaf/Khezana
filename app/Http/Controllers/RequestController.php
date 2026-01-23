@@ -39,40 +39,12 @@ class RequestController extends Controller
      */
     public function index(HttpRequest $request): View
     {
-        $filters = [
-            'search' => $request->get('search'),
-            'status' => $request->get('status'),
-            'category_id' => $request->get('category_id') ? (int) $request->get('category_id') : null,
-            'approval_status' => $request->get('approval_status'),
-        ];
-
         $sort = $request->get('sort', 'created_at_desc');
         $page = max(1, (int) $request->get('page', 1));
         $perPage = min(50, max(1, (int) $request->get('per_page', 12)));
 
         $query = RequestModel::where('user_id', Auth::id())
             ->with(['category', 'approvalRelation', 'itemAttributes.attribute', 'offers']);
-
-        // Apply filters
-        if (isset($filters['search']) && $filters['search']) {
-            $search = $filters['search'];
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        if (isset($filters['status']) && $filters['status']) {
-            $query->where('status', $filters['status']);
-        }
-
-        if (isset($filters['category_id']) && $filters['category_id']) {
-            $query->where('category_id', $filters['category_id']);
-        }
-
-        if (isset($filters['approval_status']) && $filters['approval_status']) {
-            $query->whereHas('approvalRelation', fn($q) => $q->where('status', $filters['approval_status']));
-        }
 
         // Apply sorting
         match($sort) {
@@ -87,9 +59,7 @@ class RequestController extends Controller
         $requests = $query->paginate($perPage, ['*'], 'page', $page);
         $requests->appends($request->query());
 
-        $categories = Category::active()->get();
-
-        return view('requests.index', compact('requests', 'filters', 'sort', 'categories'));
+        return view('requests.index', compact('requests', 'sort'));
     }
 
     /**

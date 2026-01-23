@@ -26,38 +26,25 @@ class ItemController extends Controller
 
     public function index(Request $request): View
     {
-        $filters = [
-            'search' => $request->get('search'),
-            'operation_type' => $request->get('operation_type'),
-            'category_id' => $request->get('category_id') ? (int) $request->get('category_id') : null,
-            'condition' => $request->get('condition'),
-            'price_min' => $request->get('price_min') ? (float) $request->get('price_min') : null,
-            'price_max' => $request->get('price_max') ? (float) $request->get('price_max') : null,
-        ];
-
         $sort = $request->get('sort', 'created_at_desc');
         $page = max(1, (int) $request->get('page', 1));
         $perPage = min(50, max(1, (int) $request->get('per_page', 20)));
         $locale = app()->getLocale();
 
         $items = $this->cacheService->rememberItemsIndex(
-            function () use ($filters, $sort, $page, $perPage) {
-                $itemsPaginator = $this->browseItemsQuery->execute($filters, $sort, $page, $perPage);
+            function () use ($sort, $page, $perPage) {
+                $itemsPaginator = $this->browseItemsQuery->execute([], $sort, $page, $perPage);
                 return $itemsPaginator->through(fn($item) => ItemReadModel::fromModel($item));
             },
-            $filters,
+            [],
             $sort,
             $page,
             $locale
         );
 
-        $categories = $this->categoryCacheService->getTree();
-
         return view('public.items.index', [
             'items' => $items,
-            'filters' => $filters,
             'sort' => $sort,
-            'categories' => $categories,
         ]);
     }
 

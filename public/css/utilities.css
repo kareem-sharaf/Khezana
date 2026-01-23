@@ -1,0 +1,119 @@
+/**
+ * Khezana Design System - Utilities & Helpers
+ * Single Responsibility: Utility classes, helpers, animations, lazy loading
+ */
+
+/* Lazy Loading */
+img[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+img[loading="lazy"].loaded {
+    opacity: 1;
+}
+
+/* Text Utilities */
+.khezana-text-center {
+    text-align: center;
+}
+
+.khezana-text-right {
+    text-align: right;
+}
+
+.khezana-text-left {
+    text-align: left;
+}
+
+.khezana-text-primary {
+    color: var(--khezana-primary);
+}
+
+.khezana-text-success {
+    color: var(--khezana-success);
+}
+
+.khezana-text-danger {
+    color: var(--khezana-danger);
+}
+
+.khezana-text-light {
+    color: var(--khezana-text-light);
+}
+
+/* Spacing Utilities */
+.khezana-mt-sm { margin-top: var(--khezana-spacing-sm); }
+.khezana-mt-md { margin-top: var(--khezana-spacing-md); }
+.khezana-mt-lg { margin-top: var(--khezana-spacing-lg); }
+.khezana-mt-xl { margin-top: var(--khezana-spacing-xl); }
+
+.khezana-mb-sm { margin-bottom: var(--khezana-spacing-sm); }
+.khezana-mb-md { margin-bottom: var(--khezana-spacing-md); }
+.khezana-mb-lg { margin-bottom: var(--khezana-spacing-lg); }
+.khezana-mb-xl { margin-bottom: var(--khezana-spacing-xl); }
+
+.khezana-p-sm { padding: var(--khezana-spacing-sm); }
+.khezana-p-md { padding: var(--khezana-spacing-md); }
+.khezana-p-lg { padding: var(--khezana-spacing-lg); }
+.khezana-p-xl { padding: var(--khezana-spacing-xl); }
+
+/* Display Utilities */
+.khezana-hidden {
+    display: none !important;
+}
+
+.khezana-visible {
+    display: block !important;
+}
+
+.khezana-flex {
+    display: flex;
+}
+
+.khezana-flex-column {
+    flex-direction: column;
+}
+
+.khezana-flex-center {
+    align-items: center;
+    justify-content: center;
+}
+
+/* Animations */
+@keyframes khezana-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes khezana-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.khezana-fade-in {
+    animation: khezana-fade-in 0.3s ease;
+}
+
+.khezana-slide-up {
+    animation: khezana-slide-up 0.3s ease;
+}
+
+/* Screen Reader Only */
+.khezana-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}

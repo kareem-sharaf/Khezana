@@ -1,0 +1,178 @@
+/**
+ * Khezana Design System - Listing Pages
+ * Single Responsibility: Listing page layout, pagination, empty states, sorting
+ */
+
+/* Listing Main Content */
+.khezana-listing-main {
+    flex: 1;
+    min-width: 0;
+    padding-left: var(--khezana-spacing-md);
+    border-left: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.khezana-listing-layout.filters-expanded .khezana-listing-main {
+    padding-left: var(--khezana-spacing-lg);
+}
+
+@media (max-width: 768px) {
+    .khezana-listing-main {
+        padding-left: 0;
+        border-left: none;
+    }
+}
+
+/* Listing Header */
+.khezana-listing-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--khezana-spacing-lg);
+    flex-wrap: wrap;
+    gap: var(--khezana-spacing-md);
+}
+
+.khezana-listing-title {
+    font-size: var(--khezana-font-size-2xl);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin: 0;
+}
+
+.khezana-listing-sort {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-sm);
+}
+
+.khezana-listing-sort-label {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+}
+
+.khezana-listing-sort-select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-sm);
+    background: var(--khezana-white);
+    color: var(--khezana-text);
+    cursor: pointer;
+    transition: var(--khezana-transition);
+}
+
+.khezana-listing-sort-select:focus {
+    outline: none;
+    border-color: var(--khezana-primary);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+/* Empty State */
+.khezana-empty-state {
+    text-align: center;
+    padding: var(--khezana-spacing-2xl) var(--khezana-spacing-lg);
+}
+
+.khezana-empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: var(--khezana-spacing-md);
+    opacity: 0.5;
+}
+
+.khezana-empty-state-title {
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 600;
+    color: var(--khezana-text);
+    margin-bottom: var(--khezana-spacing-sm);
+}
+
+.khezana-empty-state-text {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text-light);
+    margin-bottom: var(--khezana-spacing-lg);
+}
+
+/* Pagination */
+.khezana-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--khezana-spacing-xs);
+    margin-top: var(--khezana-spacing-2xl);
+    padding: var(--khezana-spacing-lg) 0;
+}
+
+.khezana-pagination-link,
+.khezana-pagination-span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 var(--khezana-spacing-sm);
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 500;
+    color: var(--khezana-text);
+    text-decoration: none;
+    transition: var(--khezana-transition);
+    background: var(--khezana-white);
+}
+
+.khezana-pagination-link:hover:not(.disabled) {
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border-color: var(--khezana-primary);
+}
+
+.khezana-pagination-link.active {
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border-color: var(--khezana-primary);
+}
+
+.khezana-pagination-link.disabled,
+.khezana-pagination-span {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.khezana-pagination-ellipsis {
+    padding: 0 var(--khezana-spacing-sm);
+    color: var(--khezana-text-light);
+}
+
+/* Results Count */
+.khezana-results-count {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    margin-bottom: var(--khezana-spacing-md);
+}
+
+@media (max-width: 768px) {
+    .khezana-listing-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .khezana-listing-sort {
+        width: 100%;
+    }
+
+    .khezana-listing-sort-select {
+        flex: 1;
+    }
+
+    .khezana-pagination {
+        flex-wrap: wrap;
+    }
+
+    .khezana-pagination-link,
+    .khezana-pagination-span {
+        min-width: 36px;
+        height: 36px;
+        font-size: var(--khezana-font-size-xs);
+    }
+}

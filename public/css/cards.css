@@ -1,0 +1,286 @@
+/**
+ * Khezana Design System - Cards & Items
+ * Single Responsibility: Item cards, product cards, image handling
+ */
+
+/* Modern Items Grid */
+.khezana-items-grid-modern {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: var(--khezana-spacing-lg) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+@media (min-width: 640px) {
+    .khezana-items-grid-modern {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: var(--khezana-spacing-xl);
+    }
+}
+
+@media (min-width: 1024px) {
+    .khezana-items-grid-modern {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .khezana-items-grid-modern {
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    }
+}
+
+@media (min-width: 1400px) {
+    .khezana-items-grid-modern {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
+/* Item Card */
+.khezana-item-card-modern {
+    display: flex;
+    flex-direction: column;
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--khezana-border);
+    transition: var(--khezana-transition);
+    contain: layout style paint;
+    will-change: transform;
+}
+
+.khezana-item-card-modern:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Image Section */
+.khezana-item-image-section {
+    position: relative;
+    width: 100%;
+    padding-top: 75%;
+    overflow: hidden;
+    background: #f3f4f6;
+}
+
+.khezana-item-image-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.khezana-item-image-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+}
+
+.khezana-item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.khezana-item-card-modern:hover .khezana-item-image {
+    transform: scale(1.05);
+}
+
+.khezana-item-image.loaded {
+    opacity: 1;
+}
+
+.khezana-item-image-skeleton {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: khezana-skeleton-shimmer 1.5s infinite;
+    display: block;
+    opacity: 1;
+}
+
+.khezana-item-image-skeleton[style*="display: none"],
+.khezana-item-image-skeleton[style*="opacity: 0"] {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+@keyframes khezana-skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.khezana-item-image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: #f3f4f6;
+    color: #9ca3af;
+}
+
+.khezana-placeholder-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--khezana-spacing-xs);
+}
+
+.khezana-placeholder-text {
+    font-size: var(--khezana-font-size-sm);
+    color: #6b7280;
+}
+
+.khezana-item-image-indicator {
+    position: absolute;
+    top: var(--khezana-spacing-sm);
+    left: var(--khezana-spacing-sm);
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--khezana-white);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-xs);
+    font-weight: 600;
+    z-index: 2;
+}
+
+.khezana-item-image-preview {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.khezana-item-card-modern:hover .khezana-item-image-preview {
+    opacity: 1;
+}
+
+.khezana-preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Content Section */
+.khezana-item-content-section {
+    padding: var(--khezana-spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-sm);
+    flex: 1;
+}
+
+.khezana-item-title-wrapper {
+    margin: 0;
+}
+
+.khezana-item-title-link {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 600;
+    color: var(--khezana-text);
+    text-decoration: none;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s ease;
+}
+
+.khezana-item-title-link:hover {
+    color: var(--khezana-primary);
+}
+
+.khezana-item-price-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--khezana-spacing-sm);
+    margin-top: var(--khezana-spacing-xs);
+}
+
+.khezana-item-price {
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 700;
+    color: var(--khezana-primary);
+}
+
+.khezana-item-price-free {
+    color: var(--khezana-success);
+}
+
+.khezana-price-unit {
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 400;
+    color: var(--khezana-text-light);
+    margin-right: var(--khezana-spacing-xs);
+}
+
+.khezana-item-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.khezana-item-badge-sell {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+}
+
+.khezana-item-badge-rent {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+}
+
+.khezana-item-badge-donate {
+    background: rgba(236, 72, 153, 0.1);
+    color: #db2777;
+}
+
+.khezana-item-secondary-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--khezana-spacing-sm);
+    margin-top: var(--khezana-spacing-xs);
+}
+
+.khezana-item-meta-text {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+}
+
+.khezana-item-actions {
+    padding: var(--khezana-spacing-sm) var(--khezana-spacing-md);
+    border-top: 1px solid var(--khezana-border);
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .khezana-items-grid-modern {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--khezana-spacing-sm);
+    }
+
+    .khezana-item-content-section {
+        padding: var(--khezana-spacing-sm);
+    }
+
+    .khezana-item-price {
+        font-size: var(--khezana-font-size-lg);
+    }
+}

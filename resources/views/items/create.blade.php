@@ -4,7 +4,33 @@
 
 @section('content')
     <div class="khezana-create-page">
-        <div class="khezana-container">
+        {{-- Pre-Creation Notice Modal (shown until user acknowledges) --}}
+        <div id="preCreationNotice" class="khezana-notice-overlay" role="dialog" aria-modal="true"
+            aria-labelledby="preCreationNoticeTitle" aria-describedby="preCreationNoticeDesc">
+            <div class="khezana-notice-modal">
+                <h2 id="preCreationNoticeTitle" class="khezana-notice-title">
+                    {{ __('items.pre_creation_notice.title') }}
+                </h2>
+                <ul id="preCreationNoticeDesc" class="khezana-notice-list">
+                    @foreach ($preCreationRules as $rule)
+                        <li class="khezana-notice-item">
+                            <span class="khezana-notice-icon" aria-hidden="true">{{ $rule['icon'] }}</span>
+                            <span>{{ $rule['text'] }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+                <div class="khezana-notice-actions">
+                    <a href="{{ route('items.index') }}" id="noticeCancel" class="khezana-btn khezana-btn-secondary">
+                        {{ __('items.pre_creation_notice.btn_cancel') }}
+                    </a>
+                    <button type="button" id="noticeContinue" class="khezana-btn khezana-btn-primary khezana-btn-large">
+                        {{ __('items.pre_creation_notice.btn_continue') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="createFormWrap" class="khezana-container khezana-create-form-wrap" hidden>
             <div class="khezana-page-header">
                 <h1 class="khezana-page-title">{{ __('items.actions.create') }}</h1>
                 <p class="khezana-page-subtitle">
@@ -13,7 +39,7 @@
             </div>
 
             <div class="khezana-form-container">
-                <form method="POST" action="{{ route('items.store') }}" class="khezana-form">
+                <form method="POST" action="{{ route('items.store') }}" class="khezana-form" id="itemCreateForm">
                     @csrf
 
                     <div class="khezana-form-group">
@@ -342,5 +368,46 @@
                 loadCategoryAttributes({{ old('category_id') }});
             });
         @endif
+
+        (function() {
+            var KEY = 'khezana_create_notice_ack';
+            var feePercent = '{{ (string) (int) ($feePercent ?? 10) }}';
+            var overlay = document.getElementById('preCreationNotice');
+            var formWrap = document.getElementById('createFormWrap');
+            var btnContinue = document.getElementById('noticeContinue');
+            var cancelUrl = '{{ route('items.index') }}';
+            var firstField = document.getElementById('category_id');
+
+            function hideNoticeShowForm() {
+                overlay.setAttribute('aria-hidden', 'true');
+                formWrap.removeAttribute('hidden');
+                if (firstField) firstField.focus();
+            }
+
+            function onContinue() {
+                try { localStorage.setItem(KEY, feePercent); } catch (e) {}
+                hideNoticeShowForm();
+                document.removeEventListener('keydown', onEscape);
+            }
+
+            function onEscape(e) {
+                if (e.key === 'Escape' && overlay.getAttribute('aria-hidden') !== 'true') {
+                    e.preventDefault();
+                    window.location.href = cancelUrl;
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (localStorage.getItem(KEY) === feePercent) {
+                    hideNoticeShowForm();
+                    return;
+                }
+                overlay.removeAttribute('aria-hidden');
+                formWrap.setAttribute('hidden', '');
+                document.addEventListener('keydown', onEscape);
+                if (btnContinue) btnContinue.focus();
+                btnContinue.addEventListener('click', onContinue);
+            });
+        })();
     </script>
 @endsection

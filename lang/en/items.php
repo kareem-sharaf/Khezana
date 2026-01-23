@@ -113,4 +113,12 @@ return [
     'messages' => [
         'create_help' => 'Add your listing with all details to make it easier for others to find it.',
     ],
+
+    'pre_creation_notice' => [
+        'title' => 'Important Information Before Listing',
+        'rule_fee' => 'A :percent% delivery/service fee will be added to the product price.',
+        'rule_contact' => 'If the product is requested, the platform will contact you via your registered phone number.',
+        'btn_continue' => 'I Understand, Continue',
+        'btn_cancel' => 'Cancel',
+    ],
 ];

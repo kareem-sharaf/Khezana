@@ -1,0 +1,785 @@
+/**
+ * Khezana Design System - Header & Navigation
+ * Single Responsibility: Header, navigation menu, dropdowns, user menu
+ */
+
+/* Header */
+.khezana-header {
+    background: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid var(--khezana-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 6px rgba(0, 0, 0, 0.02);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+}
+
+.khezana-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(245, 158, 11, 0.05), transparent);
+}
+
+.khezana-nav {
+    padding: 1rem 0;
+}
+
+.khezana-nav-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--khezana-spacing-md);
+    flex-wrap: nowrap;
+    min-height: 4rem;
+    position: relative;
+}
+
+@media (min-width: 1024px) {
+    .khezana-nav-content {
+        gap: var(--khezana-spacing-lg);
+    }
+}
+
+/* Mobile Menu Toggle - Hidden on desktop */
+.khezana-mobile-menu-checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.khezana-mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 101;
+    position: relative;
+    gap: 0.375rem;
+    order: 2;
+}
+
+.khezana-mobile-menu-toggle span {
+    width: 100%;
+    height: 3px;
+    background: var(--khezana-primary);
+    border-radius: 3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+    display: block;
+}
+
+.khezana-mobile-menu-checkbox:checked ~ .khezana-mobile-menu-toggle span:nth-child(1) {
+    transform: rotate(45deg) translate(0.5rem, 0.5rem);
+}
+
+.khezana-mobile-menu-checkbox:checked ~ .khezana-mobile-menu-toggle span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-1rem);
+}
+
+.khezana-mobile-menu-checkbox:checked ~ .khezana-mobile-menu-toggle span:nth-child(3) {
+    transform: rotate(-45deg) translate(0.5rem, -0.5rem);
+}
+
+.khezana-logo {
+    text-decoration: none;
+    font-size: var(--khezana-font-size-2xl);
+    font-weight: 700;
+    color: var(--khezana-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    flex-shrink: 0;
+}
+
+.khezana-logo:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.08);
+}
+
+.khezana-logo:active {
+    transform: scale(0.98);
+}
+
+.khezana-logo-text {
+    background: linear-gradient(135deg, var(--khezana-primary) 0%, #fbbf24 50%, var(--khezana-primary-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.025em;
+    background-size: 200% 200%;
+    animation: gradient-shift 6s ease infinite;
+    font-weight: 700;
+    position: relative;
+}
+
+.khezana-logo-img {
+    height: 45px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
+}
+
+.khezana-logo:hover .khezana-logo-img {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .khezana-logo-img {
+        height: 38px;
+        max-width: 150px;
+    }
+}
+
+.khezana-logo:hover .khezana-logo-text {
+    box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.05);
+}
+
+@keyframes gradient-shift {
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.khezana-nav-links {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+    overflow: visible;
+}
+
+.khezana-nav-link {
+    text-decoration: none;
+    color: var(--khezana-text);
+    font-weight: 500;
+    font-size: var(--khezana-font-size-base);
+    padding: 0.5625rem 1rem;
+    border-radius: calc(var(--khezana-radius) * 0.75);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    white-space: nowrap;
+    line-height: 1.5;
+}
+
+.khezana-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0.375rem;
+    left: 1rem;
+    right: 1rem;
+    height: 3px;
+    background: linear-gradient(to right, var(--khezana-primary-light), var(--khezana-primary), var(--khezana-primary-dark));
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 2px;
+}
+
+.khezana-nav-link:hover {
+    color: var(--khezana-primary);
+    background: rgba(245, 158, 11, 0.08);
+    transform: translateY(-1px);
+}
+
+.khezana-nav-link:hover::after {
+    transform: scaleX(1);
+}
+
+.khezana-nav-link:active {
+    transform: translateY(1px);
+    background: rgba(245, 158, 11, 0.12);
+}
+
+.khezana-nav-link:focus,
+.khezana-nav-link:focus-visible {
+    outline: none;
+    background: rgba(245, 158, 11, 0.1);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+}
+
+.khezana-nav-link.active {
+    color: var(--khezana-primary);
+    background: rgba(245, 158, 11, 0.12);
+    font-weight: 700;
+}
+
+.khezana-nav-link.active::after {
+    transform: scaleX(1);
+}
+
+/* Dropdown Menu */
+.khezana-nav-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.khezana-nav-link-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.khezana-dropdown-icon {
+    font-size: 0.625rem;
+    transition: transform 0.2s ease;
+    opacity: 0.7;
+}
+
+.khezana-nav-dropdown:hover .khezana-dropdown-icon,
+.khezana-nav-dropdown:focus-within .khezana-dropdown-icon {
+    transform: rotate(180deg);
+}
+
+.khezana-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: var(--khezana-radius);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 160px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    padding: 0.5rem 0;
+}
+
+.khezana-nav-dropdown:hover .khezana-dropdown-menu,
+.khezana-nav-dropdown:focus-within .khezana-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.khezana-dropdown-item {
+    display: block;
+    padding: 0.625rem 1rem;
+    color: var(--khezana-text);
+    text-decoration: none;
+    font-size: var(--khezana-font-size-base);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: right;
+}
+
+.khezana-dropdown-item:hover {
+    background: rgba(245, 158, 11, 0.08);
+    color: var(--khezana-primary);
+}
+
+.khezana-dropdown-item:focus {
+    outline: none;
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.khezana-dropdown-icon {
+    display: none;
+}
+
+/* User Dropdown */
+.khezana-user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.khezana-user-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    background: var(--khezana-bg);
+    border: 1px solid var(--khezana-border);
+    border-radius: calc(var(--khezana-radius) * 0.75);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 500;
+    color: var(--khezana-text);
+    white-space: nowrap;
+}
+
+.khezana-user-trigger:hover {
+    background: rgba(245, 158, 11, 0.05);
+    border-color: var(--khezana-primary-light);
+}
+
+.khezana-user-trigger:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+.khezana-user-icon {
+    font-size: 1rem;
+}
+
+.khezana-user-name-short {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.khezana-user-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: var(--khezana-white);
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    min-width: 180px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    padding: 0.5rem 0;
+}
+
+.khezana-user-dropdown:hover .khezana-user-menu,
+.khezana-user-dropdown:focus-within .khezana-user-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.khezana-user-menu-item {
+    display: block;
+    padding: 0.625rem 1rem;
+    color: var(--khezana-text);
+    text-decoration: none;
+    font-size: var(--khezana-font-size-base);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: right;
+    cursor: pointer;
+}
+
+.khezana-user-menu-item:hover {
+    background: rgba(245, 158, 11, 0.08);
+    color: var(--khezana-primary);
+}
+
+.khezana-user-menu-item:focus {
+    outline: none;
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.khezana-user-menu-item-logout {
+    color: #6b7280;
+}
+
+.khezana-user-menu-item-logout:hover {
+    color: rgba(239, 68, 68, 0.8);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.khezana-user-menu-divider {
+    height: 1px;
+    background: var(--khezana-border);
+    margin: 0.5rem 0;
+}
+
+.khezana-logout-form {
+    margin: 0;
+    padding: 0;
+}
+
+.khezana-user-box {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-md);
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+}
+
+.khezana-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--khezana-text);
+    font-size: var(--khezana-font-size-sm);
+    padding: 0.625rem 1rem;
+    background: linear-gradient(135deg, var(--khezana-bg) 0%, rgba(249, 250, 251, 0.9) 50%, var(--khezana-bg) 100%);
+    border: 1px solid var(--khezana-border);
+    border-top: 1px solid rgba(245, 158, 11, 0.1);
+    border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+    border-radius: calc(var(--khezana-radius) * 0.75);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.khezana-user-box:hover .khezana-user-info {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.khezana-user-greeting {
+    color: var(--khezana-text-light);
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.khezana-user-name {
+    color: var(--khezana-text);
+    font-weight: 700;
+    font-size: var(--khezana-font-size-sm);
+    background: rgba(245, 158, 11, 0.15);
+    padding: 0.125rem 0.5rem;
+    border-radius: calc(var(--khezana-radius) * 0.5);
+    position: relative;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.khezana-user-name::after {
+    content: '●';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 0.375rem;
+    color: #10b981;
+    font-size: 0.5rem;
+    vertical-align: middle;
+}
+
+.khezana-user-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.khezana-user-actions .khezana-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.875rem;
+    min-width: auto;
+}
+
+.khezana-user-actions .khezana-btn-primary {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+}
+
+.khezana-user-actions .khezana-btn-ghost {
+    padding: 0.5rem 0.75rem;
+}
+
+.khezana-guest-actions {
+    display: flex;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.khezana-nav-actions {
+    display: flex;
+    gap: 0.625rem;
+    flex-wrap: nowrap;
+    align-items: center;
+    flex-shrink: 0;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .khezana-nav {
+        padding: 0.75rem 0;
+    }
+
+    .khezana-nav-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--khezana-spacing-sm);
+        min-height: 3.5rem;
+        flex-wrap: nowrap;
+    }
+
+    .khezana-logo {
+        font-size: var(--khezana-font-size-lg);
+        justify-content: flex-start;
+        flex-shrink: 0;
+        min-width: auto;
+    }
+
+    .khezana-logo-text {
+        letter-spacing: 0.02em;
+    }
+
+    .khezana-mobile-menu-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 2rem;
+        height: 2rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 101;
+        position: relative;
+        gap: 0.25rem;
+    }
+
+    .khezana-mobile-menu-toggle span {
+        width: 100%;
+        height: 3px;
+        background: var(--khezana-primary);
+        border-radius: 3px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center;
+    }
+
+    .khezana-mobile-menu-checkbox:checked ~ .khezana-mobile-menu-toggle span:nth-child(1) {
+        transform: rotate(45deg) translate(0.375rem, 0.375rem);
+    }
+
+    .khezana-mobile-menu-checkbox:checked ~ .khezana-mobile-menu-toggle span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-1rem);
+    }
+
+    .khezana-mobile-menu-checkbox:checked ~ .khezana-mobile-menu-toggle span:nth-child(3) {
+        transform: rotate(-45deg) translate(0.375rem, -0.375rem);
+    }
+
+    /* Mobile Navigation Menu */
+    .khezana-nav-links {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 280px;
+        max-width: 85vw;
+        height: 100vh;
+        background: linear-gradient(135deg, var(--khezana-white) 0%, #fefefe 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+        padding: 5rem var(--khezana-spacing-lg) var(--khezana-spacing-lg);
+        overflow-y: auto;
+        transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        gap: var(--khezana-spacing-md);
+    }
+
+    .khezana-mobile-menu-checkbox:checked ~ .khezana-nav-links {
+        transform: translateX(0);
+    }
+
+    .khezana-mobile-menu-checkbox:checked ~ .khezana-nav-links ~ .khezana-nav-actions {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: auto;
+        bottom: var(--khezana-spacing-lg);
+        right: var(--khezana-spacing-lg);
+        left: var(--khezana-spacing-lg);
+        gap: var(--khezana-spacing-sm);
+        z-index: 101;
+    }
+
+    /* Mobile Menu Overlay */
+    .khezana-mobile-menu-checkbox:checked ~ .khezana-nav-links::before,
+    .khezana-mobile-menu-checkbox:checked ~ #navLinks::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 98;
+        animation: fadeIn 0.3s ease;
+        pointer-events: auto;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Mobile Nav Links Styling */
+    .khezana-nav-links .khezana-nav-link {
+        width: 100%;
+        padding: 1rem;
+        border-radius: var(--khezana-radius);
+        font-size: var(--khezana-font-size-lg);
+        border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+    }
+
+    .khezana-nav-links .khezana-nav-dropdown {
+        width: 100%;
+    }
+
+    .khezana-nav-links .khezana-dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        background: rgba(245, 158, 11, 0.05);
+        margin-top: var(--khezana-spacing-xs);
+        border: 1px solid rgba(245, 158, 11, 0.1);
+    }
+
+    .khezana-nav-actions {
+        justify-content: flex-end;
+        gap: 0.375rem;
+        width: auto;
+        flex-shrink: 0;
+    }
+
+    .khezana-user-dropdown {
+        flex-shrink: 0;
+    }
+
+    .khezana-user-trigger {
+        padding: 0.5rem 0.75rem;
+        font-size: var(--khezana-font-size-sm);
+        min-width: auto;
+    }
+
+    .khezana-user-name-short {
+        display: none;
+    }
+
+    .khezana-user-icon {
+        font-size: 1.25rem;
+    }
+
+    .khezana-user-menu {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        right: 0;
+        background: var(--khezana-white);
+        border: 1px solid var(--khezana-border);
+        border-radius: var(--khezana-radius);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        min-width: 160px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.2s ease;
+        z-index: 50;
+    }
+
+    .khezana-user-dropdown:focus-within .khezana-user-menu,
+    .khezana-user-dropdown:hover .khezana-user-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    /* Hide secondary buttons on mobile for guests */
+    .khezana-nav-actions .khezana-btn-secondary:not(.khezana-btn-cta) {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .khezana-nav {
+        padding: 0.625rem 0;
+    }
+
+    .khezana-nav-content {
+        min-height: 3rem;
+        gap: var(--khezana-spacing-xs);
+    }
+
+    .khezana-logo {
+        font-size: var(--khezana-font-size-base);
+    }
+
+    .khezana-logo-text {
+        font-size: 1rem;
+    }
+
+    .khezana-user-trigger {
+        padding: 0.4375rem 0.625rem;
+        font-size: var(--khezana-font-size-xs);
+        min-width: 2.5rem;
+    }
+
+    .khezana-user-icon {
+        font-size: 1.125rem;
+    }
+
+    .khezana-nav-actions {
+        gap: 0.25rem;
+    }
+
+    .khezana-user-menu {
+        min-width: 140px;
+        right: 0;
+    }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+    .khezana-nav-content {
+        gap: var(--khezana-spacing-sm);
+    }
+
+    .khezana-nav-links {
+        gap: 0.375rem;
+    }
+
+    .khezana-user-actions .khezana-btn {
+        font-size: 0.8125rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .khezana-user-name {
+        max-width: 120px;
+    }
+}

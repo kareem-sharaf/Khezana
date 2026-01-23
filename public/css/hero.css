@@ -1,0 +1,89 @@
+/**
+ * Khezana Design System - Hero Section
+ * Single Responsibility: Hero section, hero buttons, microcopy
+ */
+
+/* Hero Section */
+.khezana-hero {
+    background: transparent;
+    padding: var(--khezana-spacing-2xl) 0;
+    text-align: center;
+    position: relative;
+}
+
+.khezana-hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.khezana-hero-title {
+    font-size: var(--khezana-font-size-4xl);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin-bottom: var(--khezana-spacing-md);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.khezana-hero-subtitle {
+    font-size: var(--khezana-font-size-xl);
+    color: var(--khezana-text-light);
+    margin-bottom: var(--khezana-spacing-lg);
+    line-height: 1.7;
+    font-weight: 400;
+}
+
+.khezana-hero-actions {
+    display: flex;
+    gap: var(--khezana-spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: var(--khezana-spacing-lg);
+    align-items: center;
+}
+
+/* Hero Microcopy */
+.khezana-hero-microcopy {
+    margin-top: var(--khezana-spacing-lg);
+    text-align: center;
+}
+
+.khezana-microcopy-text {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    margin: 0;
+    line-height: 1.6;
+    font-weight: 500;
+    letter-spacing: 0.025em;
+}
+
+.khezana-microcopy-hint {
+    display: inline-block;
+}
+
+.khezana-microcopy-separator {
+    margin: 0 var(--khezana-spacing-xs);
+    color: var(--khezana-border);
+}
+
+@media (max-width: 768px) {
+    .khezana-hero {
+        padding: var(--khezana-spacing-xl) 0;
+    }
+
+    .khezana-hero-title {
+        font-size: var(--khezana-font-size-3xl);
+    }
+
+    .khezana-hero-subtitle {
+        font-size: var(--khezana-font-size-lg);
+    }
+
+    .khezana-hero-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: var(--khezana-spacing-sm);
+    }
+}

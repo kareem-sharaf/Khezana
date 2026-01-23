@@ -1,0 +1,52 @@
+/**
+ * Khezana Design System - Variables & Tokens
+ * Single Responsibility: Design tokens and CSS custom properties
+ */
+
+:root {
+    /* Colors */
+    --khezana-primary: #f59e0b;
+    /* Amber */
+    --khezana-primary-dark: #d97706;
+    --khezana-primary-light: #fbbf24;
+    --khezana-secondary: #6b7280;
+    --khezana-success: #10b981;
+    --khezana-danger: #ef4444;
+    --khezana-text: #1f2937;
+    --khezana-text-light: #6b7280;
+    --khezana-bg: #faf8f5;
+    --khezana-bg-pattern: #f5f3f0;
+    --khezana-white: #ffffff;
+    --khezana-border: #e5e7eb;
+
+    /* Spacing */
+    --khezana-spacing-xs: 0.5rem;
+    --khezana-spacing-sm: 1rem;
+    --khezana-spacing-md: 1.5rem;
+    --khezana-spacing-lg: 2rem;
+    --khezana-spacing-xl: 3rem;
+    --khezana-spacing-2xl: 4rem;
+
+    /* Typography */
+    --khezana-font-size-base: 1rem;
+    --khezana-font-size-sm: 0.875rem;
+    --khezana-font-size-lg: 1.125rem;
+    --khezana-font-size-xl: 1.25rem;
+    --khezana-font-size-2xl: 1.5rem;
+    --khezana-font-size-3xl: 1.875rem;
+    --khezana-font-size-4xl: 2.25rem;
+
+    /* Shadows */
+    --khezana-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --khezana-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --khezana-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --khezana-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    /* Border Radius */
+    --khezana-radius: 0.5rem;
+    --khezana-radius-lg: 0.75rem;
+    --khezana-radius-xl: 1rem;
+
+    /* Transitions */
+    --khezana-transition: all 0.2s ease;
+}

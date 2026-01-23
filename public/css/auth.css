@@ -1,0 +1,119 @@
+/**
+ * Khezana Design System - Authentication Pages
+ * Single Responsibility: Login, register, password reset pages
+ */
+
+.khezana-auth-page {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--khezana-spacing-xl) var(--khezana-spacing-md);
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+.khezana-auth-container {
+    width: 100%;
+    max-width: 450px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border-radius: var(--khezana-radius-xl);
+    padding: var(--khezana-spacing-2xl);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.khezana-auth-header {
+    text-align: center;
+    margin-bottom: var(--khezana-spacing-xl);
+}
+
+.khezana-auth-title {
+    font-size: var(--khezana-font-size-2xl);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin: 0 0 var(--khezana-spacing-sm);
+}
+
+.khezana-auth-subtitle {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text-light);
+    margin: 0;
+}
+
+.khezana-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-lg);
+}
+
+.khezana-auth-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-xs);
+}
+
+.khezana-auth-form-label {
+    font-weight: 600;
+    color: var(--khezana-text);
+    font-size: var(--khezana-font-size-sm);
+}
+
+.khezana-auth-form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-base);
+    font-family: inherit;
+    transition: var(--khezana-transition);
+    background: var(--khezana-white);
+}
+
+.khezana-auth-form-input:focus {
+    outline: none;
+    border-color: var(--khezana-primary);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.khezana-auth-form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-sm);
+    margin-top: var(--khezana-spacing-md);
+}
+
+.khezana-auth-form-actions .khezana-btn {
+    width: 100%;
+}
+
+.khezana-auth-footer {
+    text-align: center;
+    margin-top: var(--khezana-spacing-lg);
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid var(--khezana-border);
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+}
+
+.khezana-auth-footer-link {
+    color: var(--khezana-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.khezana-auth-footer-link:hover {
+    color: var(--khezana-primary-dark);
+}
+
+@media (max-width: 640px) {
+    .khezana-auth-container {
+        padding: var(--khezana-spacing-xl);
+    }
+
+    .khezana-auth-title {
+        font-size: var(--khezana-font-size-xl);
+    }
+}

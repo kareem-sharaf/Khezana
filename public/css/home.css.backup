@@ -33,7 +33,10 @@
 /* 9. Cards & Items */
 @import url('cards.css');
 
-/* 10. Listing Pages */
+/* 10. Filters */
+@import url('filters.css');
+
+/* 11. Listing Pages */
 @import url('listing.css');
 
 /* 12. Item Detail Pages */

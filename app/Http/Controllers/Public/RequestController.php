@@ -31,35 +31,25 @@ class RequestController extends Controller
 
     public function index(Request $request): View
     {
-        $filters = [
-            'search' => $request->get('search'),
-            'status' => $request->get('status'),
-            'category_id' => $request->get('category_id') ? (int) $request->get('category_id') : null,
-        ];
-
         $sort = $request->get('sort', 'created_at_desc');
         $page = max(1, (int) $request->get('page', 1));
         $perPage = min(50, max(1, (int) $request->get('per_page', 20)));
         $locale = app()->getLocale();
 
         $requests = $this->cacheService->rememberRequestsIndex(
-            function () use ($filters, $sort, $page, $perPage) {
-                $requestsPaginator = $this->browseRequestsQuery->execute($filters, $sort, $page, $perPage);
+            function () use ($sort, $page, $perPage) {
+                $requestsPaginator = $this->browseRequestsQuery->execute([], $sort, $page, $perPage);
                 return $requestsPaginator->through(fn($request) => RequestReadModel::fromModel($request));
             },
-            $filters,
+            [],
             $sort,
             $page,
             $locale
         );
 
-        $categories = $this->categoryCacheService->getTree();
-
         return view('public.requests.index', [
             'requests' => $requests,
-            'filters' => $filters,
             'sort' => $sort,
-            'categories' => $categories,
         ]);
     }
 

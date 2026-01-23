@@ -84,13 +84,16 @@
                                 <span class="khezana-price-label">{{ __('common.ui.free') }}</span>
                             </div>
                         @elseif($item->price)
+                            @php $displayPrice = price_with_fee((float) $item->price, $item->operation_type->value); @endphp
+                            @if ($displayPrice !== null)
                             <div class="khezana-item-price">
-                                <span class="khezana-price-amount">{{ number_format($item->price, 0) }}</span>
+                                <span class="khezana-price-amount">{{ number_format($displayPrice, 0) }}</span>
                                 <span class="khezana-price-currency">{{ __('common.ui.currency') }}</span>
                                 @if ($item->operation_type->value == 'rent')
                                     <span class="khezana-price-unit">{{ __('common.ui.per_day') }}</span>
                                 @endif
                             </div>
+                            @endif
                             @if ($item->operation_type->value == 'rent' && $item->deposit_amount)
                                 <div class="khezana-item-deposit">
                                     <span class="khezana-deposit-label">{{ __('common.ui.deposit') }}:</span>

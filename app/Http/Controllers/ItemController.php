@@ -12,6 +12,7 @@ use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,40 +40,12 @@ class ItemController extends Controller
      */
     public function index(Request $request): View
     {
-        $filters = [
-            'search' => $request->get('search'),
-            'operation_type' => $request->get('operation_type'),
-            'category_id' => $request->get('category_id') ? (int) $request->get('category_id') : null,
-            'approval_status' => $request->get('approval_status'),
-        ];
-
         $sort = $request->get('sort', 'created_at_desc');
         $page = max(1, (int) $request->get('page', 1));
         $perPage = min(50, max(1, (int) $request->get('per_page', 12)));
 
         $query = Item::where('user_id', Auth::id())
             ->with(['category', 'images', 'approvalRelation']);
-
-        // Apply filters
-        if (isset($filters['search']) && $filters['search']) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        if (isset($filters['operation_type']) && $filters['operation_type']) {
-            $query->where('operation_type', $filters['operation_type']);
-        }
-
-        if (isset($filters['category_id']) && $filters['category_id']) {
-            $query->where('category_id', $filters['category_id']);
-        }
-
-        if (isset($filters['approval_status']) && $filters['approval_status']) {
-            $query->whereHas('approvalRelation', fn($q) => $q->where('status', $filters['approval_status']));
-        }
 
         // Apply sorting
         match ($sort) {
@@ -87,9 +60,7 @@ class ItemController extends Controller
         $items = $query->paginate($perPage, ['*'], 'page', $page);
         $items->appends($request->query());
 
-        $categories = Category::active()->get();
-
-        return view('items.index', compact('items', 'filters', 'sort', 'categories'));
+        return view('items.index', compact('items', 'sort'));
     }
 
     /**
@@ -98,7 +69,13 @@ class ItemController extends Controller
     public function create(): View
     {
         $categories = Category::active()->get();
-        return view('items.create', compact('categories'));
+        $feePercent = (float) Setting::deliveryServiceFeePercent();
+        $preCreationRules = [
+            ['icon' => '💰', 'text' => __('items.pre_creation_notice.rule_fee', ['percent' => (string) (int) $feePercent])],
+            ['icon' => '📞', 'text' => __('items.pre_creation_notice.rule_contact')],
+        ];
+
+        return view('items.create', compact('categories', 'feePercent', 'preCreationRules'));
     }
 
     /**
