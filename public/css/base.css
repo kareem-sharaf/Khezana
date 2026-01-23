@@ -18,3 +18,8 @@ body {
     position: relative;
     min-height: 100vh;
 }
+
+/* Alpine.js x-cloak - Hide elements until Alpine initializes */
+[x-cloak] {
+    display: none !important;
+}

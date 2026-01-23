@@ -55,14 +55,21 @@ class ItemController extends Controller
             $locale
         );
 
+        // Ensure pagination preserves all query parameters (filters, sort, etc.)
+        $items->appends($request->query());
+
         // Get categories for filter dropdown
         $categories = $this->categoryCacheService->getTree();
+
+        // Calculate active filters count for badge
+        $activeFiltersCount = count($filters);
 
         return view('public.items.index', [
             'items' => $items,
             'sort' => $sort,
             'filters' => $filters,
             'categories' => $categories,
+            'activeFiltersCount' => $activeFiltersCount,
         ]);
     }
 

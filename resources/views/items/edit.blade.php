@@ -197,7 +197,7 @@
                             @enderror
                         </div>
 
-                        <div class="khezana-form-group">
+                        <div class="khezana-form-group" id="deposit_amount_group" style="display: none;">
                             <label for="deposit_amount" class="khezana-form-label">
                                 {{ __('items.fields.deposit_amount') }}
                             </label>
@@ -367,12 +367,48 @@
             }
         }
 
+        // Show/hide deposit amount field based on operation type
+        function toggleDepositAmountField() {
+            const operationTypeRadios = document.querySelectorAll('input[name="operation_type"]');
+            const depositAmountGroup = document.getElementById('deposit_amount_group');
+            const depositAmountInput = document.getElementById('deposit_amount');
+            
+            if (!depositAmountGroup || !depositAmountInput) return;
+            
+            // Check which operation type is selected
+            let selectedOperationType = null;
+            operationTypeRadios.forEach(radio => {
+                if (radio.checked) {
+                    selectedOperationType = radio.value;
+                }
+            });
+            
+            // Show deposit amount only for rent operation
+            if (selectedOperationType === 'rent') {
+                depositAmountGroup.style.display = 'block';
+                depositAmountInput.setAttribute('required', 'required');
+            } else {
+                depositAmountGroup.style.display = 'none';
+                depositAmountInput.removeAttribute('required');
+                // Don't clear value on edit, just hide the field
+            }
+        }
+        
         // Load attributes on page load if category is selected
         document.addEventListener('DOMContentLoaded', function() {
             const categoryId = document.getElementById('category_id').value;
             if (categoryId) {
                 loadCategoryAttributes(categoryId);
             }
+            
+            // Add event listeners to operation type radios
+            const operationTypeRadios = document.querySelectorAll('input[name="operation_type"]');
+            operationTypeRadios.forEach(radio => {
+                radio.addEventListener('change', toggleDepositAmountField);
+            });
+            
+            // Check initial state based on current item operation type
+            toggleDepositAmountField();
         });
     </script>
 @endsection

@@ -1,31 +1,296 @@
 /**
  * Khezana Design System - Pagination Component
- * Single Responsibility: Pagination component styles
- * Component-based architecture with full RTL support
+ * Single Responsibility: Professional pagination component styles
+ * Full RTL support using logical properties
+ * Matches Laravel's default pagination structure
  */
 
-/* Pagination Container */
+/* ============================================
+   PAGINATION CONTAINER
+   ============================================ */
+
 .khezana-pagination {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--khezana-spacing-xs);
     margin-top: var(--khezana-spacing-2xl);
     padding: var(--khezana-spacing-lg) 0;
 }
 
-[dir="rtl"] .khezana-pagination {
-    flex-direction: row-reverse;
-}
+/* ============================================
+   PAGINATION LIST
+   ============================================ */
 
-/* Pagination Links */
-.khezana-pagination-link,
-.khezana-pagination-span {
+.khezana-pagination__list {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 40px;
-    height: 40px;
+    gap: var(--khezana-spacing-xs);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+[dir="rtl"] .khezana-pagination__list {
+    flex-direction: row-reverse;
+}
+
+/* ============================================
+   PAGINATION ITEM
+   ============================================ */
+
+.khezana-pagination__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.khezana-pagination__item--active {
+    /* Active state handled by link */
+}
+
+.khezana-pagination__item--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.khezana-pagination__item--ellipsis {
+    /* Ellipsis styling */
+}
+
+/* ============================================
+   PAGINATION LINK
+   ============================================ */
+
+.khezana-pagination__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--khezana-spacing-xs);
+    min-width: 44px;
+    height: 44px;
+    padding: 0 var(--khezana-spacing-sm);
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 500;
+    color: var(--khezana-text);
+    text-decoration: none;
+    transition: var(--khezana-transition);
+    background: var(--khezana-white);
+    cursor: pointer;
+}
+
+.khezana-pagination__link:hover:not(.khezana-pagination__link--disabled):not(.khezana-pagination__link--active) {
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border-color: var(--khezana-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}
+
+.khezana-pagination__link:active:not(.khezana-pagination__link--disabled) {
+    transform: translateY(0);
+}
+
+/* Active State */
+.khezana-pagination__link--active {
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border-color: var(--khezana-primary);
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.khezana-pagination__link--active:hover {
+    background: var(--khezana-primary-dark);
+    border-color: var(--khezana-primary-dark);
+}
+
+/* Disabled State */
+.khezana-pagination__link--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: var(--khezana-bg);
+    color: var(--khezana-text-light);
+    border-color: var(--khezana-border);
+}
+
+.khezana-pagination__link--disabled:hover {
+    background: var(--khezana-bg);
+    color: var(--khezana-text-light);
+    border-color: var(--khezana-border);
+    transform: none;
+    box-shadow: none;
+}
+
+/* Previous/Next Links */
+.khezana-pagination__link--prev,
+.khezana-pagination__link--next {
+    min-width: auto;
+    padding: 0 var(--khezana-spacing-md);
+    font-weight: 600;
+}
+
+/* ============================================
+   PAGINATION ICON & TEXT
+   ============================================ */
+
+.khezana-pagination__icon {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 700;
+    line-height: 1;
+}
+
+.khezana-pagination__text {
+    display: inline-block;
+}
+
+/* Hide text on mobile, show only icons */
+@media (max-width: 640px) {
+    .khezana-pagination__text {
+        display: none;
+    }
+
+    .khezana-pagination__link--prev,
+    .khezana-pagination__link--next {
+        min-width: 44px;
+        padding: 0;
+    }
+}
+
+/* ============================================
+   PAGINATION ELLIPSIS
+   ============================================ */
+
+.khezana-pagination__ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    padding: 0 var(--khezana-spacing-sm);
+    color: var(--khezana-text-light);
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 600;
+}
+
+/* ============================================
+   SIMPLE PAGINATION (Previous/Next Only)
+   ============================================ */
+
+.khezana-pagination--simple .khezana-pagination__list {
+    gap: var(--khezana-spacing-md);
+}
+
+.khezana-pagination--simple .khezana-pagination__link {
+    min-width: 120px;
+    padding: 0 var(--khezana-spacing-lg);
+}
+
+@media (max-width: 640px) {
+    .khezana-pagination--simple .khezana-pagination__link {
+        min-width: 100px;
+        padding: 0 var(--khezana-spacing-md);
+    }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .khezana-pagination {
+        margin-top: var(--khezana-spacing-xl);
+        padding: var(--khezana-spacing-md) 0;
+    }
+
+    .khezana-pagination__list {
+        gap: 0.375rem;
+    }
+
+    .khezana-pagination__link {
+        min-width: 40px;
+        height: 40px;
+        font-size: var(--khezana-font-size-xs);
+        padding: 0 var(--khezana-spacing-xs);
+    }
+
+    .khezana-pagination__ellipsis {
+        min-width: 40px;
+        height: 40px;
+        font-size: var(--khezana-font-size-xs);
+    }
+}
+
+@media (max-width: 640px) {
+    .khezana-pagination__link {
+        min-width: 36px;
+        height: 36px;
+    }
+
+    .khezana-pagination__ellipsis {
+        min-width: 36px;
+        height: 36px;
+    }
+}
+
+/* ============================================
+   RTL SUPPORT
+   ============================================ */
+
+[dir="rtl"] .khezana-pagination__link--prev .khezana-pagination__icon {
+    transform: scaleX(-1);
+}
+
+[dir="rtl"] .khezana-pagination__link--next .khezana-pagination__icon {
+    transform: scaleX(-1);
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+.khezana-pagination__link:focus-visible {
+    outline: 2px solid var(--khezana-primary);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   BACKWARD COMPATIBILITY
+   ============================================ */
+
+/* Support for old class names if used elsewhere */
+.pagination {
+    /* Maps to .khezana-pagination */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--khezana-spacing-2xl);
+    padding: var(--khezana-spacing-lg) 0;
+}
+
+.pagination > li {
+    /* Maps to .khezana-pagination__item */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.pagination > li > a,
+.pagination > li > span {
+    /* Maps to .khezana-pagination__link */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
     padding: 0 var(--khezana-spacing-sm);
     border: 1px solid var(--khezana-border);
     border-radius: var(--khezana-radius);
@@ -37,41 +302,26 @@
     background: var(--khezana-white);
 }
 
-.khezana-pagination-link:hover:not(.disabled) {
+.pagination > li > a:hover {
     background: var(--khezana-primary);
     color: var(--khezana-white);
     border-color: var(--khezana-primary);
 }
 
-.khezana-pagination-link.active {
+.pagination > li.active > a,
+.pagination > li.active > span {
     background: var(--khezana-primary);
     color: var(--khezana-white);
     border-color: var(--khezana-primary);
+    font-weight: 700;
 }
 
-.khezana-pagination-link.disabled,
-.khezana-pagination-span {
+.pagination > li.disabled > a,
+.pagination > li.disabled > span {
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
-}
-
-/* Pagination Ellipsis */
-.khezana-pagination-ellipsis {
-    padding: 0 var(--khezana-spacing-sm);
+    background: var(--khezana-bg);
     color: var(--khezana-text-light);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .khezana-pagination {
-        flex-wrap: wrap;
-    }
-
-    .khezana-pagination-link,
-    .khezana-pagination-span {
-        min-width: 36px;
-        height: 36px;
-        font-size: var(--khezana-font-size-xs);
-    }
+    border-color: var(--khezana-border);
 }

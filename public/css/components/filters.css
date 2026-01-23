@@ -194,115 +194,31 @@
     border-color: var(--khezana-primary-light);
 }
 
-/* Price Range */
+/* Price Range - Simple Inputs */
 .khezana-filter-group__price-range {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: var(--khezana-spacing-sm);
+}
+
+.khezana-price-range__input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-xs);
+    flex: 1;
+}
+
+.khezana-price-range__label {
+    font-size: var(--khezana-font-size-xs);
+    color: var(--khezana-text-light);
+    font-weight: 500;
 }
 
 .khezana-filter-group__price-separator {
     color: var(--khezana-text-light);
     font-weight: 600;
     flex-shrink: 0;
-}
-
-.khezana-filter-group__input {
-    flex: 1;
-}
-
-/* Price Slider */
-.khezana-filter-group__price-slider {
-    margin-top: var(--khezana-spacing-md);
-}
-
-.khezana-price-slider {
-    position: relative;
-    height: 6px;
-    margin-bottom: var(--khezana-spacing-sm);
-}
-
-.khezana-price-slider__track {
-    position: absolute;
-    width: 100%;
-    height: 6px;
-    background: var(--khezana-border);
-    border-radius: 3px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.khezana-price-slider__range {
-    position: absolute;
-    height: 6px;
-    background: var(--khezana-primary);
-    border-radius: 3px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.khezana-price-slider__input {
-    position: absolute;
-    width: 100%;
-    height: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-    pointer-events: none;
-    z-index: 2;
-}
-
-.khezana-price-slider__input::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--khezana-primary);
-    border: 2px solid var(--khezana-white);
-    cursor: pointer;
-    pointer-events: all;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: var(--khezana-transition);
-}
-
-.khezana-price-slider__input::-webkit-slider-thumb:hover {
-    transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.khezana-price-slider__input::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--khezana-primary);
-    border: 2px solid var(--khezana-white);
-    cursor: pointer;
-    pointer-events: all;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: var(--khezana-transition);
-}
-
-.khezana-price-slider__input::-moz-range-thumb:hover {
-    transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.khezana-filter-group__price-display {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--khezana-spacing-xs);
-    font-size: var(--khezana-font-size-sm);
-    color: var(--khezana-text-light);
-    font-weight: 600;
-}
-
-.khezana-filter-group__price-currency {
-    font-size: var(--khezana-font-size-xs);
-    color: var(--khezana-text-light);
+    padding-bottom: calc(var(--khezana-spacing-xs) + 0.625rem);
 }
 
 /* Active Filters Chips */
@@ -368,6 +284,7 @@
     transition: var(--khezana-transition);
     font-size: var(--khezana-font-size-lg);
     line-height: 1;
+    text-decoration: none;
 }
 
 .khezana-filter-chip__remove:hover {
@@ -405,6 +322,10 @@
     justify-content: center;
 }
 
+.khezana-filters__apply {
+    /* Hidden by default - auto-submit is enabled */
+}
+
 .khezana-filters__reset {
     text-decoration: none;
     display: flex;
@@ -422,14 +343,7 @@
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 998;
-    opacity: 0;
-    transition: opacity 0.3s ease;
     backdrop-filter: blur(2px);
-}
-
-.khezana-filters-overlay.is-active {
-    display: block;
-    opacity: 1;
 }
 
 /* ============================================
@@ -457,11 +371,6 @@
         transition: transform 0.3s ease;
         z-index: 999;
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    /* Show filters when active */
-    .khezana-filters.is-active {
-        transform: translateY(0);
     }
 
     /* Show close button on mobile */

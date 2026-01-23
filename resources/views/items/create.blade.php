@@ -211,14 +211,15 @@
                                 {{ __('items.fields.price') }}
                             </label>
                             <p class="khezana-form-hint">{{ __('items.hints.price') }}</p>
-                            <input type="number" step="0.01" name="price" id="price" class="khezana-form-input"
-                                value="{{ old('price') }}" placeholder="{{ __('items.placeholders.price') }}">
+                            <input type="number" step="0.01" name="price" id="price"
+                                class="khezana-form-input" value="{{ old('price') }}"
+                                placeholder="{{ __('items.placeholders.price') }}">
                             @error('price')
                                 <span class="khezana-form-error">{{ $message }}</span>
                             @enderror
                         </div>
 
-                        <div class="khezana-form-group">
+                        <div class="khezana-form-group" id="deposit_amount_group" style="display: none;">
                             <label for="deposit_amount" class="khezana-form-label">
                                 {{ __('items.fields.deposit_amount') }}
                             </label>
@@ -387,9 +388,45 @@
             });
         @endif
 
+        // Show/hide deposit amount field based on operation type
+        function toggleDepositAmountField() {
+            const operationTypeRadios = document.querySelectorAll('input[name="operation_type"]');
+            const depositAmountGroup = document.getElementById('deposit_amount_group');
+            const depositAmountInput = document.getElementById('deposit_amount');
+            
+            if (!depositAmountGroup || !depositAmountInput) return;
+            
+            // Check which operation type is selected
+            let selectedOperationType = null;
+            operationTypeRadios.forEach(radio => {
+                if (radio.checked) {
+                    selectedOperationType = radio.value;
+                }
+            });
+            
+            // Show deposit amount only for rent operation
+            if (selectedOperationType === 'rent') {
+                depositAmountGroup.style.display = 'block';
+                depositAmountInput.setAttribute('required', 'required');
+            } else {
+                depositAmountGroup.style.display = 'none';
+                depositAmountInput.removeAttribute('required');
+                depositAmountInput.value = '';
+            }
+        }
+        
+        // Add event listeners to operation type radios
+        document.addEventListener('DOMContentLoaded', function() {
+            const operationTypeRadios = document.querySelectorAll('input[name="operation_type"]');
+            operationTypeRadios.forEach(radio => {
+                radio.addEventListener('change', toggleDepositAmountField);
+            });
+            
+            // Check initial state (in case of old input or default value)
+            toggleDepositAmountField();
+        });
+
         (function() {
-            var KEY = 'khezana_create_notice_ack';
-            var feePercent = '{{ (string) (int) ($feePercent ?? 10) }}';
             var overlay = document.getElementById('preCreationNotice');
             var formWrap = document.getElementById('createFormWrap');
             var btnContinue = document.getElementById('noticeContinue');
@@ -403,7 +440,6 @@
             }
 
             function onContinue() {
-                try { localStorage.setItem(KEY, feePercent); } catch (e) {}
                 hideNoticeShowForm();
                 document.removeEventListener('keydown', onEscape);
             }
@@ -416,10 +452,7 @@
             }
 
             document.addEventListener('DOMContentLoaded', function() {
-                if (localStorage.getItem(KEY) === feePercent) {
-                    hideNoticeShowForm();
-                    return;
-                }
+                // Always show the notice - user must manually dismiss it
                 overlay.removeAttribute('aria-hidden');
                 formWrap.setAttribute('hidden', '');
                 document.addEventListener('keydown', onEscape);

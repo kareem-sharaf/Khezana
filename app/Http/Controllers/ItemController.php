@@ -107,7 +107,10 @@ class ItemController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('items.index', compact('items', 'sort', 'filters', 'categories'));
+        // Calculate active filters count for badge
+        $activeFiltersCount = count($filters);
+
+        return view('items.index', compact('items', 'sort', 'filters', 'categories', 'activeFiltersCount'));
     }
 
     /**

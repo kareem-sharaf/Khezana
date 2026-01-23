@@ -16,7 +16,7 @@
                     @include('public.items._partials.filters', [
                         'filters' => $filters ?? [],
                         'categories' => $categories ?? collect(),
-                        'filterRoute' => route('items.index'),
+                        'activeFiltersCount' => $activeFiltersCount ?? 0,
                     ])
                 </aside>
 
