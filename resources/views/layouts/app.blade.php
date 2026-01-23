@@ -6,6 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', config('app.name', 'Khezana'))</title>
+    
+    @stack('meta')
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

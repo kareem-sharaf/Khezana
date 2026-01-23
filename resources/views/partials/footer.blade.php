@@ -22,9 +22,10 @@
             <div class="khezana-footer-section">
                 <h4 class="khezana-footer-heading">{{ __('common.footer.information') }}</h4>
                 <ul class="khezana-footer-links">
-                    <li><a href="#">{{ __('common.ui.about_us') }}</a></li>
-                    <li><a href="#">{{ __('common.ui.contact_us') }}</a></li>
-                    <li><a href="#">{{ __('common.ui.help') }}</a></li>
+                    <li><a href="{{ route('pages.how-it-works') }}">{{ __('pages.how_it_works.title') }}</a></li>
+                    <li><a href="{{ route('pages.fees') }}">{{ __('pages.fees.title') }}</a></li>
+                    <li><a href="{{ route('pages.terms') }}">{{ __('pages.terms.title') }}</a></li>
+                    <li><a href="{{ route('pages.privacy') }}">{{ __('pages.privacy.title') }}</a></li>
                 </ul>
             </div>
         </div>

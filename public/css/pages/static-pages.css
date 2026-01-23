@@ -1,0 +1,259 @@
+/**
+ * Khezana Design System - Static Pages
+ * Single Responsibility: Static pages layout and styles
+ * Page-based architecture with full RTL support
+ * SEO-friendly structure
+ */
+
+/* ============================================
+   STATIC PAGE CONTAINER
+   ============================================ */
+
+.khezana-static-page {
+    padding: var(--khezana-spacing-xl) 0;
+    min-height: 60vh;
+}
+
+.khezana-static-page__header {
+    margin-bottom: var(--khezana-spacing-xl);
+    padding-bottom: var(--khezana-spacing-lg);
+    border-bottom: 2px solid var(--khezana-border);
+}
+
+.khezana-static-page__title {
+    font-size: var(--khezana-font-size-4xl);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin: 0 0 var(--khezana-spacing-sm);
+    line-height: 1.2;
+}
+
+.khezana-static-page__meta {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    margin: 0;
+}
+
+/* ============================================
+   PAGE CONTENT
+   ============================================ */
+
+.khezana-static-page__content {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.khezana-static-page__sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-xl);
+}
+
+.khezana-static-page__section {
+    padding: var(--khezana-spacing-lg) 0;
+}
+
+.khezana-static-page__section:not(:last-child) {
+    border-bottom: 1px solid var(--khezana-border);
+}
+
+.khezana-static-page__section--highlight {
+    background: var(--khezana-bg);
+    padding: var(--khezana-spacing-lg);
+    border-radius: var(--khezana-radius-lg);
+    border: 1px solid var(--khezana-border);
+}
+
+.khezana-static-page__section-title {
+    font-size: var(--khezana-font-size-2xl);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin: 0 0 var(--khezana-spacing-md);
+    line-height: 1.3;
+}
+
+.khezana-static-page__section-content {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text);
+    line-height: 1.8;
+}
+
+.khezana-static-page__section-content p {
+    margin: 0 0 var(--khezana-spacing-md);
+}
+
+.khezana-static-page__section-content p:last-child {
+    margin-bottom: 0;
+}
+
+.khezana-static-page__note {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    font-style: italic;
+    margin: 0;
+}
+
+/* ============================================
+   INTRO SECTION
+   ============================================ */
+
+.khezana-static-page__intro {
+    margin-bottom: var(--khezana-spacing-xl);
+    padding-bottom: var(--khezana-spacing-lg);
+    border-bottom: 2px solid var(--khezana-border);
+}
+
+.khezana-static-page__intro-text {
+    font-size: var(--khezana-font-size-lg);
+    color: var(--khezana-text);
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* ============================================
+   PROCESS STEPS (How It Works)
+   ============================================ */
+
+.khezana-process-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-lg);
+    margin-top: var(--khezana-spacing-lg);
+}
+
+.khezana-process-step {
+    display: flex;
+    gap: var(--khezana-spacing-md);
+    align-items: flex-start;
+    padding: var(--khezana-spacing-md);
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    border: 1px solid var(--khezana-border);
+    transition: var(--khezana-transition);
+}
+
+.khezana-process-step:hover {
+    box-shadow: var(--khezana-shadow-md);
+    transform: translateY(-2px);
+}
+
+[dir="rtl"] .khezana-process-step {
+    flex-direction: row-reverse;
+}
+
+.khezana-process-step__number {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border-radius: 50%;
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 700;
+}
+
+.khezana-process-step__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.khezana-process-step__title {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 600;
+    color: var(--khezana-text);
+    margin: 0 0 var(--khezana-spacing-xs);
+}
+
+.khezana-process-step__description {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text-light);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ============================================
+   FEE CARD (Fees Page)
+   ============================================ */
+
+.khezana-fee-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--khezana-spacing-lg);
+    background: var(--khezana-white);
+    border: 2px solid var(--khezana-primary);
+    border-radius: var(--khezana-radius-lg);
+    margin: var(--khezana-spacing-md) 0;
+    min-width: 200px;
+}
+
+.khezana-fee-card__label {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    margin-bottom: var(--khezana-spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.khezana-fee-card__value {
+    font-size: var(--khezana-font-size-3xl);
+    font-weight: 700;
+    color: var(--khezana-primary);
+}
+
+/* ============================================
+   PAGE FOOTER
+   ============================================ */
+
+.khezana-static-page__footer {
+    margin-top: var(--khezana-spacing-2xl);
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid var(--khezana-border);
+    text-align: center;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .khezana-static-page__title {
+        font-size: var(--khezana-font-size-2xl);
+    }
+
+    .khezana-static-page__section-title {
+        font-size: var(--khezana-font-size-xl);
+    }
+
+    .khezana-process-step {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    [dir="rtl"] .khezana-process-step {
+        flex-direction: column;
+    }
+
+    .khezana-process-step__number {
+        align-self: center;
+    }
+
+    .khezana-fee-card {
+        width: 100%;
+    }
+}
+
+/* ============================================
+   RTL SUPPORT
+   ============================================ */
+
+[dir="rtl"] .khezana-static-page__content {
+    text-align: right;
+}
+
+[dir="rtl"] .khezana-static-page__footer {
+    text-align: center;
+}

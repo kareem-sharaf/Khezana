@@ -39,6 +39,7 @@
 @import url('pages/items-index.css');
 @import url('pages/items-show.css');
 @import url('pages/requests-index.css');
+@import url('pages/static-pages.css');
 
 /* 11. Modals & Overlays */
 @import url('modals.css');

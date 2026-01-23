@@ -16,6 +16,12 @@ Route::middleware(['cache.headers:300', 'throttle:60,1'])->group(function () {
 
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+// Static Pages
+Route::get('/terms', [\App\Http\Controllers\PageController::class, 'terms'])->name('pages.terms');
+Route::get('/privacy', [\App\Http\Controllers\PageController::class, 'privacy'])->name('pages.privacy');
+Route::get('/how-it-works', [\App\Http\Controllers\PageController::class, 'howItWorks'])->name('pages.how-it-works');
+Route::get('/fees', [\App\Http\Controllers\PageController::class, 'fees'])->name('pages.fees');
+
 Route::get('/dashboard', function () {
     // Redirect dashboard to home for simplicity
     return redirect()->route('home');
