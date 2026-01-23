@@ -164,6 +164,24 @@
 
     <!-- Simple JavaScript for Dynamic Attributes -->
     <script>
+        // Translation map for common attribute names
+        const attributeTranslations = {
+            'size': '{{ __('attributes.common_names.size') }}',
+            'color': '{{ __('attributes.common_names.color') }}',
+            'condition': '{{ __('attributes.common_names.condition') }}',
+            'fabric': '{{ __('attributes.common_names.fabric') }}',
+            'material': '{{ __('attributes.common_names.material') }}',
+            'brand': '{{ __('attributes.common_names.brand') }}',
+            'style': '{{ __('attributes.common_names.style') }}',
+            'gender': '{{ __('attributes.common_names.gender') }}',
+            'age_group': '{{ __('attributes.common_names.age_group') }}',
+        };
+
+        function translateAttributeName(name) {
+            const lowerName = name.toLowerCase().trim();
+            return attributeTranslations[lowerName] || name;
+        }
+
         function loadCategoryAttributes(categoryId) {
             const select = document.getElementById('category_id');
             const selectedOption = select.options[select.selectedIndex];
@@ -195,7 +213,7 @@
                     const label = document.createElement('label');
                     label.className = 'khezana-form-label';
                     label.htmlFor = `attributes[${attribute.slug}]`;
-                    label.textContent = attribute.name;
+                    label.textContent = translateAttributeName(attribute.name);
                     if (attribute.is_required) {
                         label.innerHTML += ' <span class="khezana-required">*</span>';
                     }

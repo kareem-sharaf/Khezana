@@ -86,8 +86,13 @@ return [
         'showing_results' => 'عرض :from إلى :to من :total نتيجة',
         'all' => 'الكل',
         'all_categories' => 'جميع الفئات',
+        'all_conditions' => 'جميع الحالات',
+        'all_types' => 'جميع الأنواع',
         'select_governorate' => 'اختر المحافظة',
         'all_governorates' => 'جميع المحافظات',
+        'min_price' => 'الحد الأدنى',
+        'max_price' => 'الحد الأقصى',
+        'reset_filters' => 'إعادة تعيين',
         'operation_type' => 'نوع العملية',
         'category' => 'الفئة',
         'price_range' => 'نطاق السعر',
@@ -187,6 +192,9 @@ return [
         'your_message' => 'رسالتك',
         'write_your_message' => 'اكتب رسالتك هنا...',
         'from' => 'من',
+        'to' => 'إلى',
+        'choose' => 'اختر',
+        'remove_filter' => 'إزالة الفلتر',
     ],
 
     'footer' => [

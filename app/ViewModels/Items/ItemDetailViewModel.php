@@ -169,9 +169,11 @@ class ItemDetailViewModel
             availabilityLabel: $type === 'public' 
                 ? __('common.ui.available')
                 : (($item->is_available ?? true) ? __('common.ui.available') : __('common.ui.unavailable')),
-            attributes: $type === 'public'
-                ? ($item->attributes ?? collect())
-                : ($item->itemAttributes ?? collect()),
+            attributes: self::prepareAttributes(
+                $type === 'public'
+                    ? ($item->attributes ?? collect())
+                    : ($item->itemAttributes ?? collect())
+            ),
             hasAttributes: $type === 'public'
                 ? ($item->attributes?->count() ?? 0) > 0
                 : ($item->itemAttributes?->count() ?? 0) > 0,
@@ -201,6 +203,37 @@ class ItemDetailViewModel
             submitForApprovalUrl: $type === 'user' ? route('items.submit-for-approval', $item) : '#',
             userName: $type === 'public' ? ($item->user?->name ?? null) : null,
         );
+    }
+
+    /**
+     * Prepare attributes with translated names
+     */
+    private static function prepareAttributes($attributes): Collection
+    {
+        if (!$attributes instanceof \Illuminate\Support\Collection) {
+            $attributes = collect($attributes);
+        }
+
+        return $attributes->map(function ($attribute) {
+            // Handle different attribute structures
+            if (is_object($attribute)) {
+                $name = $attribute->name ?? $attribute->attribute->name ?? '';
+                $value = $attribute->value ?? $attribute->formattedValue ?? '';
+                
+                // Translate attribute name
+                $translatedName = translate_attribute_name($name);
+                
+                // Create new object with translated name
+                return (object) [
+                    'name' => $translatedName,
+                    'originalName' => $name,
+                    'value' => $value,
+                    'formattedValue' => $value,
+                ];
+            }
+            
+            return $attribute;
+        });
     }
 
     /**

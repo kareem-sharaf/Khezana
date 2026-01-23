@@ -47,6 +47,35 @@ class ItemController extends Controller
         $query = Item::where('user_id', Auth::id())
             ->with(['category', 'images', 'approvalRelation']);
 
+        // Apply filters
+        if ($request->has('search') && $request->get('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->has('category_id') && $request->get('category_id')) {
+            $query->where('category_id', (int) $request->get('category_id'));
+        }
+
+        if ($request->has('condition') && $request->get('condition')) {
+            $query->where('condition', $request->get('condition'));
+        }
+
+        if ($request->has('operation_type') && $request->get('operation_type')) {
+            $query->where('operation_type', $request->get('operation_type'));
+        }
+
+        if ($request->has('price_min') && $request->get('price_min')) {
+            $query->where('price', '>=', (float) $request->get('price_min'));
+        }
+
+        if ($request->has('price_max') && $request->get('price_max')) {
+            $query->where('price', '<=', (float) $request->get('price_max'));
+        }
+
         // Apply sorting
         match ($sort) {
             'price_asc' => $query->orderBy('price', 'asc'),
@@ -60,7 +89,25 @@ class ItemController extends Controller
         $items = $query->paginate($perPage, ['*'], 'page', $page);
         $items->appends($request->query());
 
-        return view('items.index', compact('items', 'sort'));
+        // Extract filters for view
+        $filters = [
+            'search' => $request->get('search'),
+            'category_id' => $request->get('category_id'),
+            'condition' => $request->get('condition'),
+            'operation_type' => $request->get('operation_type'),
+            'price_min' => $request->get('price_min'),
+            'price_max' => $request->get('price_max'),
+        ];
+        $filters = array_filter($filters, fn($value) => $value !== null && $value !== '');
+
+        // Get categories for filter dropdown
+        $categories = Category::active()
+            ->with(['children' => fn($q) => $q->where('is_active', true)->orderBy('name')])
+            ->whereNull('parent_id')
+            ->orderBy('name')
+            ->get();
+
+        return view('items.index', compact('items', 'sort', 'filters', 'categories'));
     }
 
     /**

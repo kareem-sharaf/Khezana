@@ -7,8 +7,9 @@
         <div class="khezana-attributes-grid">
             @foreach ($viewModel->attributes as $itemAttribute)
                 @php
-                    $attributeName = $itemAttribute->attribute->name ?? $itemAttribute->name ?? '';
-                    $attributeValue = $itemAttribute->value ?? '';
+                    $originalName = $itemAttribute->originalName ?? $itemAttribute->attribute->name ?? $itemAttribute->name ?? '';
+                    $attributeName = $itemAttribute->name ?? translate_attribute_name($originalName);
+                    $attributeValue = $itemAttribute->formattedValue ?? $itemAttribute->value ?? '';
                 @endphp
                 <div class="khezana-attribute-item">
                     <span class="khezana-attribute-name">{{ $attributeName }}:</span>

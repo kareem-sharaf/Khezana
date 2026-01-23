@@ -70,6 +70,9 @@
                                 <span class="khezana-dropdown-icon">▼</span>
                             </button>
                             <div class="khezana-user-menu">
+                                <a href="{{ route('profile.show') }}" class="khezana-user-menu-item">
+                                    {{ __('profile.title') }}
+                                </a>
                                 <form method="POST" action="{{ route('logout') }}" class="khezana-logout-form">
                                     @csrf
                                     <button type="submit" class="khezana-user-menu-item khezana-user-menu-item-logout">

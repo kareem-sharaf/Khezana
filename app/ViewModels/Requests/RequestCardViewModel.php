@@ -70,13 +70,17 @@ class RequestCardViewModel
         
         $displayAttributes = $attributes->take(3)->map(function ($attr) use ($type) {
             if ($type === 'public') {
+                $originalName = $attr->name ?? '';
                 return [
-                    'name' => $attr->name ?? '',
+                    'name' => \App\Helpers\TranslationHelper::translateAttributeName($originalName),
+                    'originalName' => $originalName,
                     'value' => $attr->value ?? '',
                 ];
             }
+            $originalName = $attr->attribute->name ?? '';
             return [
-                'name' => $attr->attribute->name ?? '',
+                'name' => \App\Helpers\TranslationHelper::translateAttributeName($originalName),
+                'originalName' => $originalName,
                 'value' => $attr->value ?? '',
             ];
         })->toArray();

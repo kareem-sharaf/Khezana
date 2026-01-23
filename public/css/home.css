@@ -34,6 +34,7 @@
 @import url('components/item-card.css');
 @import url('components/pagination.css');
 @import url('components/empty-state.css');
+@import url('components/filters.css');
 
 /* 10. Pages */
 @import url('pages/items-index.css');

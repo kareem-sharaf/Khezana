@@ -31,20 +31,38 @@ class ItemController extends Controller
         $perPage = min(50, max(1, (int) $request->get('per_page', 20)));
         $locale = app()->getLocale();
 
+        // Extract filters from request
+        $filters = [
+            'operation_type' => $request->get('operation_type'),
+            'category_id' => $request->get('category_id'),
+            'condition' => $request->get('condition'),
+            'price_min' => $request->get('price_min'),
+            'price_max' => $request->get('price_max'),
+            'search' => $request->get('search'),
+        ];
+
+        // Remove empty filters
+        $filters = array_filter($filters, fn($value) => $value !== null && $value !== '');
+
         $items = $this->cacheService->rememberItemsIndex(
-            function () use ($sort, $page, $perPage) {
-                $itemsPaginator = $this->browseItemsQuery->execute([], $sort, $page, $perPage);
+            function () use ($filters, $sort, $page, $perPage) {
+                $itemsPaginator = $this->browseItemsQuery->execute($filters, $sort, $page, $perPage);
                 return $itemsPaginator->through(fn($item) => ItemReadModel::fromModel($item));
             },
-            [],
+            $filters,
             $sort,
             $page,
             $locale
         );
 
+        // Get categories for filter dropdown
+        $categories = $this->categoryCacheService->getTree();
+
         return view('public.items.index', [
             'items' => $items,
             'sort' => $sort,
+            'filters' => $filters,
+            'categories' => $categories,
         ]);
     }
 

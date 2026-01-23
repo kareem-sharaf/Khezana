@@ -85,8 +85,13 @@ return [
         'showing_results' => 'Showing :from to :to of :total results',
         'all' => 'All',
         'all_categories' => 'All Categories',
+        'all_conditions' => 'All Conditions',
+        'all_types' => 'All Types',
         'select_governorate' => 'Select Governorate',
         'all_governorates' => 'All Governorates',
+        'min_price' => 'Min Price',
+        'max_price' => 'Max Price',
+        'reset_filters' => 'Reset Filters',
         'operation_type' => 'Operation Type',
         'category' => 'Category',
         'price_range' => 'Price Range',
@@ -181,6 +186,9 @@ return [
         'your_message' => 'Your Message',
         'write_your_message' => 'Write your message here...',
         'from' => 'From',
+        'to' => 'To',
+        'choose' => 'Choose',
+        'remove_filter' => 'Remove filter',
     ],
 
     'footer' => [

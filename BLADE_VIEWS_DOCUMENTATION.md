@@ -1,35 +1,77 @@
-# Khezana - Blade Views & Interfaces Documentation
+# Khezana - Complete Blade Views & Interfaces Documentation
 
 ## 📋 Table of Contents
 
 1. [Overview](#overview)
-2. [File Structure](#file-structure)
-3. [Layout System](#layout-system)
-4. [Views Organization](#views-organization)
-5. [Partials & Components](#partials--components)
-6. [CSS Architecture](#css-architecture)
-7. [How It All Works Together](#how-it-all-works-together)
-8. [Examples & Usage](#examples--usage)
+2. [Architecture Principles](#architecture-principles)
+3. [File Structure](#file-structure)
+4. [Layout System](#layout-system)
+5. [Views Organization](#views-organization)
+6. [ViewModel Pattern](#viewmodel-pattern)
+7. [Partials & Components](#partials--components)
+8. [CSS Architecture](#css-architecture)
+9. [How It All Works Together](#how-it-all-works-together)
+10. [Examples & Usage](#examples--usage)
+11. [Best Practices](#best-practices)
 
 ---
 
 ## Overview
 
-The Khezana project uses **Laravel Blade** templating engine to build a modern, RTL (Right-to-Left) Arabic-first interface. The architecture follows a modular approach with:
+The Khezana project uses **Laravel Blade** templating engine to build a modern, RTL (Right-to-Left) Arabic-first interface. The architecture follows a **feature-based, component-driven approach** with:
 
-- **Layout-based structure** - Base layouts that pages extend
-- **Component-based partials** - Reusable UI components
-- **Modular CSS** - Organized CSS files by functionality
-- **Separation of concerns** - Public vs Authenticated views
-- **RTL support** - Full Arabic language support
+- **Feature-Based Organization** - Views organized by feature (items, requests, profile, pages)
+- **ViewModel Pattern** - Separation of presentation logic from views
+- **Component-Based Partials** - Reusable UI components (item-card, pagination, empty-state)
+- **Modular CSS** - Component-based and page-based CSS architecture
+- **Layout System** - Base layouts for different page types
+- **RTL Support** - Full Arabic language support with logical CSS properties
+- **SEO-Friendly** - Meta tags, semantic HTML, structured data
 
 ### Key Technologies
 
 - **Laravel 12.47.0** - PHP Framework
 - **Blade Templates** - Templating engine
-- **Custom CSS** - Modular design system
+- **Custom CSS** - Modular design system with BEM naming
 - **Vite** - Asset bundling
-- **Tailwind CSS** - Utility classes (optional)
+- **ViewModel Pattern** - Presentation logic separation
+
+---
+
+## Architecture Principles
+
+### 1. Feature-Based Organization
+Views are organized by **feature** rather than just by type (public/auth):
+- `items/` - Items management feature
+- `requests/` - Requests management feature
+- `profile/` - User profile feature
+- `pages/` - Static pages feature
+- `public/items/` - Public items feature
+- `public/requests/` - Public requests feature
+
+### 2. Single Responsibility Principle
+Each partial/component has a single, well-defined responsibility:
+- `page-header.blade.php` - Only page header
+- `grid.blade.php` - Only grid display
+- `empty-state.blade.php` - Only empty state
+- `pagination.blade.php` - Only pagination
+
+### 3. ViewModel Pattern
+All presentation logic is extracted from Blade views into ViewModels:
+- `ItemCardViewModel` - Item card presentation logic
+- `ItemDetailViewModel` - Item detail presentation logic
+- `RequestCardViewModel` - Request card presentation logic
+- `ProfileViewModel` - Profile presentation logic
+
+### 4. Dumb Components
+UI components receive data via props and contain minimal to no internal logic:
+- `item-card.blade.php` - Pure presentation component
+- All partials are simple and reusable
+
+### 5. RTL-First Design
+- Logical CSS properties (`margin-inline-start`, `padding-inline-end`)
+- `[dir="rtl"]` selectors for RTL-specific styles
+- Full Arabic language support
 
 ---
 
@@ -37,65 +79,143 @@ The Khezana project uses **Laravel Blade** templating engine to build a modern, 
 
 ```
 resources/views/
-├── auth/                          # Authentication pages
+├── auth/                              # Authentication pages
 │   ├── login.blade.php
 │   └── register.blade.php
 │
-├── filament/                      # Admin panel custom pages
+├── filament/                          # Admin panel custom pages
 │   └── pages/
 │       └── platform-settings.blade.php
 │
-├── home/                          # Homepage
+├── home/                              # Homepage
 │   └── index.blade.php
 │
-├── items/                         # User's own items (authenticated)
-│   ├── create.blade.php          # Create new item form
-│   ├── edit.blade.php            # Edit item form
-│   ├── index.blade.php           # User's items listing
-│   └── show.blade.php            # Item detail page
+├── items/                             # Feature: Items Management (Authenticated)
+│   ├── create.blade.php              # Create new item form
+│   ├── edit.blade.php                # Edit item form
+│   ├── index.blade.php               # User's items listing (lightweight)
+│   ├── show.blade.php                # Item detail page
+│   └── _partials/                     # Feature-specific partials
+│       ├── page-header.blade.php     # Page header
+│       ├── grid.blade.php            # Items grid
+│       ├── empty-state.blade.php     # Empty state
+│       ├── pagination.blade.php      # Pagination
+│       └── detail/                   # Detail page partials
+│           ├── breadcrumb.blade.php
+│           ├── header.blade.php
+│           ├── images.blade.php
+│           ├── price.blade.php
+│           ├── meta.blade.php
+│           ├── attributes.blade.php
+│           ├── description.blade.php
+│           ├── approval-info.blade.php
+│           ├── actions.blade.php
+│           ├── additional-info.blade.php
+│           ├── delete-modal.blade.php
+│           └── scripts.blade.php
 │
-├── layouts/                       # Base layouts
-│   ├── app.blade.php             # Main application layout
-│   ├── auth.blade.php            # Authentication layout
-│   └── home.blade.php            # Homepage layout
+├── requests/                          # Feature: Requests Management (Authenticated)
+│   ├── create.blade.php              # Create request form
+│   ├── index.blade.php               # User's requests listing (lightweight)
+│   ├── show.blade.php                # Request detail page
+│   └── _partials/                     # Feature-specific partials
+│       ├── page-header.blade.php
+│       ├── grid.blade.php
+│       ├── empty-state.blade.php
+│       └── pagination.blade.php
 │
-├── partials/                      # Reusable components
-│   ├── footer.blade.php          # Site footer
-│   ├── header.blade.php          # Site header/navigation
-│   └── item-card.blade.php       # Item card component
+├── profile/                           # Feature: User Profile
+│   ├── show.blade.php                # Profile overview
+│   ├── edit.blade.php                # Edit profile
+│   ├── password.blade.php            # Security settings
+│   └── _partials/
+│       └── navigation.blade.php     # Profile navigation sidebar
 │
-├── public/                        # Public-facing pages
+├── pages/                             # Feature: Static Pages
+│   ├── _layout.blade.php             # Shared layout for static pages
+│   ├── terms.blade.php               # Terms and Conditions
+│   ├── privacy.blade.php             # Privacy Policy
+│   ├── how-it-works.blade.php        # How It Works
+│   └── fees.blade.php                # Fees and Commissions
+│
+├── public/                            # Public-facing features
 │   ├── items/
-│   │   ├── index.blade.php       # Public items listing
-│   │   └── show.blade.php       # Public item detail
+│   │   ├── index.blade.php          # Public items listing (lightweight)
+│   │   ├── show.blade.php           # Public item detail
+│   │   └── _partials/
+│   │       ├── page-header.blade.php
+│   │       ├── grid.blade.php
+│   │       ├── empty-state.blade.php
+│   │       ├── pagination.blade.php
+│   │       └── detail/              # Detail page partials
+│   │           ├── breadcrumb.blade.php
+│   │           ├── header.blade.php
+│   │           ├── images.blade.php
+│   │           ├── price.blade.php
+│   │           ├── meta.blade.php
+│   │           ├── attributes.blade.php
+│   │           ├── description.blade.php
+│   │           ├── contact-form.blade.php
+│   │           ├── cta.blade.php
+│   │           ├── additional-info.blade.php
+│   │           ├── image-modal.blade.php
+│   │           └── scripts.blade.php
 │   └── requests/
-│       ├── create-info.blade.php # Request info page
-│       ├── index.blade.php       # Public requests listing
-│       └── show.blade.php       # Public request detail
+│       ├── create-info.blade.php    # Request info page
+│       ├── index.blade.php          # Public requests listing (lightweight)
+│       ├── show.blade.php           # Public request detail
+│       └── _partials/
+│           ├── page-header.blade.php
+│           ├── grid.blade.php
+│           ├── empty-state.blade.php
+│           └── pagination.blade.php
 │
-└── requests/                      # User's own requests (authenticated)
-    ├── create.blade.php          # Create request form
-    ├── index.blade.php           # User's requests listing
-    └── show.blade.php            # Request detail page
+├── partials/                          # Shared components (global)
+│   ├── header.blade.php              # Site header/navigation
+│   ├── footer.blade.php              # Site footer
+│   └── item-card/
+│       ├── item-card.blade.php       # Item card component (dumb component)
+│       ├── README.md                 # Component documentation
+│       └── USAGE.md                  # Usage examples
+│
+└── layouts/                           # Base layouts
+    ├── app.blade.php                 # Main application layout
+    ├── auth.blade.php                # Authentication layout
+    └── home.blade.php                # Homepage layout
+
+app/ViewModels/                        # ViewModel Pattern
+├── Items/
+│   ├── ItemCardViewModel.php        # Item card presentation logic
+│   └── ItemDetailViewModel.php      # Item detail presentation logic
+├── Requests/
+│   └── RequestCardViewModel.php     # Request card presentation logic
+├── Profile/
+│   └── ProfileViewModel.php         # Profile presentation logic
+└── README.md                         # ViewModel documentation
 
 public/css/
-├── home.css                      # Main CSS entry point (imports all)
-├── variables.css                 # Design tokens & CSS variables
-├── base.css                      # Reset & base styles
-├── layout.css                    # Layout & grid systems
-├── header.css                    # Header & navigation
-├── buttons.css                   # Button components
-├── hero.css                      # Hero section
-├── sections.css                  # Page sections
-├── forms.css                     # Form elements
-├── cards.css                     # Card components
-├── listing.css                   # Listing pages
-├── detail.css                    # Detail pages
-├── modals.css                    # Modal dialogs
-├── footer.css                    # Footer
-├── auth.css                      # Authentication pages
-├── requests.css                  # Request pages
-└── utilities.css                 # Utility classes
+├── home.css                          # Main CSS entry point (imports all)
+├── variables.css                     # Design tokens & CSS variables
+├── base.css                          # Reset & base styles
+├── layout.css                       # Layout & grid systems
+├── header.css                        # Header & navigation
+├── buttons.css                       # Button components
+├── hero.css                          # Hero section
+├── sections.css                      # Page sections
+├── forms.css                         # Form elements
+├── footer.css                        # Footer
+├── auth.css                          # Authentication pages
+├── responsive-improvements.css       # Responsive utilities
+├── components/                       # Component-based CSS
+│   ├── item-card.css                # Item card styles
+│   ├── pagination.css               # Pagination styles
+│   └── empty-state.css              # Empty state styles
+└── pages/                            # Page-based CSS
+    ├── items-index.css              # Items listing page
+    ├── items-show.css               # Item detail page
+    ├── requests-index.css           # Requests listing page
+    ├── static-pages.css             # Static pages
+    └── profile.css                   # Profile pages
 ```
 
 ---
@@ -111,12 +231,25 @@ public/css/
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="rtl">
 <head>
-    <!-- Meta tags -->
-    <!-- Fonts (Figtree) -->
-    <!-- Styles (Vite + Custom CSS) -->
-    @stack('styles')
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+    <title>@yield('title', config('app.name', 'Khezana'))</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    
+    <!-- Styles -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/responsive-improvements.css') }}">
+    
+    @stack('meta')      <!-- SEO meta tags -->
+    @stack('styles')    <!-- Additional styles -->
 </head>
-<body>
+<body class="font-sans antialiased">
     @include('partials.header')
     
     <main>
@@ -136,12 +269,18 @@ public/css/
 - Responsive viewport
 - Font loading (Figtree)
 - Stack system for additional styles/scripts
+- SEO meta tags support via `@stack('meta')`
 
 **Usage**:
 ```blade
 @extends('layouts.app')
 
-@section('title', 'Page Title')
+@section('title', 'Page Title - ' . config('app.name'))
+
+@push('meta')
+    <meta name="description" content="Page description">
+    <link rel="canonical" href="{{ url()->current() }}">
+@endpush
 
 @section('content')
     <!-- Your page content -->
@@ -187,9 +326,42 @@ public/css/
 @endsection
 ```
 
+### 4. Static Pages Layout (`pages/_layout.blade.php`)
+
+**Purpose**: Shared layout for static pages (Terms, Privacy, etc.)
+
+**Features**:
+- Breadcrumb navigation
+- Page header with title
+- SEO meta tags support
+- Consistent styling
+
+**Usage**:
+```blade
+@extends('pages._layout')
+
+@section('title', __('pages.terms.title'))
+
+@push('meta')
+    <meta name="description" content="{{ __('pages.terms.meta_description') }}">
+    <link rel="canonical" href="{{ route('pages.terms') }}">
+@endpush
+
+@section('page-content')
+    <!-- Page content -->
+@endsection
+```
+
 ---
 
 ## Views Organization
+
+### Feature-Based Structure
+
+Each feature has its own directory with:
+- Main views (index, show, create, edit)
+- `_partials/` directory for feature-specific partials
+- Lightweight main views that include partials
 
 ### Public Views (No Authentication Required)
 
@@ -218,17 +390,39 @@ public/css/
 **Controller**: `Public\ItemController@index`  
 **Layout**: `layouts.app`
 
-**Structure**:
+**Structure** (Lightweight View):
 ```blade
-- Page Header (title, count, actions)
-- Items Grid (using item-card partial)
-- Pagination
-- Empty State (if no items)
+@extends('layouts.app')
+
+@section('title', __('items.title') . ' - ' . config('app.name'))
+
+@section('content')
+    <div class="khezana-listing-page">
+        <div class="khezana-container">
+            @include('public.items._partials.page-header', ['items' => $items])
+            
+            <main class="khezana-listing-main">
+                @if ($items->count() > 0)
+                    @include('public.items._partials.grid', ['items' => $items])
+                    @include('public.items._partials.pagination', ['items' => $items])
+                @else
+                    @include('public.items._partials.empty-state')
+                @endif
+            </main>
+        </div>
+    </div>
+@endsection
 ```
 
 **Data Passed**:
-- `$items` - Paginated items collection
+- `$items` - Paginated items collection (ItemReadModel)
 - `$sort` - Current sort option
+
+**Partials Used**:
+- `page-header.blade.php` - Page title, count, actions
+- `grid.blade.php` - Items grid using item-card component
+- `pagination.blade.php` - Pagination links
+- `empty-state.blade.php` - Empty state message
 
 #### 3. Public Item Detail (`public/items/show.blade.php`)
 
@@ -236,43 +430,58 @@ public/css/
 **Controller**: `Public\ItemController@show`  
 **Layout**: `layouts.app`
 
+**Structure** (Uses ViewModel):
+```blade
+@extends('layouts.app')
+
+@section('title', $viewModel->title . ' - ' . config('app.name'))
+
+@section('content')
+    <div class="khezana-item-detail-page">
+        <div class="khezana-container">
+            @include('public.items._partials.detail.breadcrumb', ['viewModel' => $viewModel])
+            @include('public.items._partials.detail.header', ['viewModel' => $viewModel])
+            @include('public.items._partials.detail.images', ['viewModel' => $viewModel])
+            @include('public.items._partials.detail.price', ['viewModel' => $viewModel])
+            @include('public.items._partials.detail.meta', ['viewModel' => $viewModel])
+            @include('public.items._partials.detail.attributes', ['viewModel' => $viewModel])
+            @include('public.items._partials.detail.description', ['viewModel' => $viewModel])
+            @include('public.items._partials.detail.contact-form', ['viewModel' => $viewModel])
+            @include('public.items._partials.detail.cta', ['viewModel' => $viewModel])
+            @include('public.items._partials.detail.additional-info', ['viewModel' => $viewModel])
+        </div>
+    </div>
+    
+    @include('public.items._partials.detail.image-modal', ['viewModel' => $viewModel])
+    @include('public.items._partials.detail.scripts', ['viewModel' => $viewModel])
+@endsection
+```
+
 **Features**:
+- Uses `ItemDetailViewModel` for all presentation logic
 - Image gallery with zoom
-- Full item details
 - Contact form (authenticated users)
 - Breadcrumb navigation
 - Keyboard navigation (arrows, ESC)
 - Touch gestures for mobile
 
-**JavaScript Features**:
-- Image gallery with modal
-- Thumbnail navigation
-- Fullscreen image viewer
-- Contact form toggle
+**ViewModel**: `ItemDetailViewModel::fromItem($item, 'public')`
 
-#### 4. Public Requests Listing (`public/requests/index.blade.php`)
+#### 4. Static Pages (`pages/`)
 
-**Route**: `/requests`  
-**Controller**: `Public\RequestController@index`  
-**Layout**: `layouts.app`
+**Routes**:
+- `/terms` - Terms and Conditions
+- `/privacy` - Privacy Policy
+- `/how-it-works` - How It Works
+- `/fees` - Fees and Commissions
 
-**Structure**:
-- Page header
-- Requests grid
-- Pagination
-- Empty state
-
-#### 5. Public Request Detail (`public/requests/show.blade.php`)
-
-**Route**: `/requests/{id}/{slug?}`  
-**Controller**: `Public\RequestController@show`  
-**Layout**: `layouts.app`
+**Controller**: `PageController`
 
 **Features**:
-- Request details
-- Offer submission
-- Contact functionality
-- Status badges
+- SEO-friendly (meta tags, canonical URLs)
+- Full translation support
+- RTL support
+- Clean, readable design
 
 ### Authenticated Views (User's Own Content)
 
@@ -283,6 +492,30 @@ public/css/
 **Layout**: `layouts.app`  
 **Middleware**: `auth`
 
+**Structure** (Lightweight View):
+```blade
+@extends('layouts.app')
+
+@section('title', __('items.title') . ' - ' . config('app.name'))
+
+@section('content')
+    <div class="khezana-listing-page">
+        <div class="khezana-container">
+            @include('items._partials.page-header', ['items' => $items])
+            
+            <main class="khezana-listing-main">
+                @if ($items->count() > 0)
+                    @include('items._partials.grid', ['items' => $items])
+                    @include('items._partials.pagination', ['items' => $items])
+                @else
+                    @include('items._partials.empty-state')
+                @endif
+            </main>
+        </div>
+    </div>
+@endsection
+```
+
 **Features**:
 - User's own items only
 - Create new item button
@@ -291,79 +524,157 @@ public/css/
 - Empty state with CTA
 
 **Data Passed**:
-- `$items` - User's paginated items
+- `$items` - User's paginated items (Item model)
 - `$sort` - Current sort option
 
-#### 2. Create Item (`items/create.blade.php`)
+#### 2. User Profile (`profile/`)
 
-**Route**: `/my-items/create`  
-**Controller**: `ItemController@create`  
-**Layout**: `layouts.app`  
-**Middleware**: `auth`
+**Routes**:
+- `/profile` - Profile overview (`profile.show`)
+- `/profile/edit` - Edit profile (`profile.edit`)
+- `/profile/password` - Security settings (`profile.password`)
 
-**Features**:
-- Pre-creation notice modal
-- Dynamic category attributes
-- Image upload
-- Operation type selection
-- Price calculation with fees
-
-**Form Fields**:
-- Category (with dynamic attributes)
-- Operation type (sell/rent/donate)
-- Title
-- Description
-- Condition
-- Price
-- Deposit amount
-- Images
-- Attributes (dynamic based on category)
-
-#### 3. Edit Item (`items/edit.blade.php`)
-
-**Route**: `/my-items/{item}/edit`  
-**Controller**: `ItemController@edit`  
-**Layout**: `layouts.app`  
-**Middleware**: `auth`
-
-**Similar to create but with pre-filled data**
-
-#### 4. Item Detail (`items/show.blade.php`)
-
-**Route**: `/my-items/{item}`  
-**Controller**: `ItemController@show`  
-**Layout**: `layouts.app`  
-**Middleware**: `auth`
+**Controller**: `ProfileController`
 
 **Features**:
-- Full item details
-- Approval status display
-- Edit button
-- Delete button (with modal)
-- Submit for approval
-- Image gallery
+- Uses `ProfileViewModel` for presentation logic
+- Navigation sidebar
+- Profile information display
+- Edit form with validation
+- Password update with security tips
+- Account deletion
 
-**Delete Modal Features**:
-- Soft delete option
-- Archive option
-- Hard delete (admin only)
-- Confirmation required
-- Reason field (admin)
+**Structure**:
+```blade
+@extends('layouts.app')
 
-#### 5. User Requests (`requests/index.blade.php`)
+@section('title', __('profile.title') . ' - ' . config('app.name'))
 
-**Route**: `/my-requests`  
-**Controller**: `RequestController@index`  
-**Layout**: `layouts.app`  
-**Middleware**: `auth`
+@section('content')
+    <div class="khezana-profile-page">
+        <div class="khezana-container">
+            <!-- Breadcrumb -->
+            <!-- Profile Header -->
+            <!-- Profile Content -->
+            <div class="khezana-profile-content">
+                <div class="khezana-profile-sidebar">
+                    @include('profile._partials.navigation')
+                </div>
+                <main class="khezana-profile-main">
+                    <!-- Profile sections -->
+                </main>
+            </div>
+        </div>
+    </div>
+@endsection
+```
 
-**Similar structure to items listing**
+**ViewModel**: `ProfileViewModel::fromUser($user)`
+
+---
+
+## ViewModel Pattern
+
+### Overview
+
+The ViewModel Pattern separates presentation logic from Blade views, making views simple and testable.
+
+### Architecture
+
+```
+Controller → ViewModel → View
+```
+
+1. **Controller** creates ViewModel from model
+2. **ViewModel** prepares all presentation data
+3. **View** receives ready-to-display data
+
+### ViewModels
+
+#### 1. ItemCardViewModel (`app/ViewModels/Items/ItemCardViewModel.php`)
+
+**Purpose**: Encapsulates all data and logic for item card display
+
+**Methods**:
+- `fromItem($item, $variant)` - Create from Item model
+- `fromReadModel($readModel, $variant)` - Create from ItemReadModel
+- `getImageUrl()` - Get primary image URL
+- `getDisplayPrice()` - Get formatted price
+- `getOperationTypeLabel()` - Get operation type label
+- `toArray()` - Convert to array for Blade
+
+**Usage**:
+```php
+// In Controller
+$viewModel = ItemCardViewModel::fromItem($item, 'user');
+
+// In Blade
+{{ $viewModel->title }}
+{{ $viewModel->getDisplayPrice() }}
+```
+
+#### 2. ItemDetailViewModel (`app/ViewModels/Items/ItemDetailViewModel.php`)
+
+**Purpose**: Encapsulates all data and logic for item detail page
+
+**Properties**:
+- `id`, `title`, `description`
+- `price`, `depositAmount`
+- `images`, `primaryImage`
+- `approvalStatus`, `isPending`, `isApproved`
+- `canEdit`, `canDelete`, `canSubmitForApproval`
+- And more...
+
+**Methods**:
+- `fromItem($item, $variant)` - Create from Item model
+- `toArray()` - Convert to array
+
+**Usage**:
+```php
+// In Controller
+$viewModel = ItemDetailViewModel::fromItem($item, 'user');
+return view('items.show', ['viewModel' => $viewModel]);
+
+// In Blade
+{{ $viewModel->title }}
+@if($viewModel->canEdit)
+    <a href="{{ $viewModel->editUrl }}">Edit</a>
+@endif
+```
+
+#### 3. ProfileViewModel (`app/ViewModels/Profile/ProfileViewModel.php`)
+
+**Purpose**: Encapsulates all data and logic for profile pages
+
+**Methods**:
+- `fromUser($user)` - Create from User model
+- `isEmailVerified()` - Check email verification
+- `getEmailVerificationStatus()` - Get verification status text
+- `getMemberSinceFormatted()` - Get formatted member since date
+- `toArray()` - Convert to array
+
+**Usage**:
+```php
+// In Controller
+$viewModel = ProfileViewModel::fromUser($request->user());
+return view('profile.show', ['viewModel' => $viewModel]);
+```
+
+### Benefits
+
+1. **Separation of Concerns** - Logic separated from presentation
+2. **Testability** - ViewModels can be unit tested
+3. **Reusability** - Same ViewModel can be used in multiple views
+4. **Maintainability** - Changes to logic don't affect views
+5. **Type Safety** - Readonly properties ensure data integrity
 
 ---
 
 ## Partials & Components
 
-### 1. Header (`partials/header.blade.php`)
+### Global Partials (`partials/`)
+
+#### 1. Header (`partials/header.blade.php`)
 
 **Purpose**: Main site navigation
 
@@ -386,67 +697,112 @@ public/css/
 - Conditional links based on auth status
 - RTL support
 
-### 2. Footer (`partials/footer.blade.php`)
+#### 2. Footer (`partials/footer.blade.php`)
 
 **Purpose**: Site footer
 
 **Sections**:
 - App description
-- Quick links
-- Information links
+- Quick links (Sell, Rent, Donate, Requests)
+- Information links (How It Works, Fees, Terms, Privacy)
 - Trust indicators
 - Copyright
 
-### 3. Item Card (`partials/item-card.blade.php`)
+#### 3. Item Card (`partials/item-card.blade.php`)
 
-**Purpose**: Reusable item card component
+**Purpose**: Reusable item card component (Dumb Component)
 
 **Features**:
-- Works with both public and user items
-- Image with lazy loading
-- Multiple image indicator
-- Hover preview (desktop)
-- Skeleton loader
-- Price display with fees
-- Operation type badge
-- Condition & category info
-- Responsive design
+- Pure presentation component
+- Receives data via props
+- No internal logic
+- Supports multiple variants: `public`, `user`, `compact`
+- Uses `ItemCardViewModel` for data preparation
 
-**Usage**:
+**Props**:
 ```blade
-@include('partials.item-card', ['item' => $item])
+@include('partials.item-card', [
+    'itemId' => $itemId,
+    'variant' => 'public', // 'public', 'user', or 'compact'
+    'url' => $url,
+    'title' => $title,
+    'imageUrl' => $imageUrl,
+    'displayPrice' => $displayPrice,
+    'operationType' => $operationType,
+    // ... more props
+])
 ```
 
-**Smart Detection**:
-- Automatically detects if item is public (ItemReadModel) or user item (Item model)
-- Adjusts URLs and data access accordingly
+**Usage with Helper**:
+```php
+// In Controller or Helper
+$props = ItemCardHelper::preparePublicItem($item);
+// Returns array of props ready for item-card
+
+// In Blade
+@include('partials.item-card', ItemCardHelper::preparePublicItem($item))
+```
+
+**BEM Naming**:
+- `.khezana-item-card` - Base class
+- `.khezana-item-card--public` - Public variant
+- `.khezana-item-card--user` - User variant
+- `.khezana-item-card--compact` - Compact variant
+
+### Feature-Specific Partials
+
+Each feature has its own `_partials/` directory:
+
+#### Items Partials (`items/_partials/`)
+
+- `page-header.blade.php` - Page header with title, count, create button
+- `grid.blade.php` - Items grid using item-card component
+- `empty-state.blade.php` - Empty state with CTA
+- `pagination.blade.php` - Pagination links
+- `detail/` - Detail page partials (9 files)
+
+#### Requests Partials (`requests/_partials/`)
+
+- `page-header.blade.php`
+- `grid.blade.php` - Uses `RequestCardViewModel`
+- `empty-state.blade.php`
+- `pagination.blade.php`
+
+#### Profile Partials (`profile/_partials/`)
+
+- `navigation.blade.php` - Profile navigation sidebar
 
 ---
 
 ## CSS Architecture
 
-### Design System Structure
+### Component-Based & Page-Based Structure
 
-The CSS follows a **modular, component-based architecture**:
+The CSS follows a **modular, component-based and page-based architecture**:
 
 ```
 home.css (Main Entry Point)
-├── variables.css      # Design tokens
-├── base.css           # Reset & typography
-├── layout.css         # Grid & containers
-├── header.css         # Navigation
-├── buttons.css        # Button components
-├── hero.css           # Hero section
-├── sections.css       # Page sections
-├── forms.css          # Form elements
-├── cards.css          # Card components
-├── listing.css        # Listing pages
-├── detail.css         # Detail pages
-├── modals.css         # Modals
-├── footer.css         # Footer
-├── auth.css           # Auth pages
-├── requests.css       # Request pages
-└── utilities.css      # Utilities
+├── variables.css              # Design tokens
+├── base.css                   # Reset & typography
+├── layout.css                 # Grid & containers
+├── header.css                 # Navigation
+├── buttons.css                # Button components
+├── hero.css                  # Hero section
+├── sections.css              # Page sections
+├── forms.css                 # Form elements
+├── footer.css                # Footer
+├── auth.css                  # Auth pages
+├── responsive-improvements.css
+├── components/               # Component-based CSS
+│   ├── item-card.css        # Item card styles
+│   ├── pagination.css       # Pagination styles
+│   └── empty-state.css      # Empty state styles
+└── pages/                    # Page-based CSS
+    ├── items-index.css      # Items listing page
+    ├── items-show.css       # Item detail page
+    ├── requests-index.css   # Requests listing page
+    ├── static-pages.css     # Static pages
+    └── profile.css          # Profile pages
 ```
 
 ### Design Tokens (`variables.css`)
@@ -463,6 +819,7 @@ home.css (Main Entry Point)
 --khezana-text-light: #6b7280;
 --khezana-bg: #faf8f5;
 --khezana-white: #ffffff;
+--khezana-border: #e5e7eb;
 ```
 
 **Spacing**:
@@ -486,71 +843,76 @@ home.css (Main Entry Point)
 --khezana-font-size-4xl: 2.25rem;
 ```
 
-**Shadows**:
-```css
---khezana-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
---khezana-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
---khezana-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
---khezana-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-```
+### BEM Naming Convention
 
-### Naming Convention
+All CSS classes follow BEM (Block Element Modifier) pattern:
 
-All CSS classes follow the pattern: `khezana-{component}-{element}-{modifier}`
+**Pattern**: `khezana-{block}__{element}--{modifier}`
 
 **Examples**:
-- `khezana-btn` - Base button
-- `khezana-btn-primary` - Primary button
-- `khezana-btn-large` - Large button
-- `khezana-item-card` - Item card
-- `khezana-item-card-modern` - Modern variant
-- `khezana-form-input` - Form input
-- `khezana-form-error` - Form error message
+- `.khezana-item-card` - Block
+- `.khezana-item-card__image` - Element
+- `.khezana-item-card__image--primary` - Modifier
+- `.khezana-item-card--public` - Block modifier
+- `.khezana-item-card--compact` - Block modifier
+
+**RTL Support**:
+- Uses logical properties: `margin-inline-start`, `padding-inline-end`
+- `[dir="rtl"]` selectors for RTL-specific styles
+- `flex-direction: row-reverse` for RTL layouts
 
 ### Component Files
 
-#### `buttons.css`
-- Button variants (primary, secondary, danger)
-- Button sizes (small, default, large)
-- Button states (hover, active, disabled)
-- CTA buttons
+#### `components/item-card.css`
+- Item card base styles
+- Variants: `--public`, `--user`, `--compact`
+- Image handling
+- Price display
+- Hover effects
+- RTL support
 
-#### `cards.css`
-- Item cards
-- Service cards
-- Request cards
-- Card hover effects
-- Image containers
+#### `components/pagination.css`
+- Pagination container
+- Page links
+- Active state
+- RTL support
 
-#### `forms.css`
-- Form inputs
-- Textareas
-- Selects
-- Checkboxes/radios
-- Form groups
-- Error messages
-- Validation states
+#### `components/empty-state.css`
+- Empty state container
+- Icon/illustration
+- Message text
+- CTA button
+- RTL support
 
-#### `listing.css`
-- Page headers
-- Grid layouts
-- Pagination
-- Empty states
-- Filter sections (removed)
+### Page Files
 
-#### `detail.css`
-- Item detail pages
-- Image galleries
-- Breadcrumbs
+#### `pages/items-index.css`
+- Listing page layout
+- Page header styles
+- Grid container
+- RTL support
+
+#### `pages/items-show.css`
+- Detail page layout
+- Breadcrumb styles
+- Image gallery
 - Meta information
-- Action buttons
+- RTL support
 
-#### `modals.css`
-- Modal overlays
-- Modal content
-- Delete confirmation modals
-- Image modals
-- Form modals
+#### `pages/profile.css`
+- Profile page layout
+- Profile header
+- Navigation sidebar
+- Profile cards
+- Form styles
+- RTL support
+
+#### `pages/static-pages.css`
+- Static page layout
+- Section styles
+- Process steps (How It Works)
+- Fee cards (Fees page)
+- RTL support
 
 ---
 
@@ -560,13 +922,14 @@ All CSS classes follow the pattern: `khezana-{component}-{element}-{modifier}`
 
 1. **User visits URL** → Route defined in `routes/web.php`
 2. **Route calls Controller** → Controller method executes
-3. **Controller fetches data** → From database/models
-4. **Controller returns view** → `return view('view.name', $data)`
+3. **Controller creates ViewModel** → From model/read model
+4. **Controller returns view** → `return view('view.name', ['viewModel' => $viewModel])`
 5. **View extends layout** → `@extends('layouts.app')`
 6. **Layout includes partials** → Header, Footer
-7. **View renders content** → Using Blade syntax
-8. **CSS loads** → Via `home.css` import chain
-9. **JavaScript executes** → Via `@stack('scripts')` or inline
+7. **View includes feature partials** → Grid, Pagination, etc.
+8. **Partials use components** → item-card, etc.
+9. **CSS loads** → Via `home.css` import chain
+10. **JavaScript executes** → Via `@stack('scripts')` or inline
 
 ### Example: Public Item Listing
 
@@ -579,12 +942,17 @@ Controller: Public\ItemController@index
     ↓
 Query: BrowseItemsQuery (gets approved items)
     ↓
-View: public.items.index
+Returns: Paginated ItemReadModel collection
     ↓
-Layout: layouts.app
-    ├── Includes: partials.header
-    ├── Yields: content (items listing)
-    └── Includes: partials.footer
+View: public.items.index (lightweight)
+    ↓
+Includes: public.items._partials.grid
+    ↓
+Grid includes: partials.item-card (for each item)
+    ↓
+Item Card uses: ItemCardHelper::preparePublicItem()
+    ↓
+Creates: ItemCardViewModel
     ↓
 Renders: HTML with CSS classes
     ↓
@@ -593,79 +961,157 @@ CSS: home.css → imports all modules
 Browser: Displays styled page
 ```
 
-### Data Flow
+### Data Flow with ViewModel
 
-**Controller → View**:
+**Controller**:
 ```php
-// Controller
-return view('public.items.index', [
-    'items' => $items,  // Paginated collection
-    'sort' => $sort,    // Current sort
-]);
+public function show(Item $item): View
+{
+    $viewModel = ItemDetailViewModel::fromItem($item, 'user');
+    return view('items.show', ['viewModel' => $viewModel]);
+}
 ```
 
-**View Usage**:
+**View**:
 ```blade
-@foreach ($items as $item)
-    @include('partials.item-card', ['item' => $item])
-@endforeach
+@extends('layouts.app')
+
+@section('title', $viewModel->title . ' - ' . config('app.name'))
+
+@section('content')
+    <h1>{{ $viewModel->title }}</h1>
+    <p>{{ $viewModel->description }}</p>
+    @if($viewModel->canEdit)
+        <a href="{{ $viewModel->editUrl }}">Edit</a>
+    @endif
+@endsection
 ```
 
-**Partial Processing**:
-```blade
-@php
-    // Detect item type (public vs user)
-    $isPublicItem = isset($item->primaryImage);
-    // Build appropriate URL
-    $itemUrl = $isPublicItem 
-        ? route('public.items.show', ['id' => $item->id])
-        : route('items.show', $item);
-@endphp
+**ViewModel** (handles all logic):
+```php
+class ItemDetailViewModel
+{
+    public function __construct(
+        public readonly string $title,
+        public readonly bool $canEdit,
+        public readonly string $editUrl,
+        // ...
+    ) {}
+    
+    public static function fromItem(Item $item, string $variant): self
+    {
+        return new self(
+            title: $item->title,
+            canEdit: $item->user_id === auth()->id() && !$item->isPending(),
+            editUrl: route('items.edit', $item),
+            // ...
+        );
+    }
+}
 ```
 
 ---
 
 ## Examples & Usage
 
-### Creating a New Page
+### Creating a New Feature
 
-**Step 1: Create Route**
-```php
-// routes/web.php
-Route::get('/about', [AboutController::class, 'index'])->name('about');
+**Step 1: Create Directory Structure**
+```bash
+mkdir -p resources/views/my-feature/_partials
 ```
 
-**Step 2: Create Controller Method**
+**Step 2: Create Partials**
+- `page-header.blade.php`
+- `grid.blade.php`
+- `empty-state.blade.php`
+- `pagination.blade.php`
+
+**Step 3: Create Main View**
+```blade
+{{-- resources/views/my-feature/index.blade.php --}}
+@extends('layouts.app')
+
+@section('title', __('my-feature.title') . ' - ' . config('app.name'))
+
+@section('content')
+    <div class="khezana-listing-page">
+        <div class="khezana-container">
+            @include('my-feature._partials.page-header', ['items' => $items])
+            
+            <main class="khezana-listing-main">
+                @if ($items->count() > 0)
+                    @include('my-feature._partials.grid', ['items' => $items])
+                    @include('my-feature._partials.pagination', ['items' => $items])
+                @else
+                    @include('my-feature._partials.empty-state')
+                @endif
+            </main>
+        </div>
+    </div>
+@endsection
+```
+
+**Step 4: Create ViewModel (Optional)**
 ```php
-// app/Http/Controllers/AboutController.php
-public function index()
+// app/ViewModels/MyFeature/MyFeatureCardViewModel.php
+class MyFeatureCardViewModel
 {
-    return view('about.index');
+    public static function fromModel($model): self
+    {
+        return new self(
+            // Prepare data
+        );
+    }
 }
 ```
 
-**Step 3: Create View**
+**Step 5: Create CSS**
+```css
+/* public/css/pages/my-feature-index.css */
+.khezana-my-feature-page {
+    /* Styles */
+}
+```
+
+**Step 6: Import CSS**
+```css
+/* public/css/home.css */
+@import url('pages/my-feature-index.css');
+```
+
+### Using ViewModels
+
+**In Controller**:
+```php
+public function index(): View
+{
+    $items = Item::where('user_id', auth()->id())->paginate();
+    
+    return view('items.index', [
+        'items' => $items->through(fn($item) => ItemCardViewModel::fromItem($item, 'user')),
+    ]);
+}
+```
+
+**In Blade**:
 ```blade
-{{-- resources/views/about/index.blade.php --}}
-@extends('layouts.app')
-
-@section('title', __('common.ui.about_us') . ' - ' . config('app.name'))
-
-@section('content')
-    <div class="khezana-container">
-        <h1 class="khezana-page-title">{{ __('common.ui.about_us') }}</h1>
-        <p>Content here...</p>
+@foreach ($items as $viewModel)
+    <div class="khezana-item-card">
+        <h3>{{ $viewModel->title }}</h3>
+        <p>{{ $viewModel->getDisplayPrice() }}</p>
     </div>
-@endsection
+@endforeach
 ```
 
 ### Using Partials
 
 **Include a Partial**:
 ```blade
-@include('partials.item-card', [
-    'item' => $item,
-    'showActions' => true
+@include('items._partials.page-header', [
+    'items' => $items,
+    'title' => __('items.title'),
+    'showCreateButton' => true,
 ])
 ```
 
@@ -682,7 +1128,6 @@ public function index()
 
 **Option 1: Using @stack**
 ```blade
-{{-- In your view --}}
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 @endpush
@@ -696,24 +1141,6 @@ public function index()
             color: var(--khezana-primary);
         }
     </style>
-@endpush
-```
-
-### Adding JavaScript
-
-**Option 1: Using @stack**
-```blade
-@push('scripts')
-    <script>
-        // Your JavaScript
-    </script>
-@endpush
-```
-
-**Option 2: External File**
-```blade
-@push('scripts')
-    <script src="{{ asset('js/custom.js') }}"></script>
 @endpush
 ```
 
@@ -739,13 +1166,14 @@ public function index()
     @csrf
     
     <div class="khezana-form-group">
-        <label class="khezana-form-label">
+        <label for="title" class="khezana-form-label">
             {{ __('items.fields.title') }}
             <span class="khezana-required">*</span>
         </label>
         <input type="text" 
+               id="title"
                name="title" 
-               class="khezana-form-input"
+               class="khezana-form-input @error('title') khezana-form-input--error @enderror"
                value="{{ old('title') }}"
                required>
         @error('title')
@@ -753,136 +1181,113 @@ public function index()
         @enderror
     </div>
     
-    <button type="submit" class="khezana-btn khezana-btn-primary">
-        {{ __('common.actions.save') }}
-    </button>
+    <div class="khezana-form-actions">
+        <button type="submit" class="khezana-btn khezana-btn--primary">
+            {{ __('common.actions.save') }}
+        </button>
+        <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn--secondary">
+            {{ __('common.actions.cancel') }}
+        </a>
+    </div>
 </form>
-```
-
-### Displaying Data
-
-**Loops**:
-```blade
-@foreach ($items as $item)
-    <div class="khezana-item-card">
-        <h3>{{ $item->title }}</h3>
-        <p>{{ $item->description }}</p>
-    </div>
-@endforeach
-```
-
-**Conditionals**:
-```blade
-@if ($item->price)
-    <div class="khezana-item-price">
-        {{ number_format($item->price, 0) }} {{ __('common.ui.currency') }}
-    </div>
-@else
-    <div class="khezana-item-price-free">
-        {{ __('common.ui.free') }}
-    </div>
-@endif
-```
-
-**Pagination**:
-```blade
-@if ($items->hasPages())
-    <div class="khezana-pagination">
-        {{ $items->appends(request()->query())->links() }}
-    </div>
-@endif
 ```
 
 ---
 
 ## Best Practices
 
-### 1. Always Use Translations
+### 1. Always Use ViewModels for Complex Logic
+```blade
+❌ Bad: 
+@php
+    $canEdit = $item->user_id === auth()->id() && !$item->isPending();
+    $editUrl = route('items.edit', $item);
+@endphp
+
+✅ Good:
+{{-- Controller creates ViewModel --}}
+@if($viewModel->canEdit)
+    <a href="{{ $viewModel->editUrl }}">Edit</a>
+@endif
+```
+
+### 2. Use Translations
 ```blade
 ❌ Bad: <h1>Home</h1>
 ✅ Good: <h1>{{ __('common.ui.home') }}</h1>
 ```
 
-### 2. Use Design System Classes
+### 3. Use Design System Classes
 ```blade
 ❌ Bad: <button style="background: #f59e0b;">Click</button>
-✅ Good: <button class="khezana-btn khezana-btn-primary">Click</button>
+✅ Good: <button class="khezana-btn khezana-btn--primary">Click</button>
 ```
 
-### 3. Include CSRF Tokens
+### 4. Keep Views Lightweight
 ```blade
-<form method="POST">
-    @csrf
-    <!-- form fields -->
-</form>
+❌ Bad: Complex logic in Blade
+@php
+    // 50 lines of logic
+@endphp
+
+✅ Good: Use ViewModels and Partials
+@include('items._partials.grid', ['items' => $items])
 ```
 
-### 4. Use Route Names
+### 5. Use Route Names
 ```blade
 ❌ Bad: <a href="/items">Items</a>
 ✅ Good: <a href="{{ route('public.items.index') }}">Items</a>
 ```
 
-### 5. Handle Empty States
+### 6. Handle Empty States
 ```blade
 @if ($items->count() > 0)
-    <!-- Display items -->
+    @include('items._partials.grid', ['items' => $items])
+    @include('items._partials.pagination', ['items' => $items])
 @else
-    <div class="khezana-empty-state">
-        <p>{{ __('common.ui.no_items') }}</p>
-    </div>
+    @include('items._partials.empty-state')
 @endif
 ```
 
-### 6. Use Partials for Reusability
+### 7. Use Partials for Reusability
 ```blade
 ❌ Bad: Copy-paste card HTML everywhere
-✅ Good: @include('partials.item-card', ['item' => $item])
+✅ Good: @include('partials.item-card', ItemCardHelper::preparePublicItem($item))
 ```
 
-### 7. Add Accessibility
+### 8. Add SEO Meta Tags
 ```blade
-<button aria-label="{{ __('common.ui.close') }}">
-    <span aria-hidden="true">×</span>
-</button>
+@push('meta')
+    <meta name="description" content="{{ __('items.meta_description') }}">
+    <link rel="canonical" href="{{ route('public.items.index') }}">
+    <meta property="og:title" content="{{ __('items.title') }}">
+@endpush
 ```
 
-### 8. Optimize Images
+### 9. Use Semantic HTML
 ```blade
-<img src="{{ asset('storage/' . $image->path) }}" 
-     alt="{{ $item->title }}"
-     loading="lazy">
+<article class="khezana-item-card">
+    <header class="khezana-item-card__header">
+        <h2>{{ $viewModel->title }}</h2>
+    </header>
+    <main class="khezana-item-card__content">
+        <!-- Content -->
+    </main>
+</article>
 ```
 
----
+### 10. Support RTL
+```css
+/* Use logical properties */
+margin-inline-start: var(--khezana-spacing-md);
+padding-inline-end: var(--khezana-spacing-sm);
 
-## Troubleshooting
-
-### Common Issues
-
-**1. View Not Found**
-- Check file path matches namespace
-- Clear view cache: `php artisan view:clear`
-
-**2. CSS Not Loading**
-- Check `public/css/home.css` exists
-- Verify asset path: `{{ asset('css/home.css') }}`
-- Clear cache: `php artisan cache:clear`
-
-**3. Translations Missing**
-- Check language file exists: `lang/ar/common.php`
-- Verify translation key exists
-- Clear cache: `php artisan config:clear`
-
-**4. Partials Not Rendering**
-- Check partial path: `partials/header.blade.php`
-- Verify `@include` syntax
-- Check for PHP errors in partial
-
-**5. Layout Not Extending**
-- Verify `@extends` is first line
-- Check layout file exists
-- Ensure no syntax errors before `@extends`
+/* RTL-specific styles */
+[dir="rtl"] .khezana-item-card {
+    flex-direction: row-reverse;
+}
+```
 
 ---
 
@@ -890,13 +1295,15 @@ public function index()
 
 The Khezana Blade views system is built on:
 
-1. **Modular Layouts** - Base layouts for different page types
-2. **Reusable Partials** - Components like header, footer, item-card
-3. **Organized Views** - Separated by public/authenticated and feature
-4. **Design System** - Consistent CSS architecture with design tokens
-5. **RTL Support** - Full Arabic language support
-6. **Responsive Design** - Mobile-first approach
-7. **Accessibility** - ARIA labels and semantic HTML
+1. **Feature-Based Organization** - Views organized by feature
+2. **ViewModel Pattern** - Separation of presentation logic
+3. **Component-Based Partials** - Reusable UI components
+4. **Modular CSS** - Component-based and page-based architecture
+5. **Layout System** - Base layouts for different page types
+6. **RTL Support** - Full Arabic language support
+7. **SEO-Friendly** - Meta tags, semantic HTML
+8. **Responsive Design** - Mobile-first approach
+9. **Accessibility** - ARIA labels and semantic HTML
 
 This architecture ensures:
 - ✅ Maintainability
@@ -904,9 +1311,11 @@ This architecture ensures:
 - ✅ Consistency
 - ✅ Scalability
 - ✅ Performance
+- ✅ Testability
+- ✅ Separation of Concerns
 
 ---
 
 **Last Updated**: January 2026  
-**Version**: 1.0  
+**Version**: 3.0 (Feature-Based + ViewModel Pattern)  
 **Author**: Khezana Development Team

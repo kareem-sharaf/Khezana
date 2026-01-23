@@ -41,7 +41,7 @@
                     <div class="khezana-request-attributes">
                         @foreach ($viewModel->displayAttributes as $attr)
                             <span class="khezana-request-attribute">
-                                <strong>{{ $attr['name'] }}:</strong>
+                                <strong>{{ $attr['name'] ?? translate_attribute_name($attr['originalName'] ?? '') }}:</strong>
                                 {{ $attr['value'] }}
                             </span>
                         @endforeach

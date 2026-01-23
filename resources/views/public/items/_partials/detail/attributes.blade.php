@@ -7,7 +7,7 @@
         <div class="khezana-attributes-grid">
             @foreach ($viewModel->attributes as $attribute)
                 <div class="khezana-attribute-item">
-                    <span class="khezana-attribute-name">{{ $attribute->name }}:</span>
+                    <span class="khezana-attribute-name">{{ $attribute->name ?? translate_attribute_name($attribute->originalName ?? '') }}:</span>
                     <span class="khezana-attribute-value">{{ $attribute->formattedValue ?? $attribute->value }}</span>
                 </div>
             @endforeach

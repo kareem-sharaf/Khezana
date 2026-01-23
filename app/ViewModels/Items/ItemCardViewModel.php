@@ -53,6 +53,17 @@ class ItemCardViewModel
         $isFree = $operationType === 'donate' || $displayPrice === null;
         $isRent = $operationType === 'rent';
 
+        // Ensure price is float or null
+        $price = null;
+        if (isset($data['price']) && $data['price'] !== null && $data['price'] !== '') {
+            $price = is_numeric($data['price']) ? (float) $data['price'] : null;
+        }
+
+        // Ensure displayPrice is float or null
+        if ($displayPrice !== null && !is_float($displayPrice)) {
+            $displayPrice = is_numeric($displayPrice) ? (float) $displayPrice : null;
+        }
+
         return new self(
             itemId: $data['itemId'] ?? ($data['item']->id ?? uniqid()),
             variant: $data['variant'] ?? 'public',
@@ -61,7 +72,7 @@ class ItemCardViewModel
             primaryImagePath: $data['primaryImagePath'] ?? null,
             images: $images,
             hasMultipleImages: $hasMultipleImages,
-            price: $data['price'] ?? null,
+            price: $price,
             displayPrice: $displayPrice,
             operationType: $operationType,
             condition: $data['condition'] ?? null,
@@ -69,7 +80,7 @@ class ItemCardViewModel
             createdAt: $data['createdAt'] ?? null,
             showMeta: $data['showMeta'] ?? true,
             showImagePreview: $data['showImagePreview'] ?? true,
-            formattedPrice: $data['price'] ? number_format((float) $data['price'], 0) : '',
+            formattedPrice: $price ? number_format($price, 0) : '',
             formattedDisplayPrice: $displayPrice ? number_format($displayPrice, 0) : '',
             isFree: $isFree,
             isRent: $isRent,

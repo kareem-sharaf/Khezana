@@ -1,0 +1,560 @@
+/**
+ * Khezana Design System - Filters Component
+ * Single Responsibility: Professional filters sidebar and mobile modal
+ * Full RTL support using logical properties
+ * Responsive: Sidebar on desktop, Bottom Sheet on mobile
+ */
+
+/* ============================================
+   FILTERS TOGGLE BUTTON (Mobile)
+   ============================================ */
+
+.khezana-filters-toggle {
+    display: none; /* Hidden on desktop */
+    position: fixed;
+    bottom: var(--khezana-spacing-lg);
+    inset-inline-end: var(--khezana-spacing-lg);
+    z-index: 100;
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border: none;
+    border-radius: 50px;
+    padding: var(--khezana-spacing-sm) var(--khezana-spacing-md);
+    font-size: var(--khezana-font-size-base);
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(41, 60, 87, 0.3);
+    transition: var(--khezana-transition);
+    align-items: center;
+    gap: var(--khezana-spacing-xs);
+    min-width: 120px;
+    justify-content: center;
+}
+
+.khezana-filters-toggle:hover {
+    background: var(--khezana-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(41, 60, 87, 0.4);
+}
+
+.khezana-filters-toggle:active {
+    transform: translateY(0);
+}
+
+.khezana-filters-toggle__icon {
+    font-size: var(--khezana-font-size-lg);
+}
+
+.khezana-filters-toggle__text {
+    font-weight: 600;
+}
+
+.khezana-filters-toggle__badge {
+    background: var(--khezana-white);
+    color: var(--khezana-primary);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--khezana-font-size-xs);
+    font-weight: 700;
+    margin-inline-start: var(--khezana-spacing-xs);
+}
+
+/* ============================================
+   FILTERS SIDEBAR
+   ============================================ */
+
+.khezana-filters {
+    position: sticky;
+    top: calc(var(--khezana-spacing-xl) + 20px);
+    width: 280px;
+    max-height: calc(100vh - 120px);
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    box-shadow: var(--khezana-shadow-md);
+    border: 1px solid var(--khezana-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 10;
+}
+
+/* Filters Header */
+.khezana-filters__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--khezana-spacing-md);
+    border-bottom: 1px solid var(--khezana-border);
+    background: var(--khezana-bg);
+}
+
+.khezana-filters__title {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 700;
+    color: var(--khezana-text);
+    margin: 0;
+}
+
+.khezana-filters__close {
+    display: none; /* Hidden on desktop, shown on mobile */
+    background: none;
+    border: none;
+    font-size: var(--khezana-font-size-2xl);
+    color: var(--khezana-text-light);
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--khezana-radius);
+    transition: var(--khezana-transition);
+}
+
+.khezana-filters__close:hover {
+    background: var(--khezana-border);
+    color: var(--khezana-text);
+}
+
+/* Filters Content */
+.khezana-filters__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--khezana-spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-lg);
+}
+
+/* Custom Scrollbar */
+.khezana-filters__content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.khezana-filters__content::-webkit-scrollbar-track {
+    background: var(--khezana-bg);
+}
+
+.khezana-filters__content::-webkit-scrollbar-thumb {
+    background: var(--khezana-border);
+    border-radius: 3px;
+}
+
+.khezana-filters__content::-webkit-scrollbar-thumb:hover {
+    background: var(--khezana-text-light);
+}
+
+/* Filters Form */
+.khezana-filters__form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Filter Group */
+.khezana-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-xs);
+}
+
+.khezana-filter-group__label {
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 600;
+    color: var(--khezana-text);
+    margin-bottom: var(--khezana-spacing-xs);
+}
+
+.khezana-filter-group__select,
+.khezana-filter-group__input {
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-sm);
+    background: var(--khezana-white);
+    color: var(--khezana-text);
+    transition: var(--khezana-transition);
+    font-family: inherit;
+}
+
+.khezana-filter-group__select:focus,
+.khezana-filter-group__input:focus {
+    outline: none;
+    border-color: var(--khezana-primary);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.khezana-filter-group__select:hover,
+.khezana-filter-group__input:hover {
+    border-color: var(--khezana-primary-light);
+}
+
+/* Price Range */
+.khezana-filter-group__price-range {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-sm);
+}
+
+.khezana-filter-group__price-separator {
+    color: var(--khezana-text-light);
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.khezana-filter-group__input {
+    flex: 1;
+}
+
+/* Price Slider */
+.khezana-filter-group__price-slider {
+    margin-top: var(--khezana-spacing-md);
+}
+
+.khezana-price-slider {
+    position: relative;
+    height: 6px;
+    margin-bottom: var(--khezana-spacing-sm);
+}
+
+.khezana-price-slider__track {
+    position: absolute;
+    width: 100%;
+    height: 6px;
+    background: var(--khezana-border);
+    border-radius: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.khezana-price-slider__range {
+    position: absolute;
+    height: 6px;
+    background: var(--khezana-primary);
+    border-radius: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.khezana-price-slider__input {
+    position: absolute;
+    width: 100%;
+    height: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.khezana-price-slider__input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--khezana-primary);
+    border: 2px solid var(--khezana-white);
+    cursor: pointer;
+    pointer-events: all;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: var(--khezana-transition);
+}
+
+.khezana-price-slider__input::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.khezana-price-slider__input::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--khezana-primary);
+    border: 2px solid var(--khezana-white);
+    cursor: pointer;
+    pointer-events: all;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: var(--khezana-transition);
+}
+
+.khezana-price-slider__input::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.khezana-filter-group__price-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--khezana-spacing-xs);
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    font-weight: 600;
+}
+
+.khezana-filter-group__price-currency {
+    font-size: var(--khezana-font-size-xs);
+    color: var(--khezana-text-light);
+}
+
+/* Active Filters Chips */
+.khezana-filters__active-chips {
+    padding: var(--khezana-spacing-md);
+    border-bottom: 1px solid var(--khezana-border);
+    background: var(--khezana-bg);
+}
+
+.khezana-active-filters {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-sm);
+}
+
+.khezana-active-filters__label {
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 600;
+    color: var(--khezana-text);
+}
+
+.khezana-active-filters__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--khezana-spacing-xs);
+}
+
+.khezana-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--khezana-spacing-xs);
+    padding: 0.375rem 0.75rem;
+    background: var(--khezana-white);
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text);
+    transition: var(--khezana-transition);
+}
+
+.khezana-filter-chip:hover {
+    border-color: var(--khezana-primary);
+    background: rgba(245, 158, 11, 0.05);
+}
+
+.khezana-filter-chip__label {
+    font-weight: 500;
+}
+
+.khezana-filter-chip__remove {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--khezana-text-light);
+    cursor: pointer;
+    transition: var(--khezana-transition);
+    font-size: var(--khezana-font-size-lg);
+    line-height: 1;
+}
+
+.khezana-filter-chip__remove:hover {
+    background: var(--khezana-danger);
+    color: var(--khezana-white);
+}
+
+.khezana-filter-chip--clear-all {
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border-color: var(--khezana-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.khezana-filter-chip--clear-all:hover {
+    background: var(--khezana-primary-dark);
+    border-color: var(--khezana-primary-dark);
+    color: var(--khezana-white);
+}
+
+/* Filters Actions */
+.khezana-filters__actions {
+    padding: var(--khezana-spacing-md);
+    border-top: 1px solid var(--khezana-border);
+    background: var(--khezana-bg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-sm);
+}
+
+.khezana-filters__apply,
+.khezana-filters__reset {
+    width: 100%;
+    justify-content: center;
+}
+
+.khezana-filters__reset {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   FILTERS OVERLAY (Mobile)
+   ============================================ */
+
+.khezana-filters-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(2px);
+}
+
+.khezana-filters-overlay.is-active {
+    display: block;
+    opacity: 1;
+}
+
+/* ============================================
+   RESPONSIVE: MOBILE
+   ============================================ */
+
+@media (max-width: 1023px) {
+    /* Show toggle button on mobile */
+    .khezana-filters-toggle {
+        display: flex;
+    }
+
+    /* Hide filters by default on mobile */
+    .khezana-filters {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        max-height: 85vh;
+        border-radius: var(--khezana-radius-xl) var(--khezana-radius-xl) 0 0;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+        z-index: 999;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Show filters when active */
+    .khezana-filters.is-active {
+        transform: translateY(0);
+    }
+
+    /* Show close button on mobile */
+    .khezana-filters__close {
+        display: flex;
+    }
+
+    /* Adjust content padding on mobile */
+    .khezana-filters__content {
+        padding-bottom: calc(var(--khezana-spacing-md) + env(safe-area-inset-bottom));
+    }
+
+    /* Adjust actions padding on mobile */
+    .khezana-filters__actions {
+        padding-bottom: calc(var(--khezana-spacing-md) + env(safe-area-inset-bottom));
+    }
+}
+
+/* ============================================
+   LISTING LAYOUT WITH FILTERS
+   ============================================ */
+/* Note: Main layout styles are in pages/items-index.css */
+
+/* ============================================
+   RTL SUPPORT
+   ============================================ */
+
+[dir="rtl"] .khezana-filters-toggle {
+    inset-inline-start: var(--khezana-spacing-lg);
+    inset-inline-end: auto;
+}
+
+[dir="rtl"] .khezana-filters-toggle__badge {
+    margin-inline-end: var(--khezana-spacing-xs);
+    margin-inline-start: 0;
+}
+
+[dir="rtl"] .khezana-filter-group__price-range {
+    flex-direction: row-reverse;
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+.khezana-filters-toggle:focus-visible,
+.khezana-filters__close:focus-visible {
+    outline: 2px solid var(--khezana-primary);
+    outline-offset: 2px;
+}
+
+.khezana-filter-group__select:focus-visible,
+.khezana-filter-group__input:focus-visible {
+    outline: 2px solid var(--khezana-primary);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes khezana-filters-slide-up {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes khezana-filters-slide-down {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(100%);
+    }
+}
+
+/* ============================================
+   ACTIVE FILTERS INDICATOR
+   ============================================ */
+
+.khezana-filters__active-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: var(--khezana-font-size-xs);
+    font-weight: 700;
+    margin-inline-start: var(--khezana-spacing-xs);
+}

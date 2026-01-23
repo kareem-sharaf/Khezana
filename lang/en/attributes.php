@@ -45,4 +45,16 @@ return [
         'is_required' => 'This attribute must be filled when creating items',
         'values' => 'Add predefined values for select type attributes',
     ],
+    
+    'common_names' => [
+        'size' => 'Size',
+        'color' => 'Color',
+        'condition' => 'Condition',
+        'fabric' => 'Fabric',
+        'material' => 'Material',
+        'brand' => 'Brand',
+        'style' => 'Style',
+        'gender' => 'Gender',
+        'age_group' => 'Age Group',
+    ],
 ];

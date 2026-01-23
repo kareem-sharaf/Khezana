@@ -63,3 +63,16 @@ if (!function_exists('seo')) {
         ], $meta);
     }
 }
+
+if (!function_exists('translate_attribute_name')) {
+    /**
+     * Translate attribute name (size, color, condition, fabric, etc.)
+     *
+     * @param  string  $name
+     * @return string
+     */
+    function translate_attribute_name(string $name): string
+    {
+        return \App\Helpers\TranslationHelper::translateAttributeName($name);
+    }
+}
