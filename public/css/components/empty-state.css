@@ -1,0 +1,65 @@
+/**
+ * Khezana Design System - Empty State Component
+ * Single Responsibility: Empty state component styles
+ * Component-based architecture
+ */
+
+/* Empty State Container */
+.khezana-empty-state {
+    text-align: center;
+    padding: var(--khezana-spacing-2xl) var(--khezana-spacing-lg);
+}
+
+/* Empty State Icon */
+.khezana-empty-state-icon,
+.khezana-empty-icon {
+    font-size: 4rem;
+    margin-bottom: var(--khezana-spacing-md);
+    opacity: 0.5;
+}
+
+/* Empty State Title */
+.khezana-empty-state-title,
+.khezana-empty-title {
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 600;
+    color: var(--khezana-text);
+    margin-bottom: var(--khezana-spacing-sm);
+}
+
+/* Empty State Text */
+.khezana-empty-state-text,
+.khezana-empty-text {
+    font-size: var(--khezana-font-size-base);
+    color: var(--khezana-text-light);
+    margin-bottom: var(--khezana-spacing-lg);
+}
+
+/* Empty State Actions */
+.khezana-empty-actions {
+    display: flex;
+    gap: var(--khezana-spacing-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.khezana-empty-actions .khezana-btn {
+    min-width: 150px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .khezana-empty-state {
+        padding: var(--khezana-spacing-xl) var(--khezana-spacing-md);
+    }
+
+    .khezana-empty-state-icon,
+    .khezana-empty-icon {
+        font-size: 3rem;
+    }
+
+    .khezana-empty-state-title,
+    .khezana-empty-title {
+        font-size: var(--khezana-font-size-lg);
+    }
+}

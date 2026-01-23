@@ -1,0 +1,73 @@
+/**
+ * Khezana Design System - Pagination Component
+ * Single Responsibility: Pagination component styles
+ * Component-based architecture
+ */
+
+/* Pagination Container */
+.khezana-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--khezana-spacing-xs);
+    margin-top: var(--khezana-spacing-2xl);
+    padding: var(--khezana-spacing-lg) 0;
+}
+
+/* Pagination Links */
+.khezana-pagination-link,
+.khezana-pagination-span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 var(--khezana-spacing-sm);
+    border: 1px solid var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 500;
+    color: var(--khezana-text);
+    text-decoration: none;
+    transition: var(--khezana-transition);
+    background: var(--khezana-white);
+}
+
+.khezana-pagination-link:hover:not(.disabled) {
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border-color: var(--khezana-primary);
+}
+
+.khezana-pagination-link.active {
+    background: var(--khezana-primary);
+    color: var(--khezana-white);
+    border-color: var(--khezana-primary);
+}
+
+.khezana-pagination-link.disabled,
+.khezana-pagination-span {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Pagination Ellipsis */
+.khezana-pagination-ellipsis {
+    padding: 0 var(--khezana-spacing-sm);
+    color: var(--khezana-text-light);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .khezana-pagination {
+        flex-wrap: wrap;
+    }
+
+    .khezana-pagination-link,
+    .khezana-pagination-span {
+        min-width: 36px;
+        height: 36px;
+        font-size: var(--khezana-font-size-xs);
+    }
+}

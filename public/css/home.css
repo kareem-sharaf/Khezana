@@ -3,7 +3,7 @@
  * Single Responsibility: Import all CSS modules in correct order
  * 
  * This file serves as the main entry point that imports all modular CSS files.
- * The order matters: variables first, then base, then components.
+ * The order matters: variables first, then base, then components, then pages.
  */
 
 /* 1. Design Tokens & Variables */
@@ -30,26 +30,24 @@
 /* 8. Forms */
 @import url('forms.css');
 
-/* 9. Cards & Items */
-@import url('cards.css');
+/* 9. Components */
+@import url('components/item-card.css');
+@import url('components/pagination.css');
+@import url('components/empty-state.css');
 
-/* 10. Listing Pages */
-@import url('listing.css');
+/* 10. Pages */
+@import url('pages/items-index.css');
+@import url('pages/items-show.css');
+@import url('pages/requests-index.css');
 
-/* 12. Item Detail Pages */
-@import url('detail.css');
-
-/* 13. Modals & Overlays */
+/* 11. Modals & Overlays */
 @import url('modals.css');
 
-/* 14. Footer */
+/* 12. Footer */
 @import url('footer.css');
 
-/* 15. Auth Pages */
+/* 13. Auth Pages */
 @import url('auth.css');
 
-/* 16. Request Pages */
-@import url('requests.css');
-
-/* 17. Utilities & Helpers */
+/* 14. Utilities & Helpers */
 @import url('utilities.css');

@@ -1,0 +1,207 @@
+/**
+ * Khezana Design System - Requests Index Page
+ * Single Responsibility: Requests listing page layout and styles
+ * Page-based architecture
+ */
+
+/* Request Grid */
+.khezana-requests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--khezana-spacing-lg);
+    width: 100%;
+}
+
+/* Request Card */
+.khezana-request-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--khezana-border);
+    transition: var(--khezana-transition);
+    text-decoration: none;
+    color: inherit;
+}
+
+.khezana-request-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.khezana-request-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.khezana-request-header {
+    padding: var(--khezana-spacing-md);
+    border-bottom: 1px solid var(--khezana-border);
+}
+
+.khezana-request-title {
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 600;
+    color: var(--khezana-text);
+    margin: 0 0 var(--khezana-spacing-xs);
+    line-height: 1.4;
+}
+
+.khezana-request-category {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-primary);
+    font-weight: 500;
+    margin: 0 0 var(--khezana-spacing-sm);
+}
+
+.khezana-request-description {
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    line-height: 1.6;
+    margin: 0 0 var(--khezana-spacing-md);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.khezana-request-attributes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--khezana-spacing-sm);
+    margin-bottom: var(--khezana-spacing-md);
+}
+
+.khezana-request-attribute {
+    font-size: var(--khezana-font-size-xs);
+    color: var(--khezana-text-light);
+    padding: 0.25rem 0.5rem;
+    background: var(--khezana-bg);
+    border-radius: var(--khezana-radius);
+}
+
+.khezana-request-attribute strong {
+    color: var(--khezana-text);
+    margin-right: var(--khezana-spacing-xs);
+}
+
+.khezana-request-footer {
+    padding: var(--khezana-spacing-md);
+    border-top: 1px solid var(--khezana-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--khezana-spacing-sm);
+    margin-top: auto;
+}
+
+.khezana-request-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--khezana-spacing-sm);
+    align-items: center;
+}
+
+.khezana-request-date {
+    font-size: var(--khezana-font-size-xs);
+    color: var(--khezana-text-light);
+}
+
+.khezana-request-user {
+    font-size: var(--khezana-font-size-xs);
+    color: var(--khezana-text);
+    font-weight: 500;
+}
+
+.khezana-request-offers {
+    font-size: var(--khezana-font-size-xs);
+    color: var(--khezana-primary);
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    background: rgba(245, 158, 11, 0.1);
+    border-radius: var(--khezana-radius);
+}
+
+/* Request Status Badge */
+.khezana-request-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.khezana-request-badge-open {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+}
+
+.khezana-request-badge-closed {
+    background: rgba(107, 114, 128, 0.1);
+    color: #6b7280;
+}
+
+.khezana-request-badge-pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+
+.khezana-request-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.khezana-request-status-pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+
+.khezana-request-status-approved {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+}
+
+.khezana-request-status-rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+/* Request Form */
+.khezana-request-form {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border-radius: var(--khezana-radius-lg);
+    padding: var(--khezana-spacing-xl);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .khezana-requests-grid {
+        grid-template-columns: 1fr;
+        gap: var(--khezana-spacing-md);
+    }
+
+    .khezana-request-form {
+        padding: var(--khezana-spacing-lg);
+    }
+
+    .khezana-request-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
