@@ -1,11 +1,25 @@
 /**
  * Khezana Design System - Item Card Component
  * Single Responsibility: Item card component styles
- * Component-based architecture
+ * Component-based architecture with BEM modifiers
+ * Full RTL support using logical properties
  */
 
-/* Modern Items Grid */
-.khezana-items-grid-modern {
+/* ============================================
+   GRID LAYOUT
+   ============================================ */
+
+/* Base Grid */
+.khezana-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--khezana-spacing-lg);
+    width: 100%;
+    min-width: 0;
+}
+
+/* Grid Modifiers */
+.khezana-items-grid--modern {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
     gap: var(--khezana-spacing-lg) !important;
@@ -15,51 +29,48 @@
     opacity: 1 !important;
 }
 
+/* Responsive Grid */
 @media (min-width: 640px) {
-    .khezana-items-grid-modern {
+    .khezana-items-grid,
+    .khezana-items-grid--modern {
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: var(--khezana-spacing-xl);
     }
 }
 
 @media (min-width: 1024px) {
-    .khezana-items-grid-modern {
+    .khezana-items-grid,
+    .khezana-items-grid--modern {
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     }
 }
 
 @media (min-width: 1280px) {
-    .khezana-items-grid-modern {
+    .khezana-items-grid,
+    .khezana-items-grid--modern {
         grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     }
 }
 
 @media (min-width: 1400px) {
-    .khezana-items-grid-modern {
+    .khezana-items-grid,
+    .khezana-items-grid--modern {
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     }
 }
 
-/* Item Card - Base Component */
-.khezana-item-card-modern {
-    display: flex;
-    flex-direction: column;
-    background: var(--khezana-white);
-    border-radius: var(--khezana-radius-lg);
-    overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
-    border: 1px solid var(--khezana-border);
-    transition: var(--khezana-transition);
-    contain: layout style paint;
-    will-change: transform;
+@media (max-width: 640px) {
+    .khezana-items-grid,
+    .khezana-items-grid--modern {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--khezana-spacing-sm);
+    }
 }
 
-.khezana-item-card-modern:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+/* ============================================
+   ITEM CARD - BASE COMPONENT
+   ============================================ */
 
-/* BEM-based Item Card Component (v2.0) */
 .khezana-item-card {
     display: flex;
     flex-direction: column;
@@ -78,7 +89,11 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Variants */
+/* Card Modifiers */
+.khezana-item-card--modern {
+    /* Modern variant - same as base, kept for backward compatibility */
+}
+
 .khezana-item-card--public {
     /* Public variant specific styles */
 }
@@ -99,8 +114,10 @@
     display: none;
 }
 
-/* Image Section */
-.khezana-item-image-section,
+/* ============================================
+   IMAGE SECTION
+   ============================================ */
+
 .khezana-item-card__image {
     position: relative;
     width: 100%;
@@ -109,7 +126,6 @@
     background: #f3f4f6;
 }
 
-.khezana-item-image-container,
 .khezana-item-card__image-container {
     position: absolute;
     inset: 0;
@@ -117,7 +133,6 @@
     height: 100%;
 }
 
-.khezana-item-image-link,
 .khezana-item-card__image-link {
     display: block;
     width: 100%;
@@ -125,7 +140,6 @@
     text-decoration: none;
 }
 
-.khezana-item-image,
 .khezana-item-card__image-element {
     width: 100%;
     height: 100%;
@@ -133,17 +147,15 @@
     transition: transform 0.3s ease;
 }
 
-.khezana-item-card-modern:hover .khezana-item-image,
 .khezana-item-card:hover .khezana-item-card__image-element {
     transform: scale(1.05);
 }
 
-.khezana-item-image.loaded,
 .khezana-item-card__image-element.loaded {
     opacity: 1;
 }
 
-.khezana-item-image-skeleton,
+/* Image Skeleton */
 .khezana-item-card__image-skeleton {
     position: absolute;
     inset: 0;
@@ -154,8 +166,6 @@
     opacity: 1;
 }
 
-.khezana-item-image-skeleton[style*="display: none"],
-.khezana-item-image-skeleton[style*="opacity: 0"],
 .khezana-item-card__image-skeleton[style*="display: none"] {
     display: none !important;
     opacity: 0 !important;
@@ -166,7 +176,7 @@
     100% { background-position: -200% 0; }
 }
 
-.khezana-item-image-placeholder,
+/* Image Placeholder */
 .khezana-item-card__image-placeholder {
     display: flex;
     flex-direction: column;
@@ -178,24 +188,22 @@
     color: #9ca3af;
 }
 
-.khezana-placeholder-icon,
 .khezana-item-card__placeholder-icon {
     width: 48px;
     height: 48px;
     margin-bottom: var(--khezana-spacing-xs);
 }
 
-.khezana-placeholder-text,
 .khezana-item-card__placeholder-text {
     font-size: var(--khezana-font-size-sm);
     color: #6b7280;
 }
 
-.khezana-item-image-indicator,
+/* Image Indicator */
 .khezana-item-card__image-indicator {
     position: absolute;
     top: var(--khezana-spacing-sm);
-    left: var(--khezana-spacing-sm);
+    inset-inline-start: var(--khezana-spacing-sm);
     background: rgba(0, 0, 0, 0.6);
     color: var(--khezana-white);
     padding: 0.25rem 0.5rem;
@@ -205,7 +213,7 @@
     z-index: 2;
 }
 
-.khezana-item-image-preview,
+/* Image Preview */
 .khezana-item-card__image-preview {
     position: absolute;
     inset: 0;
@@ -217,20 +225,20 @@
     pointer-events: none;
 }
 
-.khezana-item-card-modern:hover .khezana-item-image-preview,
 .khezana-item-card:hover .khezana-item-card__image-preview {
     opacity: 1;
 }
 
-.khezana-preview-image,
 .khezana-item-card__preview-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-/* Content Section */
-.khezana-item-content-section,
+/* ============================================
+   CONTENT SECTION
+   ============================================ */
+
 .khezana-item-card__content {
     padding: var(--khezana-spacing-md);
     display: flex;
@@ -239,12 +247,10 @@
     flex: 1;
 }
 
-.khezana-item-title-wrapper,
 .khezana-item-card__title {
     margin: 0;
 }
 
-.khezana-item-title-link,
 .khezana-item-card__title-link {
     font-size: var(--khezana-font-size-lg);
     font-weight: 600;
@@ -258,12 +264,11 @@
     transition: color 0.2s ease;
 }
 
-.khezana-item-title-link:hover,
 .khezana-item-card__title-link:hover {
     color: var(--khezana-primary);
 }
 
-.khezana-item-price-section,
+/* Price Section */
 .khezana-item-card__price-section {
     display: flex;
     align-items: center;
@@ -272,27 +277,24 @@
     margin-top: var(--khezana-spacing-xs);
 }
 
-.khezana-item-price,
 .khezana-item-card__price {
     font-size: var(--khezana-font-size-xl);
     font-weight: 700;
     color: var(--khezana-primary);
 }
 
-.khezana-item-price-free,
 .khezana-item-card__price--free {
     color: var(--khezana-success);
 }
 
-.khezana-price-unit,
 .khezana-item-card__price-unit {
     font-size: var(--khezana-font-size-sm);
     font-weight: 400;
     color: var(--khezana-text-light);
-    margin-right: var(--khezana-spacing-xs);
+    margin-inline-start: var(--khezana-spacing-xs);
 }
 
-.khezana-item-badge,
+/* Badge */
 .khezana-item-card__badge {
     display: inline-block;
     padding: 0.25rem 0.5rem;
@@ -302,25 +304,22 @@
     text-transform: uppercase;
 }
 
-.khezana-item-badge-sell,
 .khezana-item-card__badge--sell {
     background: rgba(34, 197, 94, 0.1);
     color: #16a34a;
 }
 
-.khezana-item-badge-rent,
 .khezana-item-card__badge--rent {
     background: rgba(59, 130, 246, 0.1);
     color: #2563eb;
 }
 
-.khezana-item-badge-donate,
 .khezana-item-card__badge--donate {
     background: rgba(236, 72, 153, 0.1);
     color: #db2777;
 }
 
-.khezana-item-secondary-info,
+/* Meta Section */
 .khezana-item-card__meta {
     display: flex;
     flex-wrap: wrap;
@@ -328,13 +327,12 @@
     margin-top: var(--khezana-spacing-xs);
 }
 
-.khezana-item-meta-text,
 .khezana-item-card__meta-item {
     font-size: var(--khezana-font-size-sm);
     color: var(--khezana-text-light);
 }
 
-.khezana-item-actions,
+/* Actions */
 .khezana-item-card__actions {
     padding: var(--khezana-spacing-sm) var(--khezana-spacing-md);
     border-top: 1px solid var(--khezana-border);
@@ -347,13 +345,260 @@
     justify-content: flex-end;
 }
 
+[dir="rtl"] .khezana-item-card--user .khezana-item-card__actions {
+    justify-content: flex-start;
+}
+
+/* ============================================
+   BACKWARD COMPATIBILITY
+   ============================================ */
+
+/* Old class names - kept for compatibility */
+.khezana-items-grid-modern {
+    /* Maps to .khezana-items-grid--modern */
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: var(--khezana-spacing-lg) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.khezana-item-card-modern {
+    /* Maps to .khezana-item-card--modern */
+    display: flex;
+    flex-direction: column;
+    background: var(--khezana-white);
+    border-radius: var(--khezana-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--khezana-border);
+    transition: var(--khezana-transition);
+    contain: layout style paint;
+    will-change: transform;
+}
+
+.khezana-item-card-modern:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.khezana-item-card-modern:hover .khezana-item-image,
+.khezana-item-card-modern:hover .khezana-item-image-preview {
+    /* Compatibility for old image classes */
+}
+
+/* Old element classes - map to new BEM classes */
+.khezana-item-image-section {
+    /* Maps to .khezana-item-card__image */
+    position: relative;
+    width: 100%;
+    padding-top: 75%;
+    overflow: hidden;
+    background: #f3f4f6;
+}
+
+.khezana-item-image-container {
+    /* Maps to .khezana-item-card__image-container */
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.khezana-item-image-link {
+    /* Maps to .khezana-item-card__image-link */
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+}
+
+.khezana-item-image {
+    /* Maps to .khezana-item-card__image-element */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.khezana-item-image.loaded {
+    opacity: 1;
+}
+
+.khezana-item-image-skeleton {
+    /* Maps to .khezana-item-card__image-skeleton */
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: khezana-skeleton-shimmer 1.5s infinite;
+    display: block;
+    opacity: 1;
+}
+
+.khezana-item-image-placeholder {
+    /* Maps to .khezana-item-card__image-placeholder */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: #f3f4f6;
+    color: #9ca3af;
+}
+
+.khezana-item-image-indicator {
+    /* Maps to .khezana-item-card__image-indicator */
+    position: absolute;
+    top: var(--khezana-spacing-sm);
+    inset-inline-start: var(--khezana-spacing-sm);
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--khezana-white);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-xs);
+    font-weight: 600;
+    z-index: 2;
+}
+
+.khezana-item-image-preview {
+    /* Maps to .khezana-item-card__image-preview */
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.khezana-preview-image {
+    /* Maps to .khezana-item-card__preview-image */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.khezana-item-content-section {
+    /* Maps to .khezana-item-card__content */
+    padding: var(--khezana-spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-sm);
+    flex: 1;
+}
+
+.khezana-item-title-wrapper {
+    /* Maps to .khezana-item-card__title */
+    margin: 0;
+}
+
+.khezana-item-title-link {
+    /* Maps to .khezana-item-card__title-link */
+    font-size: var(--khezana-font-size-lg);
+    font-weight: 600;
+    color: var(--khezana-text);
+    text-decoration: none;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s ease;
+}
+
+.khezana-item-title-link:hover {
+    color: var(--khezana-primary);
+}
+
+.khezana-item-price-section {
+    /* Maps to .khezana-item-card__price-section */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--khezana-spacing-sm);
+    margin-top: var(--khezana-spacing-xs);
+}
+
+[dir="rtl"] .khezana-item-price-section {
+    flex-direction: row-reverse;
+}
+
+.khezana-item-price {
+    /* Maps to .khezana-item-card__price */
+    font-size: var(--khezana-font-size-xl);
+    font-weight: 700;
+    color: var(--khezana-primary);
+}
+
+.khezana-item-price-free {
+    /* Maps to .khezana-item-card__price--free */
+    color: var(--khezana-success);
+}
+
+.khezana-price-unit {
+    /* Maps to .khezana-item-card__price-unit */
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 400;
+    color: var(--khezana-text-light);
+    margin-inline-start: var(--khezana-spacing-xs);
+}
+
+.khezana-item-badge {
+    /* Maps to .khezana-item-card__badge */
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--khezana-radius);
+    font-size: var(--khezana-font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.khezana-item-badge-sell {
+    /* Maps to .khezana-item-card__badge--sell */
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+}
+
+.khezana-item-badge-rent {
+    /* Maps to .khezana-item-card__badge--rent */
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+}
+
+.khezana-item-badge-donate {
+    /* Maps to .khezana-item-card__badge--donate */
+    background: rgba(236, 72, 153, 0.1);
+    color: #db2777;
+}
+
+.khezana-item-secondary-info {
+    /* Maps to .khezana-item-card__meta */
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--khezana-spacing-sm);
+    margin-top: var(--khezana-spacing-xs);
+}
+
+.khezana-item-meta-text {
+    /* Maps to .khezana-item-card__meta-item */
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+}
+
+.khezana-item-actions {
+    /* Maps to .khezana-item-card__actions */
+    padding: var(--khezana-spacing-sm) var(--khezana-spacing-md);
+    border-top: 1px solid var(--khezana-border);
+    display: none;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
-    .khezana-items-grid-modern {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--khezana-spacing-sm);
-    }
-
     .khezana-item-content-section,
     .khezana-item-card__content {
         padding: var(--khezana-spacing-sm);

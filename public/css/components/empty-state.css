@@ -1,13 +1,17 @@
 /**
  * Khezana Design System - Empty State Component
  * Single Responsibility: Empty state component styles
- * Component-based architecture
+ * Component-based architecture with full RTL support
  */
 
 /* Empty State Container */
 .khezana-empty-state {
     text-align: center;
     padding: var(--khezana-spacing-2xl) var(--khezana-spacing-lg);
+}
+
+[dir="rtl"] .khezana-empty-state {
+    text-align: center; /* Center is same for RTL */
 }
 
 /* Empty State Icon */

@@ -85,7 +85,12 @@
 
 .khezana-request-attribute strong {
     color: var(--khezana-text);
-    margin-right: var(--khezana-spacing-xs);
+    margin-inline-end: var(--khezana-spacing-xs);
+}
+
+[dir="rtl"] .khezana-request-attribute strong {
+    margin-inline-start: var(--khezana-spacing-xs);
+    margin-inline-end: 0;
 }
 
 .khezana-request-footer {

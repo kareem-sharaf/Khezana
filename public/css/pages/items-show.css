@@ -125,7 +125,7 @@
 .khezana-image-counter {
     position: absolute;
     bottom: var(--khezana-spacing-sm);
-    right: var(--khezana-spacing-sm);
+    inset-inline-end: var(--khezana-spacing-sm);
     background: rgba(0, 0, 0, 0.6);
     color: var(--khezana-white);
     padding: 0.25rem 0.5rem;
@@ -137,7 +137,7 @@
 .khezana-image-zoom-trigger {
     position: absolute;
     top: var(--khezana-spacing-sm);
-    right: var(--khezana-spacing-sm);
+    inset-inline-end: var(--khezana-spacing-sm);
     background: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: var(--khezana-radius);
@@ -244,6 +244,10 @@
     color: var(--khezana-text-light);
 }
 
+[dir="rtl"] .khezana-breadcrumb {
+    flex-direction: row-reverse;
+}
+
 .khezana-breadcrumb a {
     color: var(--khezana-primary);
     text-decoration: none;
@@ -285,14 +289,24 @@
 .khezana-price-currency {
     font-size: var(--khezana-font-size-lg);
     font-weight: 400;
-    margin-right: var(--khezana-spacing-xs);
+    margin-inline-start: var(--khezana-spacing-xs);
+}
+
+[dir="rtl"] .khezana-price-currency {
+    margin-inline-end: var(--khezana-spacing-xs);
+    margin-inline-start: 0;
 }
 
 .khezana-price-unit {
     font-size: var(--khezana-font-size-base);
     font-weight: 400;
     color: var(--khezana-text-light);
-    margin-right: var(--khezana-spacing-xs);
+    margin-inline-start: var(--khezana-spacing-xs);
+}
+
+[dir="rtl"] .khezana-price-unit {
+    margin-inline-end: var(--khezana-spacing-xs);
+    margin-inline-start: 0;
 }
 
 .khezana-item-deposit {

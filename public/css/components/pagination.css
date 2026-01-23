@@ -1,7 +1,7 @@
 /**
  * Khezana Design System - Pagination Component
  * Single Responsibility: Pagination component styles
- * Component-based architecture
+ * Component-based architecture with full RTL support
  */
 
 /* Pagination Container */
@@ -12,6 +12,10 @@
     gap: var(--khezana-spacing-xs);
     margin-top: var(--khezana-spacing-2xl);
     padding: var(--khezana-spacing-lg) 0;
+}
+
+[dir="rtl"] .khezana-pagination {
+    flex-direction: row-reverse;
 }
 
 /* Pagination Links */
