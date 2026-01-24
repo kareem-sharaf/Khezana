@@ -10,7 +10,22 @@
     $priceMax = isset($currentFilters['price_max']) ? (int) $currentFilters['price_max'] : 1000000;
 @endphp
 
-<div x-data="{ filtersOpen: false }">
+<div x-data="{ 
+    filtersOpen: false,
+    overlayReady: false,
+    init() {
+        this.$watch('filtersOpen', value => {
+            if (value) {
+                // Delay overlay activation to prevent immediate closing
+                setTimeout(() => {
+                    this.overlayReady = true;
+                }, 100);
+            } else {
+                this.overlayReady = false;
+            }
+        });
+    }
+}">
     <button type="button" class="khezana-filters-toggle" aria-label="{{ __('common.ui.filters') }}"
         title="{{ __('common.ui.filters') }}"
         x-show="!filtersOpen"
@@ -27,13 +42,21 @@
         @endif
     </button>
 
-    <div class="khezana-filters-overlay" x-show="filtersOpen" x-transition:opacity.duration.200ms
-        @click="filtersOpen = false" aria-hidden="true"></div>
+    <div class="khezana-filters-overlay" 
+        x-show="filtersOpen && overlayReady" 
+        x-transition:opacity.duration.200ms
+        @click.self="filtersOpen = false" 
+        @mousedown.self="filtersOpen = false"
+        @touchstart.self="filtersOpen = false"
+        aria-hidden="true"></div>
 
     <aside class="khezana-filters" :class="{ 'is-active': filtersOpen }" x-show="filtersOpen"
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full"
         x-transition:enter-end="translate-y-0" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full"
+        @click.stop
+        @mousedown.stop
+        @touchstart.stop
         @keydown.escape.window="filtersOpen = false" role="dialog" aria-label="{{ __('common.ui.filters') }}">
 
         <div class="khezana-filters__drag" aria-hidden="true"></div>
@@ -41,15 +64,17 @@
             <h2 class="khezana-filters__title">{{ __('common.ui.filters') }}</h2>
             <button type="button" class="khezana-filters__close" aria-label="{{ __('common.ui.close') }}"
                 title="{{ __('common.ui.close') }}"
-                @click.stop="filtersOpen = false"
-                @touchstart.stop="filtersOpen = false">
+                @click.stop.prevent="filtersOpen = false">
                 <svg class="khezana-filters__close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </header>
 
-        <form method="GET" action="{{ $filterRoute }}" class="khezana-filters__form" id="filters-form">
+        <form method="GET" action="{{ $filterRoute }}" class="khezana-filters__form" id="filters-form"
+            @click.stop
+            @mousedown.stop
+            @touchstart.stop>
             @foreach (request()->except(['search', 'category_id', 'condition', 'price_min', 'price_max', 'operation_type', 'page']) as $paramKey => $paramVal)
                 @if (is_array($paramVal))
                     @foreach ($paramVal as $v)

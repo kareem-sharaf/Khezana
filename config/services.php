@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'whatsapp' => [
+        'number' => env('WHATSAPP_NUMBER', '+963959378002'),
+    ],
+
+    'telegram' => [
+        'username' => env('TELEGRAM_USERNAME', 'KARMO_VSKY'),
+        'contact' => env('TELEGRAM_CONTACT', '+963959378002'),
+    ],
+
 ];

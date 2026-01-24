@@ -69,6 +69,7 @@
     background: rgba(0, 0, 0, 0.35);
     z-index: 998;
     backdrop-filter: blur(2px);
+    pointer-events: auto;
 }
 
 /* ----- Filters panel / sheet ----- */
@@ -119,12 +120,14 @@
 /* Header */
 .khezana-filters__header {
     display: flex;
+    position: relative;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
     padding: 14px 18px;
     background: rgba(255, 255, 255, 0.8);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    z-index: 1;
 }
 
 .khezana-filters__title {
@@ -137,6 +140,8 @@
 
 .khezana-filters__close {
     display: none;
+    position: relative;
+    z-index: 10;
     align-items: center;
     justify-content: center;
     width: 36px;
@@ -150,6 +155,7 @@
     transition: background 0.15s ease, color 0.15s ease;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    pointer-events: auto;
 }
 
 .khezana-filters__close:hover {
@@ -613,13 +619,11 @@
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 999;
         box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
-        display: none;
         background: #fafafa;
+        pointer-events: auto;
     }
 
-    .khezana-filters.is-active,
-    .khezana-filters[x-show] {
-        display: flex !important;
+    .khezana-filters.is-active {
         transform: translateY(0);
     }
 
@@ -630,6 +634,12 @@
         left: 0;
         right: 0;
         bottom: 78vh;
+        pointer-events: auto;
+    }
+    
+    /* Prevent overlay from covering the filters panel */
+    .khezana-filters-overlay[x-show] + .khezana-filters {
+        pointer-events: auto;
     }
 
     .khezana-filters__drag {
@@ -638,10 +648,13 @@
 
     .khezana-filters__close {
         display: flex;
+        position: relative;
+        z-index: 10;
         width: 44px;
         height: 44px;
         min-width: 44px;
         min-height: 44px;
+        pointer-events: auto;
     }
 
     .khezana-filters__content {

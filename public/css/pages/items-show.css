@@ -444,6 +444,29 @@
     min-width: 150px;
 }
 
+/* CTA Section */
+.khezana-item-cta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--khezana-spacing-md);
+    margin-top: var(--khezana-spacing-lg);
+    padding-top: var(--khezana-spacing-lg);
+    border-top: 1px solid var(--khezana-border);
+}
+
+.khezana-item-cta .khezana-btn {
+    width: 100%;
+}
+
+.khezana-item-cta__contact-info {
+    margin: 0;
+    padding: var(--khezana-spacing-sm) 0;
+    font-size: var(--khezana-font-size-sm);
+    color: var(--khezana-text-light);
+    text-align: center;
+    line-height: 1.5;
+}
+
 /* Additional Info */
 .khezana-item-additional-info {
     display: flex;
