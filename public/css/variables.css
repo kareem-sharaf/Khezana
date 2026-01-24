@@ -4,7 +4,7 @@
  */
 
 :root {
-    /* Colors */
+    /* Colors - Improved Contrast (WCAG AA) */
     --khezana-primary: #f59e0b;
     /* Amber */
     --khezana-primary-dark: #d97706;
@@ -12,8 +12,9 @@
     --khezana-secondary: #6b7280;
     --khezana-success: #10b981;
     --khezana-danger: #ef4444;
-    --khezana-text: #1f2937;
-    --khezana-text-light: #6b7280;
+    /* Improved text colors for better contrast */
+    --khezana-text: #111827; /* Changed from #1f2937 for better contrast */
+    --khezana-text-light: #4b5563; /* Changed from #6b7280 for better contrast */
     --khezana-bg: #faf8f5;
     --khezana-bg-pattern: #f5f3f0;
     --khezana-white: #ffffff;
@@ -36,11 +37,13 @@
     --khezana-font-size-3xl: 1.875rem;
     --khezana-font-size-4xl: 2.25rem;
 
-    /* Shadows */
-    --khezana-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --khezana-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    --khezana-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --khezana-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    /* Shadows - Unified System */
+    --khezana-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --khezana-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --khezana-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --khezana-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --khezana-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    --khezana-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
 
     /* Border Radius */
     --khezana-radius: 0.5rem;
@@ -52,6 +55,14 @@
     --khezana-transition-fast: all 0.15s ease;
     --khezana-transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --khezana-transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Breakpoints - Unified System */
+    --khezana-breakpoint-xs: 480px;
+    --khezana-breakpoint-sm: 640px;
+    --khezana-breakpoint-md: 768px;
+    --khezana-breakpoint-lg: 1024px;
+    --khezana-breakpoint-xl: 1280px;
+    --khezana-breakpoint-2xl: 1536px;
     
     /* Golden Ratio */
     --khezana-golden-ratio: 1.618;

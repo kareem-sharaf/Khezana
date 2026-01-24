@@ -74,9 +74,9 @@ class BrowseItemsQuery
         $query->with([
             'user:id,name', // Only id and name from users table
             'category:id,name,slug', // Only id, name, slug from categories table
-            'images' => fn($q) => $q->select('id', 'item_id', 'path', 'disk', 'is_primary')
+            'images' => fn($q) => $q->select('id', 'item_id', 'path', 'disk', 'is_primary', 'path_webp')
                                    ->orderBy('is_primary', 'desc')
-                                   ->limit(1), // Only primary image or first image
+                                   ->orderBy('id', 'asc'), // Get primary first, then by ID
         ]);
 
         $paginator = $query->paginate(min($perPage, 50), ['*'], 'page', max(1, $page));

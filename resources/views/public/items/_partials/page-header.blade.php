@@ -13,13 +13,13 @@
 @endphp
 
 <header class="khezana-page-header">
-    <div class="khezana-page-header-content">
-        <div class="khezana-page-header-text">
+    <div class="khezana-page-header__inner">
+        <div class="khezana-page-header__text">
             <h1 class="khezana-page-title">{{ $title }}</h1>
             <p class="khezana-page-subtitle" aria-live="polite">{{ $subtitle }}</p>
         </div>
         @auth
-            <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn-secondary">
+            <a href="{{ route('items.index') }}" class="khezana-btn khezana-btn-secondary khezana-page-header__cta">
                 {{ __('common.ui.my_items') }}
             </a>
         @endauth

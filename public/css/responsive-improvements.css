@@ -267,11 +267,23 @@
    ============================================ */
 
 @media (max-width: 768px) {
-    .khezana-btn {
+    /* Enhanced Touch Targets - Minimum 44x44px for accessibility */
+    .khezana-btn,
+    .khezana-nav-link,
+    .khezana-dropdown-item,
+    .khezana-user-menu-item,
+    button,
+    a[role="button"],
+    input[type="button"],
+    input[type="submit"] {
         min-height: 48px;
-        padding: 0.875rem 1.5rem;
-        font-size: var(--khezana-font-size-base);
+        min-width: 48px;
+        padding: 0.875rem 1.25rem;
         touch-action: manipulation;
+    }
+
+    .khezana-btn {
+        font-size: var(--khezana-font-size-base);
     }
 
     .khezana-btn-large {
@@ -281,8 +293,13 @@
     }
 
     .khezana-nav-link {
-        min-height: 44px;
         padding: 0.75rem 1rem;
+    }
+
+    /* Increase spacing between interactive elements */
+    .khezana-nav-links,
+    .khezana-nav-actions {
+        gap: var(--khezana-spacing-sm);
     }
 }
 

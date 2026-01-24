@@ -5,6 +5,8 @@
 @section('content')
     <div class="khezana-listing-page">
         <div class="khezana-container">
+            <x-breadcrumb :items="[['label' => __('items.title'), 'url' => null]]" />
+
             @include('public.items._partials.page-header', ['items' => $items])
 
             <div class="khezana-listing-layout">
@@ -19,6 +21,10 @@
 
                 {{-- Main Content --}}
                 <main class="khezana-listing-layout__main" role="main">
+                    @include('public.items._partials.filter-chips', [
+                        'filters' => $filters ?? [],
+                        'categories' => $categories ?? collect(),
+                    ])
                     @if ($items->count() > 0)
                         @include('public.items._partials.grid', ['items' => $items])
                         @include('public.items._partials.pagination', ['items' => $items])

@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Read\Items\Models\ItemReadModel;
 use App\Read\Items\Queries\BrowseItemsQuery;
+use App\Read\Items\Queries\SimilarItemsQuery;
 use App\Read\Items\Queries\ViewItemQuery;
 use App\Services\Cache\CacheService;
 use App\Services\Cache\CategoryCacheService;
@@ -20,6 +21,7 @@ class ItemController extends Controller
     public function __construct(
         private readonly BrowseItemsQuery $browseItemsQuery,
         private readonly ViewItemQuery $viewItemQuery,
+        private readonly SimilarItemsQuery $similarItemsQuery,
         private readonly CacheService $cacheService,
         private readonly CategoryCacheService $categoryCacheService,
     ) {}
@@ -45,7 +47,7 @@ class ItemController extends Controller
         $filters = array_filter($filters, fn($value) => $value !== null && $value !== '');
 
         $user = $request->user();
-        
+
         $items = $this->cacheService->rememberItemsIndex(
             function () use ($filters, $sort, $page, $perPage, $user) {
                 $itemsPaginator = $this->browseItemsQuery->execute($filters, $sort, $page, $perPage, $user);
@@ -101,8 +103,19 @@ class ItemController extends Controller
 
         $viewModel = \App\ViewModels\Items\ItemDetailViewModel::fromItem($item, 'public');
 
+        // Get similar items (same category, same operation type, same condition if available)
+        $similarItems = $this->similarItemsQuery->execute(
+            $item->id,
+            $item->category?->id,
+            $item->operationType,
+            $item->condition,
+            12, // Limit to 12 items
+            $user
+        );
+
         return view('public.items.show', [
             'viewModel' => $viewModel,
+            'similarItems' => $similarItems,
         ]);
     }
 

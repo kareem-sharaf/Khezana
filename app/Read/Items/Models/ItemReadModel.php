@@ -50,7 +50,10 @@ class ItemReadModel
         $canonicalUrl = route('public.items.show', ['id' => $item->id, 'slug' => $slug]);
 
         $images = $item->images->map(fn($img) => ImageReadModel::fromModel($img));
-        $primaryImage = $images->first();
+        // Get primary image first, or fallback to first image
+        // Use filter to find primary, then fallback to first
+        $primaryImage = $images->filter(fn($img) => $img->isPrimary)->first() 
+                    ?? $images->first();
 
         $availabilityStatus = $item->availability_status?->value ?? ($item->is_available ? 'available' : 'unavailable');
         $availabilityStatusLabel = $item->availability_status?->label() ?? ($item->is_available ? 'Available' : 'Unavailable');

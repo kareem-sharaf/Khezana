@@ -91,4 +91,16 @@ Alpine.data('priceSlider', (minValue = 0, maxValue = 1000000) => {
     };
 });
 
+// Ensure filters form submission works
+document.addEventListener('DOMContentLoaded', function() {
+    const filtersForm = document.getElementById('filters-form');
+    if (filtersForm) {
+        // Make sure form submission works
+        filtersForm.addEventListener('submit', function(e) {
+            // Allow normal form submission
+            console.log('Form submitting...');
+        });
+    }
+});
+
 Alpine.start();

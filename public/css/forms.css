@@ -66,12 +66,18 @@
     min-height: 120px;
 }
 
-.khezana-form-input:focus,
 .khezana-form-input:focus-visible,
-.khezana-form-select:focus,
 .khezana-form-select:focus-visible,
-.khezana-form-textarea:focus,
 .khezana-form-textarea:focus-visible {
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
+    border-color: var(--khezana-primary);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+}
+
+.khezana-form-input:focus:not(:focus-visible),
+.khezana-form-select:focus:not(:focus-visible),
+.khezana-form-textarea:focus:not(:focus-visible) {
     outline: none;
     border-color: var(--khezana-primary);
     box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);

@@ -1,0 +1,195 @@
+/**
+ * Khezana Design System - Alert Component
+ * Single Responsibility: Alert messages (success, error, warning, info)
+ * Full RTL support and accessibility
+ */
+
+/* ============================================
+   BASE ALERT
+   ============================================ */
+
+.khezana-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--khezana-spacing-sm);
+    padding: var(--khezana-spacing-md);
+    border-radius: var(--khezana-radius);
+    border: 1px solid;
+    margin-bottom: var(--khezana-spacing-md);
+    position: relative;
+    animation: khezana-alert-slide-in 0.3s ease-out;
+}
+
+@keyframes khezana-alert-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.khezana-alert__icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+}
+
+.khezana-alert__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.khezana-alert__title {
+    font-size: var(--khezana-font-size-base);
+    font-weight: 600;
+    margin: 0 0 var(--khezana-spacing-xs);
+    line-height: 1.4;
+}
+
+.khezana-alert__message {
+    font-size: var(--khezana-font-size-sm);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.khezana-alert__close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: var(--khezana-radius);
+    transition: var(--khezana-transition);
+    color: inherit;
+    opacity: 0.7;
+    margin-top: -2px;
+    margin-inline-start: var(--khezana-spacing-xs);
+}
+
+.khezana-alert__close:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.khezana-alert__close:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* ============================================
+   ALERT VARIANTS
+   ============================================ */
+
+/* Success Alert */
+.khezana-alert--success {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #065f46;
+}
+
+.khezana-alert--success .khezana-alert__icon {
+    color: #10b981;
+}
+
+/* Error Alert */
+.khezana-alert--error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #991b1b;
+}
+
+.khezana-alert--error .khezana-alert__icon {
+    color: #ef4444;
+}
+
+/* Warning Alert */
+.khezana-alert--warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #92400e;
+}
+
+.khezana-alert--warning .khezana-alert__icon {
+    color: #f59e0b;
+}
+
+/* Info Alert */
+.khezana-alert--info {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #1e40af;
+}
+
+.khezana-alert--info .khezana-alert__icon {
+    color: #3b82f6;
+}
+
+/* ============================================
+   ALERT SIZES
+   ============================================ */
+
+.khezana-alert--sm {
+    padding: var(--khezana-spacing-sm);
+    font-size: var(--khezana-font-size-sm);
+}
+
+.khezana-alert--sm .khezana-alert__icon {
+    width: 18px;
+    height: 18px;
+    font-size: 1rem;
+}
+
+.khezana-alert--lg {
+    padding: var(--khezana-spacing-lg);
+    font-size: var(--khezana-font-size-lg);
+}
+
+.khezana-alert--lg .khezana-alert__icon {
+    width: 24px;
+    height: 24px;
+    font-size: 1.25rem;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .khezana-alert {
+        padding: var(--khezana-spacing-sm);
+        gap: var(--khezana-spacing-xs);
+    }
+
+    .khezana-alert__title {
+        font-size: var(--khezana-font-size-sm);
+    }
+
+    .khezana-alert__message {
+        font-size: var(--khezana-font-size-xs);
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+.khezana-alert[role="alert"] {
+    /* Screen reader will announce this automatically */
+}
+
+.khezana-alert[role="status"] {
+    /* For non-critical messages */
+}

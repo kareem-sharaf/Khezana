@@ -111,7 +111,7 @@
    THUMBNAILS - VERTICAL SIDEBAR
    ============================================ */
 .khezana-image-gallery__thumbnails {
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     gap: var(--khezana-spacing-xs);
     width: 100px;
@@ -122,6 +122,8 @@
     padding: var(--khezana-spacing-xs);
     scrollbar-width: thin;
     scrollbar-color: var(--khezana-border) transparent;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .khezana-image-gallery__thumbnails::-webkit-scrollbar {
@@ -153,6 +155,8 @@
     border: 3px solid transparent;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 0.7;
+    display: block !important;
+    visibility: visible !important;
 }
 
 .khezana-image-gallery__thumbnail:hover {
@@ -174,6 +178,9 @@
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .khezana-image-gallery__thumbnail:hover img {
@@ -398,17 +405,22 @@
     }
     
     .khezana-image-gallery__thumbnails {
-        flex-direction: row;
-        width: 100%;
-        max-height: 120px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding: var(--khezana-spacing-xs);
+        flex-direction: row !important;
+        width: 100% !important;
+        max-height: 120px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding: var(--khezana-spacing-xs) !important;
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     .khezana-image-gallery__thumbnail {
         min-width: 80px;
         width: 80px;
+        display: block !important;
+        visibility: visible !important;
     }
     
     .khezana-image-gallery__hero {
@@ -443,12 +455,17 @@
     }
     
     .khezana-image-gallery__thumbnails {
-        max-height: 100px;
+        max-height: 100px !important;
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     .khezana-image-gallery__thumbnail {
         min-width: 60px;
         width: 60px;
+        display: block !important;
+        visibility: visible !important;
     }
 }
 

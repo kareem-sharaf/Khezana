@@ -1,40 +1,35 @@
 /**
- * Khezana Design System - Modern Filters Component
- * Redesigned: Minimal, Professional, E-commerce Style
- * Inspired by: Amazon, Zara, Airbnb, ASOS
+ * Khezana — Filters: Panel (desktop) / Bottom sheet (mobile)
+ * Lightweight, Amazon/Airbnb-style. No heavy borders or full gray.
  */
 
-/* ============================================
-   FILTERS TOGGLE BUTTON (Mobile)
-   ============================================ */
-
+/* ----- Mobile toggle (filter icon FAB) ----- */
 .khezana-filters-toggle {
     display: none;
     position: fixed;
     bottom: 20px;
     inset-inline-end: 20px;
     z-index: 100;
-    background: var(--khezana-primary);
-    color: var(--khezana-white);
-    border: none;
-    border-radius: 50px;
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-    transition: all 0.2s ease;
-    display: flex;
     align-items: center;
-    gap: 8px;
-    min-width: 110px;
     justify-content: center;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    color: var(--khezana-white);
+    background: var(--khezana-primary);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .khezana-filters-toggle:hover {
     background: var(--khezana-primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.45);
 }
 
 .khezana-filters-toggle:active {
@@ -42,81 +37,119 @@
 }
 
 .khezana-filters-toggle__icon {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
-}
-
-.khezana-filters-toggle__text {
-    font-weight: 600;
+    pointer-events: none;
 }
 
 .khezana-filters-toggle__badge {
+    position: absolute;
+    top: -4px;
+    inset-inline-end: -4px;
     background: var(--khezana-white);
     color: var(--khezana-primary);
     border-radius: 50%;
-    width: 20px;
+    min-width: 20px;
     height: 20px;
+    padding: 0 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 11px;
     font-weight: 700;
-    margin-inline-start: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
-/* ============================================
-   FILTERS SIDEBAR
-   ============================================ */
+/* ----- Overlay (mobile) ----- */
+.khezana-filters-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 998;
+    backdrop-filter: blur(2px);
+}
 
+/* ----- Filters panel / sheet ----- */
 .khezana-filters {
     position: sticky;
     top: 0;
     width: 280px;
-    height: 100vh;
-    background: var(--khezana-white);
-    border-radius: 0;
-    box-shadow: none;
-    border-right: 1px solid #e5e7eb;
+    max-height: calc(100vh - 48px);
     display: flex;
     flex-direction: column;
-    overflow: visible;
+    background: #fafafa;
+    border-inline-end: 1px solid rgba(0, 0, 0, 0.06);
+    overflow-y: auto;
+    overflow-x: hidden;
     z-index: 10;
     min-height: 0;
+    box-shadow: none;
 }
 
-/* Filters Header */
+.khezana-filters::-webkit-scrollbar {
+    width: 4px;
+}
+
+.khezana-filters::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.khezana-filters::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
+}
+
+.khezana-filters::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Drag handle — mobile only */
+.khezana-filters__drag {
+    display: none;
+    flex-shrink: 0;
+    width: 40px;
+    height: 4px;
+    margin: 10px auto 0;
+    background: #d1d5db;
+    border-radius: 2px;
+}
+
+/* Header */
 .khezana-filters__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
-    border-bottom: 1px solid #e5e7eb;
     flex-shrink: 0;
-    background: #fafafa;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .khezana-filters__title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--khezana-text);
     margin: 0;
+    letter-spacing: 0.01em;
 }
 
 .khezana-filters__close {
     display: none;
-    background: none;
-    border: none;
-    color: #6b7280;
-    cursor: pointer;
-    padding: 4px;
-    width: 32px;
-    height: 32px;
-    display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: #6b7280;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .khezana-filters__close:hover {
@@ -124,258 +157,217 @@
     color: var(--khezana-text);
 }
 
-/* Filters Content */
-.khezana-filters__content {
-    flex: 1;
-    overflow-y: visible;
-    overflow-x: hidden;
-    padding: 16px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    min-height: 0;
+.khezana-filters__close-icon {
+    pointer-events: none;
 }
 
-/* No scrollbar - content flows naturally */
-
-/* Filters Form */
+/* Form */
 .khezana-filters__form {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex: 1;
     min-height: 0;
-    overflow: visible;
 }
 
-/* ============================================
-   FILTER SECTION (Accordion)
-   ============================================ */
+.khezana-filters__content {
+    flex: 1;
+    padding: 6px 0 14px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 
+/* Section (accordion) */
 .khezana-filter-section {
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .khezana-filter-section:last-child {
     border-bottom: none;
 }
 
-.khezana-filter-section__header {
+.khezana-filter-section__trigger {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 0;
+    padding: 10px 14px;
     background: none;
     border: none;
     cursor: pointer;
     text-align: start;
-    transition: all 0.2s ease;
+    font: inherit;
+    color: inherit;
+    transition: background 0.15s ease;
+    border-radius: 6px;
 }
 
-.khezana-filter-section__header:hover {
-    opacity: 0.8;
+.khezana-filter-section__trigger:hover {
+    background: rgba(0, 0, 0, 0.03);
 }
 
-.khezana-filter-section__title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--khezana-text);
+.khezana-filter-section__label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #4b5563;
 }
 
-.khezana-filter-section__icon {
+.khezana-filter-section__chevron {
     width: 16px;
     height: 16px;
     color: #9ca3af;
-    transition: transform 0.2s ease;
     flex-shrink: 0;
+    transition: transform 0.2s ease;
 }
 
-.khezana-filter-section__icon.is-open {
+.khezana-filter-section__chevron.is-open {
     transform: rotate(180deg);
 }
 
-.khezana-filter-section__content {
-    padding-bottom: 16px;
+.khezana-filter-section__body {
+    padding: 0 14px 14px;
     overflow: hidden;
 }
 
-.khezana-filter-section__content[x-show] {
+.khezana-filter-section__body[x-show] {
     display: block;
 }
 
-.khezana-filter-section__content[x-transition] {
-    transition: all 0.2s ease;
-}
-
-/* ============================================
-   TOGGLE GROUP (Operation Type)
-   ============================================ */
-
-.khezana-toggle-group {
+/* Segmented (operation type) */
+.khezana-segmented {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 0;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    padding: 3px;
 }
 
-.khezana-toggle-option {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.khezana-segmented__option {
+    flex: 1;
+    min-width: 0;
     cursor: pointer;
-    padding: 8px 0;
-    transition: all 0.2s ease;
-}
-
-.khezana-toggle-option:hover {
-    opacity: 0.8;
-}
-
-.khezana-toggle-option input[type="radio"] {
-    width: 18px;
-    height: 18px;
-    margin: 0;
-    cursor: pointer;
-    accent-color: var(--khezana-primary);
-}
-
-.khezana-toggle-option__label {
-    font-size: 14px;
-    color: var(--khezana-text);
     user-select: none;
 }
 
-/* ============================================
-   CHECKBOX GROUP (Categories)
-   ============================================ */
-
-.khezana-checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    overflow-y: visible;
-    padding-right: 4px;
-}
-
-/* No scrollbar for checkbox group - content flows naturally */
-
-.khezana-checkbox-option {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 8px 0;
-    transition: all 0.2s ease;
-}
-
-.khezana-checkbox-option:hover {
-    opacity: 0.8;
-}
-
-.khezana-checkbox-option--child {
-    padding-inline-start: 24px;
-}
-
-.khezana-checkbox-option input[type="radio"] {
+.khezana-segmented__option input {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.khezana-checkbox-option__check {
-    width: 18px;
-    height: 18px;
-    border: 2px solid #d1d5db;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-    position: relative;
+.khezana-segmented__option span {
+    display: block;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b7280;
+    text-align: center;
+    border-radius: 6px;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
-.khezana-checkbox-option input[type="radio"]:checked + .khezana-checkbox-option__check {
-    background: var(--khezana-primary);
-    border-color: var(--khezana-primary);
+.khezana-segmented__option:hover span {
+    color: #374151;
 }
 
-.khezana-checkbox-option input[type="radio"]:checked + .khezana-checkbox-option__check::after {
-    content: '';
-    position: absolute;
-    width: 4px;
-    height: 8px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-    top: 2px;
-}
-
-.khezana-checkbox-option__label {
-    font-size: 14px;
+.khezana-segmented__option input:checked+span {
+    background: var(--khezana-white);
     color: var(--khezana-text);
-    user-select: none;
+    box-shadow: var(--khezana-shadow-xs);
 }
 
-/* ============================================
-   PILL GROUP (Condition)
-   ============================================ */
-
-.khezana-pill-group {
+/* Pills (condition) */
+.khezana-pills {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
 .khezana-pill {
-    display: inline-flex;
-    align-items: center;
     cursor: pointer;
     user-select: none;
 }
 
-.khezana-pill input[type="radio"] {
+.khezana-pill input {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.khezana-pill__label {
+.khezana-pill span {
     display: inline-block;
-    padding: 8px 16px;
+    padding: 6px 12px;
     font-size: 13px;
     font-weight: 500;
-    color: var(--khezana-text);
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 20px;
-    transition: all 0.2s ease;
+    color: #4b5563;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.khezana-pill input[type="radio"]:checked + .khezana-pill__label {
+.khezana-pill:hover span {
+    border-color: rgba(0, 0, 0, 0.12);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.khezana-pill input:checked+span {
     background: var(--khezana-primary);
     color: var(--khezana-white);
     border-color: var(--khezana-primary);
 }
 
-.khezana-pill:hover .khezana-pill__label {
-    border-color: var(--khezana-primary-light);
+/* Filter list (categories) */
+.khezana-filter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-/* ============================================
-   PRICE SLIDER - Simple & Clean
-   ============================================ */
-
-.khezana-price-slider-wrapper {
-    padding: 20px 0;
+.khezana-filter-list__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s ease;
 }
 
+.khezana-filter-list__item:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.khezana-filter-list__item--child {
+    padding-inline-start: 24px;
+}
+
+.khezana-filter-list__item input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--khezana-primary);
+    cursor: pointer;
+}
+
+.khezana-filter-list__item span {
+    font-size: 14px;
+    color: #4b5563;
+    user-select: none;
+}
+
+/* Price slider — minimal */
 .khezana-price-slider {
     position: relative;
     width: 100%;
-    height: 40px;
-    margin: 0;
+}
+
+.khezana-price-slider__track-wrap {
+    position: relative;
+    width: 100%;
+    height: 36px;
 }
 
 .khezana-price-slider__track {
@@ -398,8 +390,8 @@
     height: 100%;
     background: var(--khezana-primary);
     border-radius: 2px;
-    transition: all 0.1s ease;
     pointer-events: none;
+    transition: left 0.1s ease, width 0.1s ease;
 }
 
 .khezana-price-slider__input {
@@ -419,100 +411,92 @@
 
 .khezana-price-slider__input::-webkit-slider-thumb {
     -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     background: var(--khezana-white);
     border: 2px solid var(--khezana-primary);
     border-radius: 50%;
     cursor: grab;
     pointer-events: all;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.15s ease;
 }
 
 .khezana-price-slider__input::-webkit-slider-thumb:hover {
-    transform: scale(1.1);
-    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+    transform: scale(1.08);
 }
 
 .khezana-price-slider__input::-webkit-slider-thumb:active {
     cursor: grabbing;
-    transform: scale(1.05);
+}
+
+.khezana-price-slider__input::-webkit-slider-runnable-track {
+    background: transparent;
+    height: 4px;
 }
 
 .khezana-price-slider__input::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     background: var(--khezana-white);
     border: 2px solid var(--khezana-primary);
     border-radius: 50%;
     cursor: grab;
     pointer-events: all;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     -moz-appearance: none;
     appearance: none;
 }
 
 .khezana-price-slider__input::-moz-range-thumb:hover {
-    transform: scale(1.1);
-    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+    transform: scale(1.08);
 }
 
 .khezana-price-slider__input::-moz-range-thumb:active {
     cursor: grabbing;
-    transform: scale(1.05);
 }
 
-.khezana-price-slider__input::-webkit-slider-runnable-track,
 .khezana-price-slider__input::-moz-range-track {
     background: transparent;
     height: 4px;
 }
 
-.khezana-price-slider__values {
+.khezana-price-slider__labels {
     display: flex;
     justify-content: space-between;
-    margin-top: 12px;
-}
-
-.khezana-price-slider__value {
-    font-size: 13px;
+    margin-bottom: 12px;
+    font-size: 12px;
     font-weight: 500;
-    color: var(--khezana-text);
+    color: #6b7280;
 }
 
-/* Dragging state */
-.khezana-price-slider-wrapper--dragging-min .khezana-price-slider__input--min {
+.khezana-price-slider.is-dragging-min .khezana-price-slider__input--min {
     z-index: 10;
 }
 
-.khezana-price-slider-wrapper--dragging-max .khezana-price-slider__input--max {
+.khezana-price-slider.is-dragging-max .khezana-price-slider__input--max {
     z-index: 10;
 }
 
-/* ============================================
-   FILTERS ACTIONS
-   ============================================ */
-
-.khezana-filters__actions {
-    padding: 16px 20px;
-    border-top: 1px solid #e5e7eb;
-    background: #fafafa;
+/* Footer */
+.khezana-filters__footer {
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    flex-shrink: 0;
-    margin-top: auto;
-    position: sticky;
-    bottom: 0;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.9);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .khezana-filters__apply,
 .khezana-filters__reset {
     width: 100%;
     justify-content: center;
+}
+
+.khezana-filters__apply::after {
+    display: none;
 }
 
 .khezana-filters__reset {
@@ -522,29 +506,80 @@
     justify-content: center;
 }
 
-/* ============================================
-   FILTERS OVERLAY (Mobile)
-   ============================================ */
-
-.khezana-filters-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 998;
-    backdrop-filter: blur(2px);
+/* ----- Filter chips (above results) ----- */
+.khezana-filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 0;
+    margin-bottom: 14px;
 }
 
-/* ============================================
-   DESKTOP: Always show filters
-   ============================================ */
+.khezana-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #4b5563;
+    background: #f5f5f5;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
 
+.khezana-filter-chip__label {
+    user-select: none;
+}
+
+.khezana-filter-chip__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1;
+    color: #6b7280;
+    background: none;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.khezana-filter-chip__remove:hover {
+    color: var(--khezana-primary);
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.khezana-filter-chip--clear {
+    color: var(--khezana-primary);
+    background: transparent;
+    border-color: transparent;
+    font-size: 12px;
+}
+
+.khezana-filter-chip--clear:hover {
+    background: rgba(245, 158, 11, 0.06);
+    border-color: transparent;
+}
+
+/* Chips: wrap chip width so remove is inside */
+.khezana-filter-chip[role="listitem"] {
+    padding-inline-end: 4px;
+}
+
+/* ----- Desktop ----- */
 @media (min-width: 1024px) {
     .khezana-filters {
         display: flex !important;
-        position: sticky;
-        top: 0;
-        height: 100vh;
+        max-height: calc(100vh - 48px);
     }
 
     .khezana-filters-overlay {
@@ -552,17 +587,14 @@
     }
 
     .khezana-filters__content {
-        /* No max-height - content flows naturally */
+        padding-bottom: 24px;
     }
 }
 
-/* ============================================
-   RESPONSIVE: MOBILE
-   ============================================ */
-
+/* ----- Mobile: bottom sheet ----- */
 @media (max-width: 1023px) {
     .khezana-filters-toggle {
-        display: flex !important;
+        display: flex;
     }
 
     .khezana-filters {
@@ -573,14 +605,16 @@
         right: 0;
         width: 100%;
         max-width: 100%;
-        height: 90vh;
-        border-radius: 20px 20px 0 0;
+        height: 78vh;
+        max-height: 78vh;
+        border-radius: 16px 16px 0 0;
+        border-inline-end: none;
         transform: translateY(100%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 999;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
         display: none;
-        overflow-y: auto;
+        background: #fafafa;
     }
 
     .khezana-filters.is-active,
@@ -591,62 +625,50 @@
 
     .khezana-filters-overlay[x-show] {
         display: block;
+        inset: auto;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 78vh;
+    }
+
+    .khezana-filters__drag {
+        display: block;
     }
 
     .khezana-filters__close {
         display: flex;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
     }
 
     .khezana-filters__content {
-        padding-bottom: calc(16px + env(safe-area-inset-bottom));
-        /* No max-height on mobile - content flows naturally */
+        padding-bottom: 24px;
     }
 
-    .khezana-filters__actions {
-        padding-bottom: calc(16px + env(safe-area-inset-bottom));
-        flex-shrink: 0;
+    .khezana-filters__footer {
+        padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
     }
 }
 
-/* ============================================
-   RTL SUPPORT
-   ============================================ */
-
+/* ----- RTL ----- */
 [dir="rtl"] .khezana-filters-toggle {
     inset-inline-start: 20px;
     inset-inline-end: auto;
 }
 
-[dir="rtl"] .khezana-filters-toggle__badge {
-    margin-inline-end: 4px;
-    margin-inline-start: 0;
-}
-
-[dir="rtl"] .khezana-checkbox-option--child {
+[dir="rtl"] .khezana-filter-list__item--child {
     padding-inline-end: 24px;
-    padding-inline-start: 0;
+    padding-inline-start: 12px;
 }
 
-/* ============================================
-   ACCESSIBILITY
-   ============================================ */
-
+/* ----- A11y ----- */
 .khezana-filters-toggle:focus-visible,
 .khezana-filters__close:focus-visible,
-.khezana-filter-section__header:focus-visible {
+.khezana-filter-section__trigger:focus-visible,
+.khezana-filter-chip__remove:focus-visible {
     outline: 2px solid var(--khezana-primary);
     outline-offset: 2px;
-}
-
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
-@keyframes khezana-filters-slide-up {
-    from {
-        transform: translateY(100%);
-    }
-    to {
-        transform: translateY(0);
-    }
 }

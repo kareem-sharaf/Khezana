@@ -116,6 +116,7 @@ return [
         'active_filters' => 'الفلاتر النشطة',
         'clear_all' => 'مسح الكل',
         'filters' => 'الفلاتر',
+        'filter_results' => 'فلترة النتائج',
         'quick_filters' => 'فلاتر سريعة',
         'search_items' => 'بحث في الإعلانات...',
         'search_requests' => 'بحث في الطلبات...',

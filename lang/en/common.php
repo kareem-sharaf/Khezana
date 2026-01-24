@@ -111,6 +111,7 @@ return [
         'active_filters' => 'Active Filters',
         'clear_all' => 'Clear All',
         'filters' => 'Filters',
+        'filter_results' => 'Filter results',
         'search_items' => 'Search items...',
         'search_requests' => 'Search requests...',
         'no_image' => 'No Image',

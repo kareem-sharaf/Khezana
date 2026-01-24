@@ -33,8 +33,9 @@ class ViewItemQuery
             ->with([
                 'user:id,name,created_at',
                 'category:id,name,slug,description',
-                'images' => fn($q) => $q->select('id', 'item_id', 'path', 'disk', 'is_primary')
-                                       ->orderBy('is_primary', 'desc'),
+                'images' => fn($q) => $q->select('id', 'item_id', 'path', 'disk', 'is_primary', 'path_webp')
+                                       ->orderBy('is_primary', 'desc')
+                                       ->orderBy('id', 'asc'),
                 'itemAttributes' => fn($q) => $q->select('id', 'attributable_id', 'attributable_type', 'attribute_id', 'value')
                                                ->with('attribute:id,name,type'),
             ])

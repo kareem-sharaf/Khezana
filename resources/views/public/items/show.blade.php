@@ -21,6 +21,11 @@
                     @include('public.items._partials.detail.additional-info', ['viewModel' => $viewModel])
                 </div>
             </div>
+
+            {{-- Similar Items Section --}}
+            @if (isset($similarItems) && $similarItems->count() > 0)
+                @include('public.items._partials.similar-items', ['items' => $similarItems])
+            @endif
         </div>
     </div>
 

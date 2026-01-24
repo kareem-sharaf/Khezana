@@ -1,0 +1,107 @@
+/**
+ * Khezana Design System - Breadcrumb Component
+ * Single Responsibility: Breadcrumb navigation component
+ * Full RTL support and accessibility
+ */
+
+/* ============================================
+   BASE BREADCRUMB
+   ============================================ */
+
+.khezana-breadcrumb {
+    margin-bottom: var(--khezana-spacing-lg);
+    padding: var(--khezana-spacing-sm) 0;
+}
+
+.khezana-breadcrumb__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--khezana-spacing-xs);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.khezana-breadcrumb__item {
+    display: flex;
+    align-items: center;
+    gap: var(--khezana-spacing-xs);
+}
+
+.khezana-breadcrumb__link {
+    color: var(--khezana-text-light);
+    text-decoration: none;
+    font-size: var(--khezana-font-size-sm);
+    transition: var(--khezana-transition);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--khezana-radius);
+}
+
+.khezana-breadcrumb__link:hover {
+    color: var(--khezana-primary);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.khezana-breadcrumb__link:focus-visible {
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
+    color: var(--khezana-primary);
+}
+
+.khezana-breadcrumb__link:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.khezana-breadcrumb__current {
+    color: var(--khezana-text);
+    font-size: var(--khezana-font-size-sm);
+    font-weight: 600;
+}
+
+.khezana-breadcrumb__separator {
+    color: var(--khezana-text-light);
+    font-size: var(--khezana-font-size-sm);
+    margin: 0 var(--khezana-spacing-xs);
+    opacity: 0.5;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 640px) {
+    .khezana-breadcrumb {
+        margin-bottom: var(--khezana-spacing-md);
+        padding: var(--khezana-spacing-xs) 0;
+    }
+
+    .khezana-breadcrumb__list {
+        gap: 0.25rem;
+        font-size: var(--khezana-font-size-xs);
+    }
+
+    .khezana-breadcrumb__link,
+    .khezana-breadcrumb__current {
+        font-size: var(--khezana-font-size-xs);
+        padding: 0.25rem 0.375rem;
+    }
+
+    .khezana-breadcrumb__separator {
+        margin: 0 0.25rem;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+.khezana-breadcrumb[aria-label] {
+    /* Screen reader will announce the label */
+}
+
+.khezana-breadcrumb__link[aria-current="page"] {
+    color: var(--khezana-text);
+    font-weight: 600;
+    pointer-events: none;
+}

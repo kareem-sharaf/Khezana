@@ -79,7 +79,7 @@
     overflow: hidden;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
     border: 1px solid var(--khezana-border);
-    transition: var(--khezana-transition);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     contain: layout style paint;
     will-change: transform;
 }
@@ -87,6 +87,11 @@
 .khezana-item-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.khezana-item-card:focus-visible {
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
 }
 
 /* Card Modifiers */

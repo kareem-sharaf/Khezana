@@ -50,7 +50,7 @@
             </button>
             
             {{-- Navigation Arrows (if multiple images) --}}
-            @if ($viewModel->hasMultipleImages)
+            @if ($viewModel->hasMultipleImages && count($viewModel->imageUrls) > 1)
                 <div class="khezana-image-gallery__navigation">
                     <button type="button" 
                             class="khezana-image-gallery__nav-btn khezana-image-gallery__nav-btn--prev" 
@@ -80,27 +80,29 @@
         </div>
 
         {{-- Vertical Thumbnails Sidebar --}}
-        @if ($viewModel->hasMultipleImages)
+        @if ($viewModel->hasImages && !empty($viewModel->imageUrls) && count($viewModel->imageUrls) > 0)
             <div class="khezana-image-gallery__thumbnails" id="thumbnailsContainer" role="list" aria-label="{{ __('common.ui.image_gallery') }}">
                 @foreach ($viewModel->imageUrls as $image)
-                    <button 
-                        type="button"
-                        class="khezana-image-gallery__thumbnail {{ $loop->first ? 'khezana-image-gallery__thumbnail--active' : '' }}"
-                        data-image-index="{{ $loop->index }}"
-                        data-image-src="{{ $image['url'] }}"
-                        aria-label="{{ __('common.ui.view_image') }} {{ $loop->iteration }}"
-                        role="listitem"
-                        onclick="changeMainImage('{{ $image['url'] }}', {{ $loop->index }}, this)">
-                        <img 
-                            src="{{ $image['url'] }}"
-                            alt="{{ $viewModel->title }} - {{ __('common.ui.image') }} {{ $loop->iteration }}"
-                            loading="lazy"
-                            decoding="async"
-                            onerror="this.onerror=null; this.parentElement.style.display='none';">
-                        <span class="khezana-image-gallery__thumbnail-preview"></span>
-                        {{-- Future: Add icon for video/360 if needed --}}
-                        {{-- <span class="khezana-image-gallery__thumbnail-icon">▶</span> --}}
-                    </button>
+                    @if (!empty($image['url']))
+                        <button 
+                            type="button"
+                            class="khezana-image-gallery__thumbnail {{ $loop->first ? 'khezana-image-gallery__thumbnail--active' : '' }}"
+                            data-image-index="{{ $loop->index }}"
+                            data-image-src="{{ $image['url'] }}"
+                            aria-label="{{ __('common.ui.view_image') }} {{ $loop->iteration }}"
+                            role="listitem"
+                            onclick="changeMainImage('{{ $image['url'] }}', {{ $loop->index }}, this)">
+                            <img 
+                                src="{{ $image['url'] }}"
+                                alt="{{ $viewModel->title }} - {{ __('common.ui.image') }} {{ $loop->iteration }}"
+                                loading="lazy"
+                                decoding="async"
+                                onerror="this.onerror=null; this.parentElement.style.display='none';">
+                            <span class="khezana-image-gallery__thumbnail-preview"></span>
+                            {{-- Future: Add icon for video/360 if needed --}}
+                            {{-- <span class="khezana-image-gallery__thumbnail-icon">▶</span> --}}
+                        </button>
+                    @endif
                 @endforeach
             </div>
         @endif

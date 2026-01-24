@@ -88,8 +88,20 @@
                 const modalPrev = document.getElementById('modalPrev');
                 const modalNext = document.getElementById('modalNext');
 
-                if (closeBtn) closeBtn.addEventListener('click', () => this.closeModal());
-                if (modalOverlay) modalOverlay.addEventListener('click', () => this.closeModal());
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.closeModal();
+                    });
+                }
+                if (modalOverlay) {
+                    modalOverlay.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.closeModal();
+                    });
+                }
                 if (modalPrev) modalPrev.addEventListener('click', () => this.modalNavigate(-1));
                 if (modalNext) modalNext.addEventListener('click', () => this.modalNavigate(1));
             },
@@ -368,8 +380,15 @@
 
                 if (!modal || !modalImage) return;
 
+                // Show modal with animation
                 modal.style.display = 'flex';
+                modal.style.opacity = '0';
                 document.body.style.overflow = 'hidden';
+                
+                // Fade in
+                requestAnimationFrame(() => {
+                    modal.style.opacity = '1';
+                });
 
                 if (loader) loader.style.display = 'flex';
                 modalImage.style.opacity = '0';
@@ -379,6 +398,9 @@
                     modalImage.src = this.images[index];
                     modalImage.alt = '{{ $viewModel->title }} - {{ __('common.ui.image') }} ' + (index + 1);
                     modalImage.style.opacity = '1';
+                    if (loader) loader.style.display = 'none';
+                };
+                img.onerror = () => {
                     if (loader) loader.style.display = 'none';
                 };
                 img.src = this.images[index];
@@ -394,8 +416,13 @@
                 const modal = this.modal;
                 if (!modal) return;
 
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
+                // Hide modal with animation
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    modal.style.opacity = '1';
+                    document.body.style.overflow = '';
+                }, 200);
             },
 
             /**
@@ -411,6 +438,9 @@
         window.changeMainImage = function(src, index, element) {
             gallery.changeMainImage(src, index, element);
         };
+
+        // Expose gallery to window for direct access
+        window.gallery = gallery;
 
         // Initialize on DOM ready
         if (document.readyState === 'loading') {

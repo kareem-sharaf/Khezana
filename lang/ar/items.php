@@ -157,4 +157,7 @@ return [
         'btn_continue' => 'أفهم، متابعة',
         'btn_cancel' => 'إلغاء',
     ],
+
+    'similar_items' => 'إعلانات مشابهة',
+    'similar_items_description' => 'إعلانات أخرى قد تهمك',
 ];

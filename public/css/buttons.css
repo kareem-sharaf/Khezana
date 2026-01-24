@@ -59,10 +59,14 @@
     box-shadow: 0 1px 2px rgba(245, 158, 11, 0.2);
 }
 
-.khezana-btn-primary:focus,
 .khezana-btn-primary:focus-visible {
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2), 0 4px 6px rgba(245, 158, 11, 0.25), 0 2px 4px rgba(245, 158, 11, 0.15);
+}
+
+.khezana-btn-primary:focus:not(:focus-visible) {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3), 0 4px 6px rgba(245, 158, 11, 0.25), 0 2px 4px rgba(245, 158, 11, 0.15);
 }
 
 .khezana-btn-secondary {
@@ -82,11 +86,15 @@
     transform: translateY(-1px);
 }
 
-.khezana-btn-secondary:focus,
 .khezana-btn-secondary:focus-visible {
-    outline: none;
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
     border-color: var(--khezana-primary);
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15), 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15), 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.khezana-btn-secondary:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .khezana-btn-ghost {
@@ -121,18 +129,26 @@
     transform: translateY(-1px);
 }
 
-.khezana-btn-outline:focus,
 .khezana-btn-outline:focus-visible {
-    outline: none;
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
     border-color: var(--khezana-primary);
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
 }
 
-.khezana-btn-ghost:focus,
-.khezana-btn-ghost:focus-visible {
+.khezana-btn-outline:focus:not(:focus-visible) {
     outline: none;
+}
+
+.khezana-btn-ghost:focus-visible {
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
     background: var(--khezana-bg);
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+}
+
+.khezana-btn-ghost:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .khezana-btn-large {
@@ -146,7 +162,10 @@
 }
 
 /* BEM-style aliases for consistency (using class composition) */
+/* Note: These are aliases for backward compatibility. 
+   Prefer using .khezana-btn-primary instead of .khezana-btn--primary */
 .khezana-btn--primary {
+    /* Maps to .khezana-btn-primary - use .khezana-btn-primary instead */
     background: var(--khezana-primary);
     color: var(--khezana-white);
     box-shadow: 0 2px 4px rgba(245, 158, 11, 0.25);
@@ -158,7 +177,14 @@
     box-shadow: 0 4px 6px rgba(245, 158, 11, 0.25), 0 2px 4px rgba(245, 158, 11, 0.15);
 }
 
+.khezana-btn--primary:focus-visible {
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2), 0 4px 6px rgba(245, 158, 11, 0.25), 0 2px 4px rgba(245, 158, 11, 0.15);
+}
+
 .khezana-btn--secondary {
+    /* Maps to .khezana-btn-secondary - use .khezana-btn-secondary instead */
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px) saturate(180%);
     -webkit-backdrop-filter: blur(10px) saturate(180%);
@@ -173,6 +199,13 @@
     color: var(--khezana-primary);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(245, 158, 11, 0.2);
     transform: translateY(-1px);
+}
+
+.khezana-btn--secondary:focus-visible {
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
+    border-color: var(--khezana-primary);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15), 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .khezana-btn:disabled {
@@ -383,5 +416,51 @@
     .khezana-btn {
         font-size: var(--khezana-font-size-xs);
         padding: 0.5625rem 0.875rem;
+    }
+}
+
+/* ============================================
+   Loading States
+   ============================================ */
+
+.khezana-btn--loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+    cursor: wait;
+}
+
+.khezana-btn--loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: khezana-spin 0.6s linear infinite;
+    color: inherit;
+}
+
+.khezana-btn-primary.khezana-btn--loading::after {
+    border-color: var(--khezana-white);
+    border-top-color: transparent;
+}
+
+.khezana-btn-secondary.khezana-btn--loading::after {
+    border-color: var(--khezana-text);
+    border-top-color: transparent;
+}
+
+@keyframes khezana-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
     }
 }

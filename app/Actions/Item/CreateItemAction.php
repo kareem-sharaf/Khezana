@@ -75,6 +75,11 @@ class CreateItemAction
 
             if ($images && is_array($images)) {
                 $tempPaths = $this->storeImagesToTemp($images);
+                \Illuminate\Support\Facades\Log::info('Item creation: Images stored to temp', [
+                    'item_id' => $item->id,
+                    'temp_paths_count' => count($tempPaths),
+                    'temp_paths' => $tempPaths,
+                ]);
             }
 
             $this->submitForApprovalAction->execute($item, $user);
@@ -84,7 +89,16 @@ class CreateItemAction
         });
 
         if (!empty($tempPaths)) {
+            \Illuminate\Support\Facades\Log::info('Item creation: Dispatching ProcessItemImagesJob', [
+                'item_id' => $item->id,
+                'temp_paths_count' => count($tempPaths),
+                'queue_connection' => config('queue.default'),
+            ]);
             ProcessItemImagesJob::dispatch($item->id, $tempPaths, 'public');
+        } else {
+            \Illuminate\Support\Facades\Log::info('Item creation: No images to process', [
+                'item_id' => $item->id,
+            ]);
         }
 
         // Phase 0.1: Record performance metrics
@@ -110,15 +124,25 @@ class CreateItemAction
         $tempPaths = [];
         $disk = 'public';
 
-        foreach ($images as $file) {
+        \Illuminate\Support\Facades\Log::info('CreateItemAction: Storing images to temp', [
+            'images_count' => count($images),
+        ]);
+
+        foreach ($images as $index => $file) {
             if (!($file instanceof UploadedFile)) {
+                \Illuminate\Support\Facades\Log::warning('CreateItemAction: Skipping non-UploadedFile', [
+                    'index' => $index,
+                    'type' => gettype($file),
+                ]);
                 continue;
             }
             try {
                 $this->imageService->validateFile($file);
             } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::warning('Skipping invalid image in queue', [
+                \Illuminate\Support\Facades\Log::warning('CreateItemAction: Skipping invalid image', [
                     'name' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                    'mime' => $file->getMimeType(),
                     'error' => $e->getMessage(),
                 ]);
                 continue;
@@ -129,8 +153,22 @@ class CreateItemAction
             $path = $file->storeAs('temp', $name, $disk);
             if ($path) {
                 $tempPaths[] = $path;
+                \Illuminate\Support\Facades\Log::debug('CreateItemAction: Image stored to temp', [
+                    'original_name' => $file->getClientOriginalName(),
+                    'temp_path' => $path,
+                    'size' => $file->getSize(),
+                ]);
+            } else {
+                \Illuminate\Support\Facades\Log::error('CreateItemAction: Failed to store image to temp', [
+                    'original_name' => $file->getClientOriginalName(),
+                ]);
             }
         }
+
+        \Illuminate\Support\Facades\Log::info('CreateItemAction: Images stored to temp completed', [
+            'stored_count' => count($tempPaths),
+            'total_count' => count($images),
+        ]);
 
         return $tempPaths;
     }

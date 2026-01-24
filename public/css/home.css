@@ -36,6 +36,8 @@
 @import url('components/empty-state.css');
 @import url('components/filters.css');
 @import url('components/image-gallery.css');
+@import url('components/alerts.css');
+@import url('components/breadcrumb.css');
 
 /* 10. Pages */
 @import url('pages/items-index.css');

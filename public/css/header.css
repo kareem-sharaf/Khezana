@@ -212,11 +212,15 @@
     background: rgba(245, 158, 11, 0.12);
 }
 
-.khezana-nav-link:focus,
 .khezana-nav-link:focus-visible {
-    outline: none;
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
     background: rgba(245, 158, 11, 0.1);
     box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+}
+
+.khezana-nav-link:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .khezana-nav-link.active {
@@ -297,9 +301,14 @@
     color: var(--khezana-primary);
 }
 
-.khezana-dropdown-item:focus {
-    outline: none;
+.khezana-dropdown-item:focus-visible {
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: -2px;
     background: rgba(245, 158, 11, 0.1);
+}
+
+.khezana-dropdown-item:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .khezana-dropdown-icon {
@@ -333,9 +342,14 @@
     border-color: var(--khezana-primary-light);
 }
 
-.khezana-user-trigger:focus {
+.khezana-user-trigger:focus-visible {
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+}
+
+.khezana-user-trigger:focus:not(:focus-visible) {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
 }
 
 .khezana-user-icon {
@@ -393,9 +407,14 @@
     color: var(--khezana-primary);
 }
 
-.khezana-user-menu-item:focus {
-    outline: none;
+.khezana-user-menu-item:focus-visible {
+    outline: 3px solid var(--khezana-primary);
+    outline-offset: -2px;
     background: rgba(245, 158, 11, 0.1);
+}
+
+.khezana-user-menu-item:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .khezana-user-menu-item-logout {

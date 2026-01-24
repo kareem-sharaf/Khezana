@@ -128,4 +128,7 @@ return [
         'btn_continue' => 'I Understand, Continue',
         'btn_cancel' => 'Cancel',
     ],
+
+    'similar_items' => 'Similar Listings',
+    'similar_items_description' => 'Other listings you might be interested in',
 ];
