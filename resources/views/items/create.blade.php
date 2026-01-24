@@ -39,6 +39,16 @@
             </div>
 
             <div class="khezana-form-container">
+                @if($errors->any())
+                    <div class="khezana-alert khezana-alert--error khezana-mb-md">
+                        <ul>
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                
                 <p id="draftSavedIndicator" class="khezana-form-hint" style="display:none; margin-bottom:1rem;" aria-live="polite">
                     {{ __('items.messages.draft_saved') }}
                 </p>
@@ -623,17 +633,5 @@
             });
         })();
 
-        // Phase 4.4: Client-side validation (HTML5 + was-validated)
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('itemCreateForm');
-            if (!form) return;
-            form.addEventListener('submit', function(e) {
-                if (!form.checkValidity()) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
     </script>
 @endsection

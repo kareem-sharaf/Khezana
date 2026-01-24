@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'العروض',
-    'singular' => 'عرض',
-    'plural' => 'عروض',
+    'title' => 'الإعلانات',
+    'singular' => 'إعلان',
+    'plural' => 'إعلانات',
 
     'fields' => [
         'operation_type' => 'نوع العملية',

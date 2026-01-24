@@ -56,7 +56,13 @@ class ItemService
         $validator = Validator::make($data, $rules);
 
         if ($validator->fails()) {
-            throw new \Exception('Validation failed: ' . $validator->errors()->first());
+            $errors = $validator->errors()->all();
+            \Illuminate\Support\Facades\Log::warning('ItemService: Operation rules validation failed', [
+                'operation_type' => $data['operation_type'] ?? 'unknown',
+                'errors' => $errors,
+                'data' => $data
+            ]);
+            throw new \Illuminate\Validation\ValidationException($validator);
         }
     }
 
@@ -76,7 +82,12 @@ class ItemService
             if ($attribute->is_required) {
                 $slug = $attribute->slug;
                 if (!isset($attributes[$slug]) || empty($attributes[$slug])) {
-                    throw new \Exception("Required attribute '{$attribute->name}' is missing.");
+                    \Illuminate\Support\Facades\Log::warning('ItemService: Required attribute missing', [
+                        'attribute' => $attribute->name,
+                        'slug' => $slug,
+                        'item_id' => $item->id
+                    ]);
+                    throw new \Exception(__('items.messages.attributes_required') . ': ' . $attribute->name);
                 }
             }
 
@@ -102,11 +113,20 @@ class ItemService
             // Get allowed values for this attribute
             $allowedValues = $attribute->values()->pluck('value')->toArray();
             if (!in_array($value, $allowedValues)) {
-                throw new \Exception("Invalid value for attribute '{$attribute->name}'.");
+                \Illuminate\Support\Facades\Log::warning('ItemService: Invalid attribute value', [
+                    'attribute' => $attribute->name,
+                    'value' => $value,
+                    'allowed_values' => $allowedValues
+                ]);
+                throw new \Exception(__('items.messages.invalid_attribute_value', ['attribute' => $attribute->name]));
             }
         } elseif ($attribute->isNumberType()) {
             if (!is_numeric($value)) {
-                throw new \Exception("Attribute '{$attribute->name}' must be a number.");
+                \Illuminate\Support\Facades\Log::warning('ItemService: Attribute must be numeric', [
+                    'attribute' => $attribute->name,
+                    'value' => $value
+                ]);
+                throw new \Exception(__('items.messages.attribute_must_be_numeric', ['attribute' => $attribute->name]));
             }
         }
         // Text type is always valid

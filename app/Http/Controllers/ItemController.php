@@ -138,6 +138,11 @@ class ItemController extends Controller
     public function store(StoreItemRequest $request): RedirectResponse
     {
         try {
+            \Illuminate\Support\Facades\Log::info('Item creation started', [
+                'user_id' => Auth::id(),
+                'request_data' => $request->except(['images', '_token'])
+            ]);
+
             $validated = $request->validated();
 
             // Handle image uploads - Store in filesystem
@@ -146,6 +151,9 @@ class ItemController extends Controller
                 // We'll get item ID after creation, so we'll process images in the Action
                 // For now, just pass the files
                 $imageData = $request->file('images');
+                \Illuminate\Support\Facades\Log::info('Item creation: Images found', [
+                    'count' => count($imageData)
+                ]);
             }
 
             $item = $this->createItemAction->execute(
@@ -155,10 +163,28 @@ class ItemController extends Controller
                 !empty($imageData) ? $imageData : null
             );
 
-            return redirect()->route('items.show', $item)
-                ->with('success', __('items.messages.created'));
+            \Illuminate\Support\Facades\Log::info('Item created successfully', [
+                'item_id' => $item->id,
+                'user_id' => Auth::id()
+            ]);
+
+            return redirect()->route('public.items.index')
+                ->with('success', __('items.messages.submitted_for_approval'));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Illuminate\Support\Facades\Log::warning('Item creation validation failed', [
+                'errors' => $e->errors(),
+                'user_id' => Auth::id()
+            ]);
+            return back()->withInput()->withErrors($e->errors());
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => $e->getMessage()]);
+            \Illuminate\Support\Facades\Log::error('Item creation error', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => Auth::id()
+            ]);
+            return back()->withInput()->withErrors(['error' => __('items.messages.create_error', ['message' => $e->getMessage()])]);
         }
     }
 

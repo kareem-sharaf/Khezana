@@ -64,7 +64,8 @@ return [
         'archived' => 'تم أرشفة الإعلان بنجاح',
         'restored' => 'تم استرجاع الإعلان بنجاح',
         'permanently_deleted' => 'تم الحذف النهائي للإعلان',
-        'submitted_for_approval' => 'تم إرسال الإعلان للموافقة بنجاح',
+        'submitted_for_approval' => 'تم نشر الإعلان بنجاح! سيتم مراجعته من قبل الإدارة قبل الظهور على الموقع.',
+        'submitting' => 'جاري النشر...',
         'category_required' => 'يجب اختيار الفئة',
         'operation_type_required' => 'يجب اختيار نوع العملية',
         'operation_type_invalid' => 'نوع العملية غير صحيح',
@@ -78,6 +79,8 @@ return [
         'deposit_numeric' => 'مبلغ التأمين يجب أن يكون رقماً',
         'deposit_min' => 'مبلغ التأمين يجب أن يكون أكبر من أو يساوي صفر',
         'attributes_required' => 'يجب ملء جميع الخصائص المطلوبة',
+        'invalid_attribute_value' => 'قيمة غير صحيحة للخاصية: :attribute',
+        'attribute_must_be_numeric' => 'الخاصية :attribute يجب أن تكون رقماً',
         'price_required_for_sell' => 'السعر مطلوب للبيع',
         'price_required_for_rent' => 'السعر مطلوب للإيجار',
         'deposit_required_for_rent' => 'مبلغ التأمين مطلوب للإيجار',
@@ -88,6 +91,7 @@ return [
         'new_images' => 'الصور الجديدة:',
         'create_help' => 'أضف إعلانك مع كل التفاصيل ليسهل على الآخرين العثور عليه.',
         'review_notice' => 'سيتم مراجعة الإعلان قبل النشر لضمان الجودة والأمان.',
+        'create_error' => 'حدث خطأ أثناء إنشاء الإعلان: :message',
     ],
 
     'deletion' => [

@@ -43,6 +43,17 @@
 
         <div class="khezana-footer-bottom">
             <p>&copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('common.ui.all_rights_reserved') }}.</p>
+            <div class="khezana-footer-credits">
+                <p class="khezana-footer-credit-text">
+                    {{ __('common.footer.developed_by') }} <strong>TichnoVsky</strong>
+                </p>
+                <p class="khezana-footer-contact">
+                    <a href="tel:+963959378002" class="khezana-footer-contact-link">
+                        <span class="khezana-footer-contact-icon">📞</span>
+                        +963959378002
+                    </a>
+                </p>
+            </div>
         </div>
     </div>
 </footer>

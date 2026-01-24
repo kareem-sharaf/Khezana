@@ -5,6 +5,14 @@
 @section('content')
     <div class="khezana-listing-page">
         <div class="khezana-container">
+            @if(session('success'))
+                <x-alert 
+                    type="success" 
+                    :message="session('success')" 
+                    dismissible="true"
+                    class="khezana-mb-md" />
+            @endif
+
             <x-breadcrumb :items="[['label' => __('items.title'), 'url' => null]]" />
 
             @include('public.items._partials.page-header', ['items' => $items])

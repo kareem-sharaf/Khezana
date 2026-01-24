@@ -83,10 +83,12 @@ class CreateItemAction
             }
 
             $this->submitForApprovalAction->execute($item, $user);
-            $this->cacheService->invalidateItem($item->id);
 
-            return $item->fresh(['user', 'category', 'images']);
+            return $item;
         });
+
+        // Invalidate cache after transaction to avoid blocking response
+        $this->cacheService->invalidateItem($item->id);
 
         if (!empty($tempPaths)) {
             \Illuminate\Support\Facades\Log::info('Item creation: Dispatching ProcessItemImagesJob', [
