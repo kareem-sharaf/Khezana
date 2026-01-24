@@ -18,16 +18,11 @@ class BrowseItemsQuery
     {
         $startTime = microtime(true);
         
+        // Phase 1.3: Use scope for published and available items
         $query = Item::query()
             ->where(function($q) use ($user) {
-                // Public items: only approved and available
-                $q->whereHas('approvalRelation', fn($a) => $a->where('status', ApprovalStatus::APPROVED->value))
-                  ->where(function($av) {
-                      $av->where('availability_status', ItemAvailability::AVAILABLE->value)
-                        ->orWhere('is_available', true);
-                  })
-                  ->whereNull('deleted_at')
-                  ->whereNull('archived_at');
+                // Public items: only approved and available (using scope)
+                $q->publishedAndAvailable();
                 
                 // If user is authenticated, also show their own items (regardless of approval status)
                 if ($user) {
@@ -40,11 +35,7 @@ class BrowseItemsQuery
             });
 
         if (isset($filters['search']) && $filters['search']) {
-            $search = $filters['search'];
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
-            });
+            $query->search($filters['search']);
         }
 
         if (isset($filters['operation_type']) && $filters['operation_type']) {
@@ -76,14 +67,16 @@ class BrowseItemsQuery
             default => $query->orderBy('created_at', 'desc'),
         };
 
+        // Phase 1.3: Select only needed columns (already optimized)
         $query->select('id', 'title', 'slug', 'description', 'condition', 'price', 'operation_type', 'availability_status', 'user_id', 'category_id', 'created_at', 'updated_at');
 
+        // Phase 1.3: Optimized Eager Loading - only load what's needed
         $query->with([
-            'user:id,name',
-            'category:id,name,slug',
+            'user:id,name', // Only id and name from users table
+            'category:id,name,slug', // Only id, name, slug from categories table
             'images' => fn($q) => $q->select('id', 'item_id', 'path', 'disk', 'is_primary')
                                    ->orderBy('is_primary', 'desc')
-                                   ->limit(1),
+                                   ->limit(1), // Only primary image or first image
         ]);
 
         $paginator = $query->paginate(min($perPage, 50), ['*'], 'page', max(1, $page));

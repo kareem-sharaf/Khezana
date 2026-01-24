@@ -57,6 +57,7 @@ return [
     ],
 
     'messages' => [
+        'draft_saved' => 'Draft saved',
         'created' => 'Listing created successfully',
         'updated' => 'Listing updated successfully',
         'deleted' => 'Listing deleted successfully',
@@ -105,6 +106,7 @@ return [
         'deposit_amount' => 'Deposit ensures the clothing is returned in good condition',
         'is_available' => 'Uncheck if the listing is temporarily unavailable',
         'images' => 'Clear images increase buyer confidence',
+        'drop_images' => 'Drag images here or click to choose',
     ],
 
     'actions' => [

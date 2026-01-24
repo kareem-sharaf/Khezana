@@ -59,9 +59,13 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            // Phase 2.3: Optional persistent connections (set DB_PERSISTENT=true in .env)
+            'options' => extension_loaded('pdo_mysql') ? array_filter(array_merge(
+                [
+                    (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                ],
+                env('DB_PERSISTENT', false) ? [\PDO::ATTR_PERSISTENT => true] : []
+            )) : [],
         ],
 
         'mariadb' => [

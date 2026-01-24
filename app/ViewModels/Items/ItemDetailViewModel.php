@@ -189,35 +189,38 @@ class ItemDetailViewModel
             images: $images,
             primaryImage: $primaryImage,
             imageUrls: $images->map(function ($img) {
-                // Handle both ImageReadModel and ItemImage models
                 $path = null;
+                $pathWebp = null;
                 $disk = 'public';
                 $isPrimary = false;
-                
+
                 if ($img instanceof \App\Read\Shared\Models\ImageReadModel) {
                     $path = $img->path ?? null;
+                    $pathWebp = $img->pathWebp ?? null;
                     $disk = $img->disk ?? 'public';
                     $isPrimary = $img->isPrimary ?? false;
                 } elseif (is_object($img)) {
                     $path = $img->path ?? null;
+                    $pathWebp = $img->path_webp ?? null;
                     $disk = $img->disk ?? 'public';
                     $isPrimary = $img->is_primary ?? false;
                 } else {
                     return null;
                 }
-                
+
                 if (!$path) {
                     return null;
                 }
-                
-                // Generate URL using Storage facade
-                // Use asset() for better compatibility with different hosts
+
                 $url = asset('storage/' . $path);
-                
+                $urlWebp = $pathWebp ? asset('storage/' . $pathWebp) : null;
+
                 return [
                     'path' => $path,
+                    'path_webp' => $pathWebp,
                     'disk' => $disk,
                     'url' => $url,
+                    'url_webp' => $urlWebp,
                     'isPrimary' => $isPrimary,
                 ];
             })->filter()->values()->toArray(),

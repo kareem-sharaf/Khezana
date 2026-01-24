@@ -72,10 +72,12 @@ Route::middleware('auth')->group(function () {
     Route::prefix('my-items')->name('items.')->group(function () {
         Route::get('/', [\App\Http\Controllers\ItemController::class, 'index'])->name('index');
         Route::get('/create', [\App\Http\Controllers\ItemController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\ItemController::class, 'store'])->name('store');
+        Route::post('/', [\App\Http\Controllers\ItemController::class, 'store'])->name('store')
+            ->middleware('throttle:10,1');
         Route::get('/{item}', [\App\Http\Controllers\ItemController::class, 'show'])->name('show');
         Route::get('/{item}/edit', [\App\Http\Controllers\ItemController::class, 'edit'])->name('edit');
-        Route::put('/{item}', [\App\Http\Controllers\ItemController::class, 'update'])->name('update');
+        Route::put('/{item}', [\App\Http\Controllers\ItemController::class, 'update'])->name('update')
+            ->middleware('throttle:10,1');
         Route::delete('/{item}', [\App\Http\Controllers\ItemController::class, 'destroy'])->name('destroy');
         Route::delete('/{item}/force', [\App\Http\Controllers\ItemController::class, 'forceDestroy'])->name('force-destroy');
         Route::post('/{item}/restore', [\App\Http\Controllers\ItemController::class, 'restore'])->name('restore');

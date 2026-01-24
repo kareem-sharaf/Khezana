@@ -83,6 +83,13 @@
     margin-top: var(--khezana-spacing-xs);
 }
 
+/* Phase 4.4: Client-side validation – invalid state */
+.was-validated .khezana-form-input:invalid,
+.was-validated .khezana-form-select:invalid,
+.was-validated .khezana-form-textarea:invalid {
+    border-color: var(--khezana-danger, #ef4444);
+}
+
 .khezana-form-hint {
     font-size: var(--khezana-font-size-sm);
     color: #4b5563;
@@ -323,6 +330,38 @@
     }
 }
 
+/* Phase 4.3: Drag & Drop zone */
+.khezana-image-drop-zone {
+    position: relative;
+    min-height: 120px;
+    border: 2px dashed var(--khezana-border);
+    border-radius: var(--khezana-radius);
+    background: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+.khezana-image-drop-zone:hover,
+.khezana-image-drop-zone--dragover {
+    border-color: var(--khezana-primary);
+    background: rgba(245, 158, 11, 0.08);
+}
+.khezana-image-drop-zone .khezana-form-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+.khezana-image-drop-zone__label {
+    pointer-events: none;
+    color: var(--khezana-text);
+    font-size: var(--khezana-font-size-sm);
+}
+
 /* Image Upload Preview */
 .khezana-image-preview-container {
     margin-top: var(--khezana-spacing-md);
@@ -343,6 +382,22 @@
     border: 2px solid var(--khezana-border);
     background: var(--khezana-bg);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Phase 1.6: Placeholder/skeleton while lazy image loads */
+.khezana-image-preview-skeleton {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--khezana-border) 25%, var(--khezana-bg) 50%, var(--khezana-border) 75%);
+    background-size: 200% 100%;
+    animation: khezana-skeleton-shimmer 1.5s infinite;
+}
+.khezana-image-preview-skeleton--hidden {
+    display: none;
+}
+@keyframes khezana-skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 .khezana-image-preview-item img {

@@ -175,7 +175,7 @@
                         </label>
                         <p class="khezana-form-hint">{{ __('items.hints.images') }}</p>
                         <input type="file" name="images[]" id="images" class="khezana-form-input"
-                            accept="image/jpeg,image/jpg,image/png" multiple>
+                            accept="image/jpeg,image/jpg,image/png" capture="environment" multiple>
                         @error('images')
                             <span class="khezana-form-error">{{ $message }}</span>
                         @enderror
@@ -193,8 +193,13 @@
                                 <div class="khezana-image-preview-grid">
                                     @foreach ($item->images as $image)
                                         <div class="khezana-image-preview-item">
+                                            <div class="khezana-image-preview-skeleton" aria-hidden="true"></div>
                                             <img src="{{ Storage::url($image->path) }}"
-                                                alt="Image {{ $loop->index + 1 }}">
+                                                alt="Image {{ $loop->index + 1 }}"
+                                                loading="lazy"
+                                                decoding="async"
+                                                onload="this.previousElementSibling?.classList?.add('khezana-image-preview-skeleton--hidden')"
+                                                onerror="this.previousElementSibling?.classList?.add('khezana-image-preview-skeleton--hidden')">
                                         </div>
                                     @endforeach
                                 </div>

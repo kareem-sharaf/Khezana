@@ -10,9 +10,26 @@ use Illuminate\Validation\Rule;
  * Form Request for updating an existing item
  *
  * Handles validation for item updates with proper error messages
+ * Phase 5.1: Input sanitization (strip_tags for title, allowed tags for description)
  */
 class UpdateItemRequest extends BaseFormRequest
 {
+    private const DESCRIPTION_ALLOWED_TAGS = '<p><br><b><i><em><strong><ul><ol><li>';
+
+    protected function prepareForValidation(): void
+    {
+        $merge = [];
+        if ($this->has('title') && is_string($this->title)) {
+            $merge['title'] = strip_tags($this->title);
+        }
+        if ($this->has('description') && is_string($this->description)) {
+            $merge['description'] = strip_tags($this->description, self::DESCRIPTION_ALLOWED_TAGS);
+        }
+        if ($merge !== []) {
+            $this->merge($merge);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      */

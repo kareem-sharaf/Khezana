@@ -1,13 +1,15 @@
-{{-- Item Images Partial --}}
+{{-- Item Images Partial – Phase 3.3: WebP + srcset --}}
 {{-- Usage: @include('items._partials.detail.images', ['viewModel' => $viewModel]) --}}
 
 <div class="khezana-item-images">
     @if ($viewModel->hasImages && !empty($viewModel->imageUrls))
-        {{-- Main Image --}}
+        {{-- Main Image (plain img for changeMainImage JS) --}}
         <div class="khezana-item-main-image">
             @if (!empty($viewModel->imageUrls[0]['url']))
-                <img id="mainImage" src="{{ $viewModel->imageUrls[0]['url'] }}" alt="{{ $viewModel->title }}"
+                @php $img = $viewModel->imageUrls[0]; @endphp
+                <img id="mainImage" src="{{ $img['url'] }}" alt="{{ $viewModel->title }}"
                     class="khezana-main-img" loading="eager" decoding="async"
+                    srcset="{{ $img['url'] }} 1920w" sizes="(max-width: 768px) 100vw, 50vw"
                     onerror="this.onerror=null; this.style.display='none';">
             @else
                 <div class="khezana-no-image-placeholder">
@@ -23,8 +25,13 @@
                     @if (!empty($image['url']))
                         <button type="button" class="khezana-thumbnail {{ $loop->first ? 'active' : '' }}"
                             onclick="changeMainImage('{{ $image['url'] }}', this)">
-                            <img src="{{ $image['url'] }}" alt="{{ $viewModel->title }}" loading="lazy" decoding="async"
-                                onerror="this.onerror=null; this.parentElement.style.display='none';">
+                            <x-responsive-image
+                                :url="$image['url']"
+                                :urlWebp="$image['url_webp'] ?? null"
+                                :alt="$viewModel->title"
+                                loading="lazy"
+                                decoding="async"
+                            />
                         </button>
                     @endif
                 @endforeach

@@ -9,9 +9,11 @@ use App\Enums\ItemAvailability;
 use App\Enums\OperationType;
 use App\Models\Item;
 use App\Models\User;
+use App\Jobs\ProcessItemImagesJob;
 use App\Services\Cache\CacheService;
 use App\Services\ImageOptimizationService;
 use App\Services\ItemService;
+use App\Services\Performance\PerformanceMonitoringService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +26,8 @@ class CreateItemAction
         private readonly ItemService $itemService,
         private readonly SubmitForApprovalAction $submitForApprovalAction,
         private readonly ImageOptimizationService $imageService,
-        private readonly CacheService $cacheService
+        private readonly CacheService $cacheService,
+        private readonly PerformanceMonitoringService $performanceMonitoring
     ) {
     }
 
@@ -40,13 +43,17 @@ class CreateItemAction
      */
     public function execute(array $data, User $user, ?array $attributes = null, ?array $images = null): Item
     {
+        // Phase 0.1: Start performance monitoring
+        $startTime = microtime(true);
+        $imageCount = $images ? count($images) : 0;
+
         // Validate operation rules
         $this->itemService->validateOperationRules($data);
 
-        return DB::transaction(function () use ($data, $user, $attributes, $images) {
+        $tempPaths = [];
+        $item = DB::transaction(function () use ($data, $user, $attributes, $images, &$tempPaths) {
             $isAvailable = $data['is_available'] ?? true;
-            
-            // Create the item
+
             $item = Item::create([
                 'user_id' => $user->id,
                 'category_id' => $data['category_id'],
@@ -61,62 +68,70 @@ class CreateItemAction
                 'availability_status' => $isAvailable ? ItemAvailability::AVAILABLE : ItemAvailability::UNAVAILABLE,
             ]);
 
-            // Set dynamic attributes if provided
             if ($attributes) {
                 $this->itemService->validateCategoryAttributes($item, $attributes);
                 $item->setAttributeValues($attributes);
             }
 
-            // Process and attach images if provided
             if ($images && is_array($images)) {
-                $this->attachImages($item, $images);
+                $tempPaths = $this->storeImagesToTemp($images);
             }
 
-            // Create approval automatically
             $this->submitForApprovalAction->execute($item, $user);
-
-            // Invalidate cache to show new item immediately
             $this->cacheService->invalidateItem($item->id);
 
             return $item->fresh(['user', 'category', 'images']);
         });
+
+        if (!empty($tempPaths)) {
+            ProcessItemImagesJob::dispatch($item->id, $tempPaths, 'public');
+        }
+
+        // Phase 0.1: Record performance metrics
+        $duration = (microtime(true) - $startTime) * 1000; // Convert to milliseconds
+        $this->performanceMonitoring->recordMetric('item_creation', $duration, [
+            'user_id' => $user->id,
+            'category_id' => $data['category_id'],
+            'image_count' => $imageCount,
+            'has_attributes' => !empty($attributes),
+        ]);
+
+        return $item;
     }
 
     /**
-     * Attach images to item
-     * 
-     * @param Item $item The item to attach images to
-     * @param array $images Array of UploadedFile instances
+     * Phase 3.1: Store uploaded images to temp and return paths for queue processing
+     *
+     * @param array<UploadedFile> $images
+     * @return array<int, string> Temp paths relative to public disk
      */
-    private function attachImages(Item $item, array $images): void
+    private function storeImagesToTemp(array $images): array
     {
-        $isFirst = true;
-        $disk = 'public'; // Default disk, can be configured via env
-        
+        $tempPaths = [];
+        $disk = 'public';
+
         foreach ($images as $file) {
             if (!($file instanceof UploadedFile)) {
                 continue;
             }
-            
             try {
-                // Process and store image using ImageOptimizationService
-                $imageData = $this->imageService->processAndStore($file, $item->id, $disk);
-                
-                // Save image record in database
-                $item->images()->create([
-                    'path' => $imageData['path'],
-                    'disk' => $imageData['disk'],
-                    'is_primary' => $isFirst,
-                ]);
-                
-                $isFirst = false;
+                $this->imageService->validateFile($file);
             } catch (\Exception $e) {
-                // Log error but continue with other images
-                \Illuminate\Support\Facades\Log::error('Failed to process image', [
-                    'item_id' => $item->id,
+                \Illuminate\Support\Facades\Log::warning('Skipping invalid image in queue', [
+                    'name' => $file->getClientOriginalName(),
                     'error' => $e->getMessage(),
                 ]);
+                continue;
+            }
+
+            $ext = strtolower($file->getClientOriginalExtension()) ?: 'jpg';
+            $name = \Illuminate\Support\Str::uuid() . '.' . $ext;
+            $path = $file->storeAs('temp', $name, $disk);
+            if ($path) {
+                $tempPaths[] = $path;
             }
         }
+
+        return $tempPaths;
     }
 }

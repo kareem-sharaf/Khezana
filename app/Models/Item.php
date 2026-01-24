@@ -156,6 +156,56 @@ class Item extends Model implements Approvable
     }
 
     /**
+     * Phase 1.3: Scope to get published and available items
+     * This is the most common query pattern
+     */
+    public function scopePublishedAndAvailable($query)
+    {
+        return $query->whereHas('approvalRelation', fn($a) =>
+            $a->where('status', \App\Enums\ApprovalStatus::APPROVED->value)
+        )
+        ->where(function ($q) {
+            $q->where('availability_status', ItemAvailability::AVAILABLE->value)
+              ->orWhere('is_available', true);
+        })
+        ->whereNull('deleted_at')
+        ->whereNull('archived_at');
+    }
+
+    /**
+     * Phase 2.1: Scope for search - Full-Text when available (MySQL), fallback to LIKE (SQLite, etc.)
+     */
+    public function scopeSearch($query, string $term)
+    {
+        $term = trim($term);
+        if ($term === '') {
+            return $query;
+        }
+
+        $driver = $query->getConnection()->getDriverName();
+        if ($driver !== 'mysql') {
+            return $query->where(function ($q) use ($term) {
+                $q->where('title', 'like', "%{$term}%")
+                  ->orWhere('description', 'like', "%{$term}%");
+            });
+        }
+
+        try {
+            return $query->whereFullText(['title', 'description'], $term);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::debug('Full-text search failed, using LIKE', [
+                'error' => $e->getMessage(),
+                'term' => $term,
+            ]);
+
+            return $query->where(function ($q) use ($term) {
+                $q->where('title', 'like', "%{$term}%")
+                  ->orWhere('description', 'like', "%{$term}%");
+            });
+        }
+    }
+
+    /**
      * Ensure item can receive offers (BR-024)
      *
      * @throws \Exception If item cannot receive offers

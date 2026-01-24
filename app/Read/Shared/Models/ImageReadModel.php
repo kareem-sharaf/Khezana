@@ -14,6 +14,7 @@ class ImageReadModel
         public readonly string $disk,
         public readonly bool $isPrimary,
         public readonly ?string $alt,
+        public readonly ?string $pathWebp = null,
     ) {
     }
 
@@ -25,6 +26,7 @@ class ImageReadModel
             disk: $image->disk ?? 'public',
             isPrimary: $image->is_primary ?? false,
             alt: $image->alt ?? null,
+            pathWebp: $image->path_webp ?? null,
         );
     }
 }

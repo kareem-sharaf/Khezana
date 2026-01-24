@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Read\Items\Queries;
 
-use App\Enums\ApprovalStatus;
-use App\Enums\ItemAvailability;
 use App\Models\Item;
 use App\Models\User;
 use App\Read\Items\Models\ItemReadModel;
@@ -17,17 +15,11 @@ class ViewItemQuery
     {
         $startTime = microtime(true);
         
+        // Phase 2.2: Use publishedAndAvailable scope; owner can always view
         $query = Item::query()
             ->where('id', $itemId)
-            ->where(function($q) use ($user) {
-                $q->whereHas('approvalRelation', fn($a) => $a->where('status', ApprovalStatus::APPROVED->value))
-                  ->where(function($av) {
-                      $av->where('availability_status', ItemAvailability::AVAILABLE->value)
-                         ->orWhere('is_available', true);
-                  })
-                  ->whereNull('deleted_at')
-                  ->whereNull('archived_at');
-
+            ->where(function ($q) use ($user) {
+                $q->where(fn ($sub) => $sub->publishedAndAvailable());
                 if ($user) {
                     $q->orWhere('user_id', $user->id);
                 }

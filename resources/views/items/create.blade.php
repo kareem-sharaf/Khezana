@@ -39,6 +39,9 @@
             </div>
 
             <div class="khezana-form-container">
+                <p id="draftSavedIndicator" class="khezana-form-hint" style="display:none; margin-bottom:1rem;" aria-live="polite">
+                    {{ __('items.messages.draft_saved') }}
+                </p>
                 <form method="POST" action="{{ route('items.store') }}" class="khezana-form" id="itemCreateForm"
                     enctype="multipart/form-data">
                     @csrf
@@ -195,8 +198,11 @@
                             {{ __('items.fields.images') }}
                         </label>
                         <p class="khezana-form-hint">{{ __('items.hints.images') }}</p>
-                        <input type="file" name="images[]" id="images" class="khezana-form-input"
-                            accept="image/jpeg,image/jpg,image/png" multiple>
+                        <div id="imageDropZone" class="khezana-image-drop-zone" aria-label="{{ __('items.hints.images') }}">
+                            <input type="file" name="images[]" id="images" class="khezana-form-input"
+                                accept="image/jpeg,image/jpg,image/png" capture="environment" multiple>
+                            <span class="khezana-image-drop-zone__label">{{ __('items.hints.drop_images') }}</span>
+                        </div>
                         @error('images')
                             <span class="khezana-form-error">{{ $message }}</span>
                         @enderror
@@ -464,14 +470,37 @@
                 updatePreview();
             }
 
+            function addFiles(files) {
+                if (!imageInput || !files || !files.length) return;
+                const dt = new DataTransfer();
+                const existing = Array.from(imageInput.files || []);
+                existing.forEach(function(f) { dt.items.add(f); });
+                for (let i = 0; i < files.length; i++) {
+                    if (files[i].type.match('image.*') && files[i].size <= 5 * 1024 * 1024) dt.items.add(files[i]);
+                }
+                imageInput.files = dt.files;
+                updatePreview();
+            }
+
             document.addEventListener('DOMContentLoaded', function() {
                 imageInput = document.getElementById('images');
                 previewContainer = document.getElementById('imagePreviewContainer');
                 previewGrid = document.getElementById('imagePreviewGrid');
+                const dropZone = document.getElementById('imageDropZone');
 
                 if (!imageInput || !previewContainer || !previewGrid) return;
 
                 imageInput.addEventListener('change', updatePreview);
+
+                if (dropZone) {
+                    ['dragenter', 'dragover'].forEach(function(ev) {
+                        dropZone.addEventListener(ev, function(e) { e.preventDefault(); dropZone.classList.add('khezana-image-drop-zone--dragover'); });
+                    });
+                    ['dragleave', 'drop'].forEach(function(ev) {
+                        dropZone.addEventListener(ev, function(e) { e.preventDefault(); dropZone.classList.remove('khezana-image-drop-zone--dragover'); });
+                    });
+                    dropZone.addEventListener('drop', function(e) { addFiles(e.dataTransfer.files); });
+                }
             });
         })();
 
@@ -509,5 +538,102 @@
                 btnContinue.addEventListener('click', onContinue);
             });
         })();
+
+        // Phase 4.1: Draft auto-save to localStorage
+        (function() {
+            const DRAFT_KEY = 'item_draft';
+            const DEBOUNCE_MS = 2000;
+            let debounceTimer;
+
+            function buildDraft(form) {
+                const d = {};
+                const skip = ['_token', 'images'];
+                for (const el of form.elements) {
+                    if (skip.includes(el.name) || !el.name) continue;
+                    if (el.type === 'file') continue;
+                    if (el.type === 'radio' || el.type === 'checkbox') {
+                        if (el.checked) d[el.name] = el.value;
+                    } else {
+                        d[el.name] = el.value;
+                    }
+                }
+                return d;
+            }
+
+            function saveDraft() {
+                const form = document.getElementById('itemCreateForm');
+                if (!form) return;
+                const draft = buildDraft(form);
+                if (Object.keys(draft).length === 0) return;
+                try {
+                    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+                    const ind = document.getElementById('draftSavedIndicator');
+                    if (ind) { ind.style.display = 'block'; setTimeout(function() { ind.style.display = 'none'; }, 2000); }
+                } catch (e) {}
+            }
+
+            function restoreDraft() {
+                const form = document.getElementById('itemCreateForm');
+                if (!form) return;
+                try {
+                    const raw = localStorage.getItem(DRAFT_KEY);
+                    if (!raw) return;
+                    const draft = JSON.parse(raw);
+                    if (!draft.category_id) return;
+
+                    const cat = document.getElementById('category_id');
+                    if (cat) { cat.value = draft.category_id; loadCategoryAttributes(draft.category_id); }
+
+                    const rest = () => {
+                        for (const [name, value] of Object.entries(draft)) {
+                            if (name === 'category_id') continue;
+                            const els = form.querySelectorAll(`[name="${name}"]`);
+                            if (!els.length) continue;
+                            if (els[0].type === 'radio' || els[0].type === 'checkbox') {
+                                els.forEach(function(el) { el.checked = (el.value === value); });
+                            } else {
+                                els[0].value = value || '';
+                            }
+                        }
+                        if (typeof toggleDepositAmountField === 'function') toggleDepositAmountField();
+                    };
+                    setTimeout(rest, 100);
+                } catch (e) {}
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('itemCreateForm');
+                if (!form) return;
+
+                form.addEventListener('input', function() {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(saveDraft, DEBOUNCE_MS);
+                });
+                form.addEventListener('change', function() {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(saveDraft, DEBOUNCE_MS);
+                });
+                form.addEventListener('submit', function() {
+                    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+                });
+
+                @if(!old('category_id'))
+                restoreDraft();
+                @endif
+            });
+        })();
+
+        // Phase 4.4: Client-side validation (HTML5 + was-validated)
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('itemCreateForm');
+            if (!form) return;
+            form.addEventListener('submit', function(e) {
+                if (!form.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
     </script>
 @endsection

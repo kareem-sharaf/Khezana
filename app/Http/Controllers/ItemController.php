@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateItemRequest;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Setting;
+use App\Services\Cache\CategoryCacheService;
 use App\Services\ImageOptimizationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,7 +35,8 @@ class ItemController extends Controller
         private readonly UpdateItemAction $updateItemAction,
         private readonly DeleteItemAction $deleteItemAction,
         private readonly SubmitItemForApprovalAction $submitForApprovalAction,
-        private readonly ImageOptimizationService $imageService
+        private readonly ImageOptimizationService $imageService,
+        private readonly CategoryCacheService $categoryCacheService
     ) {
         // Middleware is applied in routes/web.php
     }
@@ -51,13 +53,9 @@ class ItemController extends Controller
         $query = Item::where('user_id', Auth::id())
             ->with(['category', 'images', 'approvalRelation']);
 
-        // Apply filters
-        if ($request->has('search') && $request->get('search')) {
-            $search = $request->get('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
+        // Apply filters (Phase 2.1: use Full-Text search when available)
+        if ($request->filled('search')) {
+            $query->search($request->get('search'));
         }
 
         if ($request->has('category_id') && $request->get('category_id')) {
@@ -122,11 +120,9 @@ class ItemController extends Controller
      */
     public function create(): View
     {
-        $categories = Category::active()
-            ->with(['children' => fn($q) => $q->where('is_active', true)->orderBy('name')])
-            ->whereNull('parent_id')
-            ->orderBy('name')
-            ->get();
+        // Phase 1.2: Use cached categories (TTL: 1 hour)
+        $categories = $this->categoryCacheService->getTree();
+        
         $feePercent = (float) Setting::deliveryServiceFeePercent();
         $preCreationRules = [
             ['icon' => '💰', 'text' => __('items.pre_creation_notice.rule_fee', ['percent' => (string) (int) $feePercent])],

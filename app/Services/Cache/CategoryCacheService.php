@@ -15,7 +15,10 @@ class CategoryCacheService
 
     public function getTree(): Collection
     {
-        return Cache::remember('categories:tree', self::TTL_TREE, function () {
+        // Phase 1.2: Use consistent cache key with CacheService
+        $key = 'categories:tree:active';
+        
+        return Cache::remember($key, self::TTL_TREE, function () {
             return Category::query()
                 ->where('is_active', true)
                 ->with(['children' => fn($q) => $q->where('is_active', true)->orderBy('name')])
@@ -41,7 +44,9 @@ class CategoryCacheService
 
     public function invalidateTree(): void
     {
+        // Phase 1.2: Invalidate both old and new cache keys
         Cache::forget('categories:tree');
+        Cache::forget('categories:tree:active');
     }
 
     public function invalidateCategoryAttributes(int $categoryId): void
