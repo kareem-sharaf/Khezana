@@ -45,6 +45,9 @@ class ItemReadModel
 
     public static function fromModel(Item $item): self
     {
+        // Performance fix #7: Load missing relationships to prevent N+1 queries
+        $item->loadMissing(['images', 'user', 'category', 'itemAttributes.attribute']);
+        
         $slug = $item->slug ?? Str::slug($item->title);
         $url = route('public.items.show', ['id' => $item->id, 'slug' => $slug]);
         $canonicalUrl = route('public.items.show', ['id' => $item->id, 'slug' => $slug]);

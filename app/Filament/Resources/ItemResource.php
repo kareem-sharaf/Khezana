@@ -97,21 +97,17 @@ class ItemResource extends Resource
                             ->relationship('category', 'name')
                             ->searchable()
                             ->preload()
-                            ->required()
-                            ->disabled(),
+                            ->required(),
                         Select::make('operation_type')
                             ->label(__('filament-dashboard.Operation Type'))
                             ->options(OperationType::getOptions())
-                            ->required()
-                            ->disabled(),
+                            ->required(),
                         TextInput::make('price')
                             ->label(__('filament-dashboard.Price'))
-                            ->numeric()
-                            ->disabled(),
+                            ->numeric(),
                         TextInput::make('deposit_amount')
                             ->label(__('filament-dashboard.Deposit Amount'))
-                            ->numeric()
-                            ->disabled(),
+                            ->numeric(),
                         Toggle::make('is_available')
                             ->label(__('filament-dashboard.Is Available'))
                             ->default(true),
@@ -203,6 +199,8 @@ class ItemResource extends Resource
             ])
             ->actions([
                 Actions\ViewAction::make(),
+                Actions\EditAction::make()
+                    ->visible(fn (Item $record) => auth()->user()?->can('update', $record)),
                 Actions\DeleteAction::make()
                     ->label(__('filament-dashboard.Delete'))
                     ->requiresConfirmation()
@@ -281,6 +279,7 @@ class ItemResource extends Resource
         return [
             'index' => Pages\ListItems::route('/'),
             'view' => Pages\ViewItem::route('/{record}'),
+            'edit' => Pages\EditItem::route('/{record}/edit'),
         ];
     }
 

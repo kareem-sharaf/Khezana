@@ -60,8 +60,8 @@ class AttributeResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function ($state, callable $set) {
-                                if (empty($set('slug'))) {
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                if (empty($get('slug'))) {
                                     $set('slug', \Illuminate\Support\Str::slug($state));
                                 }
                             }),

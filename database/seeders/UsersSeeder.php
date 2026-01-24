@@ -13,8 +13,14 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create 10 regular users
-        for ($i = 1; $i <= 10; $i++) {
+        // Create 100 regular users (for bulk seeding)
+        $usersToCreate = 100;
+        
+        $this->command->info("Creating {$usersToCreate} regular users...");
+        $progressBar = $this->command->getOutput()->createProgressBar($usersToCreate);
+        $progressBar->start();
+        
+        for ($i = 1; $i <= $usersToCreate; $i++) {
             User::firstOrCreate(
                 ['email' => "user{$i}@khezana.com"],
                 [
@@ -24,8 +30,11 @@ class UsersSeeder extends Seeder
                     'status' => 'active',
                 ]
             );
+            $progressBar->advance();
         }
-
-        $this->command->info('Created 10 regular users.');
+        
+        $progressBar->finish();
+        $this->command->newLine();
+        $this->command->info("Created {$usersToCreate} regular users.");
     }
 }

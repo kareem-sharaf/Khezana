@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             AttributesSeeder::class,
             UsersSeeder::class,
             ItemsSeeder::class,
+            // Uncomment the line below to seed 100,000 additional items
+            // BulkItemsSeeder::class,
         ]);
 
         // Create a super admin user (if not exists)

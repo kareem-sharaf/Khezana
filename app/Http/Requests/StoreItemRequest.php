@@ -36,8 +36,17 @@ class StoreItemRequest extends BaseFormRequest
      */
     public function rules(): array
     {
-        return [
-            'category_id' => ['required', 'exists:categories,id'],
+        $rules = [
+            'category_id' => [
+                'required',
+                'exists:categories,id',
+                function ($attribute, $value, $fail) {
+                    $category = \App\Models\Category::find($value);
+                    if (!$category || !$category->is_active) {
+                        $fail(__('items.messages.category_inactive', ['attribute' => __('items.fields.category')]));
+                    }
+                },
+            ],
             'operation_type' => ['required', Rule::in(['sell', 'rent', 'donate'])],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
@@ -67,6 +76,22 @@ class StoreItemRequest extends BaseFormRequest
             'images' => ['nullable', 'array'],
             'images.*' => ['image', 'mimes:jpeg,jpg,png', 'max:5120'], // Max 5MB per image
         ];
+
+        // Dynamic validation based on operation_type
+        $operationType = $this->input('operation_type');
+        
+        if ($operationType === 'sell') {
+            $rules['price'] = ['required', 'numeric', 'min:0'];
+            $rules['deposit_amount'] = ['nullable', 'numeric', 'min:0'];
+        } elseif ($operationType === 'rent') {
+            $rules['price'] = ['required', 'numeric', 'min:0'];
+            $rules['deposit_amount'] = ['required', 'numeric', 'min:0'];
+        } elseif ($operationType === 'donate') {
+            $rules['price'] = ['nullable', 'numeric', 'min:0'];
+            $rules['deposit_amount'] = ['nullable', 'numeric', 'min:0'];
+        }
+
+        return $rules;
     }
 
     /**
@@ -86,8 +111,10 @@ class StoreItemRequest extends BaseFormRequest
             'governorate.in' => __('items.messages.governorate_invalid'),
             'price.numeric' => __('items.messages.price_numeric'),
             'price.min' => __('items.messages.price_min'),
+            'deposit_amount.required' => __('items.messages.deposit_required_for_rent'),
             'deposit_amount.numeric' => __('items.messages.deposit_numeric'),
             'deposit_amount.min' => __('items.messages.deposit_min'),
+            'price.required' => __('items.messages.price_required'),
             'images.*.image' => __('items.messages.invalid_image_type'),
             'images.*.mimes' => __('items.messages.invalid_image_format'),
             'images.*.max' => __('items.messages.image_too_large'),

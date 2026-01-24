@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Contracts\Approvable;
 use App\Enums\ItemAvailability;
 use App\Enums\OperationType;
+use App\Models\User;
 use App\Traits\HasApproval;
 use App\Traits\HasAttributes;
 use App\Traits\HasCategory;
@@ -182,15 +183,25 @@ class Item extends Model implements Approvable
             return $query;
         }
 
+        // Performance fix: Use table prefix when joins are present
+        $hasJoins = $this->hasJoins($query);
+        $tablePrefix = $hasJoins ? 'items.' : '';
+
         $driver = $query->getConnection()->getDriverName();
         if ($driver !== 'mysql') {
-            return $query->where(function ($q) use ($term) {
-                $q->where('title', 'like', "%{$term}%")
-                  ->orWhere('description', 'like', "%{$term}%");
+            return $query->where(function ($q) use ($term, $tablePrefix) {
+                $q->where($tablePrefix . 'title', 'like', "%{$term}%")
+                  ->orWhere($tablePrefix . 'description', 'like', "%{$term}%");
             });
         }
 
         try {
+            // For full-text search, we need to specify table prefix
+            if ($hasJoins) {
+                return $query->where(function ($q) use ($term) {
+                    $q->whereRaw('MATCH(items.title, items.description) AGAINST(? IN NATURAL LANGUAGE MODE)', [$term]);
+                });
+            }
             return $query->whereFullText(['title', 'description'], $term);
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::debug('Full-text search failed, using LIKE', [
@@ -198,11 +209,20 @@ class Item extends Model implements Approvable
                 'term' => $term,
             ]);
 
-            return $query->where(function ($q) use ($term) {
-                $q->where('title', 'like', "%{$term}%")
-                  ->orWhere('description', 'like', "%{$term}%");
+            return $query->where(function ($q) use ($term, $tablePrefix) {
+                $q->where($tablePrefix . 'title', 'like', "%{$term}%")
+                  ->orWhere($tablePrefix . 'description', 'like', "%{$term}%");
             });
         }
+    }
+
+    /**
+     * Check if query has joins
+     */
+    private function hasJoins($query): bool
+    {
+        $joins = $query->getQuery()->joins ?? [];
+        return !empty($joins);
     }
 
     /**
@@ -225,8 +245,13 @@ class Item extends Model implements Approvable
         }
     }
 
-    public function ensureCanBeModified(): void
+    public function ensureCanBeModified(?User $user = null): void
     {
+        // Admins can always modify items, even if pending
+        if ($user && $user->hasAnyRole(['admin', 'super_admin'])) {
+            return;
+        }
+
         if ($this->isPending()) {
             throw new \Exception('Cannot modify item while it is pending approval.');
         }
@@ -236,6 +261,14 @@ class Item extends Model implements Approvable
     {
         $this->update(['archived_at' => now()]);
         $this->delete();
+    }
+
+    /**
+     * Check if the item is archived
+     */
+    public function isArchived(): bool
+    {
+        return $this->archived_at !== null;
     }
 
     protected static function boot(): void

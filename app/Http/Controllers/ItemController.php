@@ -48,7 +48,16 @@ class ItemController extends Controller
     {
         $sort = $request->get('sort', 'created_at_desc');
         $page = max(1, (int) $request->get('page', 1));
-        $perPage = min(50, max(1, (int) $request->get('per_page', 12)));
+        $perPage = min(50, max(1, (int) $request->get('per_page', 10)));
+
+        // Validate price filters
+        if ($request->has('price_min') && $request->has('price_max')) {
+            $priceMin = (float) $request->get('price_min', 0);
+            $priceMax = (float) $request->get('price_max', 0);
+            if ($priceMin > 0 && $priceMax > 0 && $priceMin > $priceMax) {
+                return back()->withErrors(['price_min' => __('items.messages.price_min_max_error')]);
+            }
+        }
 
         $query = Item::where('user_id', Auth::id())
             ->with(['category', 'images', 'approvalRelation']);
@@ -58,24 +67,55 @@ class ItemController extends Controller
             $query->search($request->get('search'));
         }
 
+        // Validate and apply category_id filter - Performance fix: use join instead of whereHas
         if ($request->has('category_id') && $request->get('category_id')) {
-            $query->where('category_id', (int) $request->get('category_id'));
+            $categoryId = (int) $request->get('category_id');
+            $query->join('categories', 'items.category_id', '=', 'categories.id')
+                  ->where('items.category_id', $categoryId)
+                  ->where('categories.is_active', true);
         }
 
+        // Validate and apply condition filter
         if ($request->has('condition') && $request->get('condition')) {
-            $query->where('condition', $request->get('condition'));
+            $validConditions = ['new', 'used'];
+            $condition = $request->get('condition');
+            if (in_array($condition, $validConditions)) {
+                $query->where('condition', $condition);
+            }
         }
 
+        // Validate and apply operation_type filter
         if ($request->has('operation_type') && $request->get('operation_type')) {
-            $query->where('operation_type', $request->get('operation_type'));
+            $validTypes = ['sell', 'rent', 'donate'];
+            $operationType = $request->get('operation_type');
+            if (in_array($operationType, $validTypes)) {
+                $query->where('operation_type', $operationType);
+            }
         }
 
-        if ($request->has('price_min') && $request->get('price_min')) {
-            $query->where('price', '>=', (float) $request->get('price_min'));
-        }
-
-        if ($request->has('price_max') && $request->get('price_max')) {
-            $query->where('price', '<=', (float) $request->get('price_max'));
+        // Apply price filters - exclude donate items from price filtering
+        $hasPriceFilter = ($request->has('price_min') && $request->get('price_min')) || 
+                         ($request->has('price_max') && $request->get('price_max'));
+        
+        if ($hasPriceFilter) {
+            $query->where(function($q) use ($request) {
+                // Apply price filters only to sell and rent items
+                $priceCondition = $q->where(function($priceQ) use ($request) {
+                    $priceQ->whereIn('operation_type', ['sell', 'rent']);
+                    
+                    if ($request->has('price_min') && $request->get('price_min')) {
+                        $priceQ->where('price', '>=', (float) $request->get('price_min'));
+                    }
+                    
+                    if ($request->has('price_max') && $request->get('price_max')) {
+                        $priceQ->where('price', '<=', (float) $request->get('price_max'));
+                    }
+                });
+                
+                // Always include donate items (they don't have price restrictions)
+                $q->where('operation_type', 'donate')
+                  ->orWhere($priceCondition);
+            });
         }
 
         // Apply sorting
@@ -91,16 +131,15 @@ class ItemController extends Controller
         $items = $query->paginate($perPage, ['*'], 'page', $page);
         $items->appends($request->query());
 
-        // Extract filters for view
-        $filters = [
+        // Performance fix #17: Build filters array with filtering in one step
+        $filters = array_filter([
             'search' => $request->get('search'),
             'category_id' => $request->get('category_id'),
             'condition' => $request->get('condition'),
             'operation_type' => $request->get('operation_type'),
             'price_min' => $request->get('price_min'),
             'price_max' => $request->get('price_max'),
-        ];
-        $filters = array_filter($filters, fn($value) => $value !== null && $value !== '');
+        ], fn($value) => $value !== null && $value !== '');
 
         // Get categories for filter dropdown
         $categories = Category::active()
@@ -241,7 +280,8 @@ class ItemController extends Controller
                 $item,
                 $validated,
                 $validated['attributes'] ?? null,
-                $imageData
+                $imageData,
+                Auth::user()
             );
 
             return redirect()->route('items.show', $item)

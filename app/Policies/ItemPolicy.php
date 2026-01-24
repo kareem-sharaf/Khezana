@@ -12,8 +12,7 @@ use App\Models\User;
  *
  * Authorization rules:
  * - User can manage only their own items
- * - Admin can view all items
- * - Admin cannot edit item content (only approve/reject)
+ * - Admin can view and edit all items
  * - Super Admin can override everything
  */
 class ItemPolicy
@@ -48,19 +47,14 @@ class ItemPolicy
      * 
      * Rules:
      * - Regular users: Can update own items only if NOT approved (pending, rejected, or draft)
+     * - Admin: Can update any item
      * - Super admin: Can update any item
-     * - Regular admin: Cannot edit item content (only approve/reject)
      */
     public function update(User $user, Item $item): bool
     {
-        // Super admin can update any item
-        if ($user->hasRole('super_admin')) {
+        // Super admin and admin can update any item
+        if ($user->hasAnyRole(['super_admin', 'admin'])) {
             return true;
-        }
-
-        // Regular admin cannot edit item content
-        if ($user->hasRole('admin')) {
-            return false;
         }
 
         // User can update their own items only if NOT approved

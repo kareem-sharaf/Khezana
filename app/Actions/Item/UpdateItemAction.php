@@ -36,17 +36,18 @@ class UpdateItemAction
      * @param array $data Updated data
      * @param array|null $attributes Updated attributes
      * @param array|null $images New uploaded files (UploadedFile instances, will replace existing)
+     * @param \App\Models\User|null $user The user performing the update (for permission checks)
      * @return Item
      * @throws \Exception If validation fails
      */
-    public function execute(Item $item, array $data, ?array $attributes = null, ?array $images = null): Item
+    public function execute(Item $item, array $data, ?array $attributes = null, ?array $images = null, ?\App\Models\User $user = null): Item
     {
         // Validate operation rules
         $this->itemService->validateOperationRules($data);
 
-        return DB::transaction(function () use ($item, $data, $attributes, $images) {
+        return DB::transaction(function () use ($item, $data, $attributes, $images, $user) {
             $item->refresh();
-            $item->ensureCanBeModified();
+            $item->ensureCanBeModified($user);
 
             $wasApproved = $item->isApproved();
             $hasSensitiveChanges = false;

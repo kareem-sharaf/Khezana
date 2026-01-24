@@ -26,8 +26,7 @@ class CreateItemAction
         private readonly ItemService $itemService,
         private readonly SubmitForApprovalAction $submitForApprovalAction,
         private readonly ImageOptimizationService $imageService,
-        private readonly CacheService $cacheService,
-        private readonly PerformanceMonitoringService $performanceMonitoring
+        private readonly CacheService $cacheService
     ) {
     }
 
@@ -43,16 +42,13 @@ class CreateItemAction
      */
     public function execute(array $data, User $user, ?array $attributes = null, ?array $images = null): Item
     {
-        // Phase 0.1: Start performance monitoring
-        $startTime = microtime(true);
-        $imageCount = $images ? count($images) : 0;
-
         // Validate operation rules
         $this->itemService->validateOperationRules($data);
 
         $tempPaths = [];
         $item = DB::transaction(function () use ($data, $user, $attributes, $images, &$tempPaths) {
-            $isAvailable = $data['is_available'] ?? true;
+            // Items are always available when created
+            $isAvailable = true;
 
             $item = Item::create([
                 'user_id' => $user->id,
@@ -65,7 +61,7 @@ class CreateItemAction
                 'price' => $data['price'] ?? null,
                 'deposit_amount' => $data['deposit_amount'] ?? null,
                 'is_available' => $isAvailable,
-                'availability_status' => $isAvailable ? ItemAvailability::AVAILABLE : ItemAvailability::UNAVAILABLE,
+                'availability_status' => ItemAvailability::AVAILABLE,
             ]);
 
             if ($attributes) {
@@ -75,11 +71,6 @@ class CreateItemAction
 
             if ($images && is_array($images)) {
                 $tempPaths = $this->storeImagesToTemp($images);
-                \Illuminate\Support\Facades\Log::info('Item creation: Images stored to temp', [
-                    'item_id' => $item->id,
-                    'temp_paths_count' => count($tempPaths),
-                    'temp_paths' => $tempPaths,
-                ]);
             }
 
             $this->submitForApprovalAction->execute($item, $user);
@@ -91,26 +82,8 @@ class CreateItemAction
         $this->cacheService->invalidateItem($item->id);
 
         if (!empty($tempPaths)) {
-            \Illuminate\Support\Facades\Log::info('Item creation: Dispatching ProcessItemImagesJob', [
-                'item_id' => $item->id,
-                'temp_paths_count' => count($tempPaths),
-                'queue_connection' => config('queue.default'),
-            ]);
             ProcessItemImagesJob::dispatch($item->id, $tempPaths, 'public');
-        } else {
-            \Illuminate\Support\Facades\Log::info('Item creation: No images to process', [
-                'item_id' => $item->id,
-            ]);
         }
-
-        // Phase 0.1: Record performance metrics
-        $duration = (microtime(true) - $startTime) * 1000; // Convert to milliseconds
-        $this->performanceMonitoring->recordMetric('item_creation', $duration, [
-            'user_id' => $user->id,
-            'category_id' => $data['category_id'],
-            'image_count' => $imageCount,
-            'has_attributes' => !empty($attributes),
-        ]);
 
         return $item;
     }
@@ -126,25 +99,16 @@ class CreateItemAction
         $tempPaths = [];
         $disk = 'public';
 
-        \Illuminate\Support\Facades\Log::info('CreateItemAction: Storing images to temp', [
-            'images_count' => count($images),
-        ]);
-
+        // Performance fix #13: Reduced logging - only log errors
         foreach ($images as $index => $file) {
             if (!($file instanceof UploadedFile)) {
-                \Illuminate\Support\Facades\Log::warning('CreateItemAction: Skipping non-UploadedFile', [
-                    'index' => $index,
-                    'type' => gettype($file),
-                ]);
                 continue;
             }
             try {
                 $this->imageService->validateFile($file);
             } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::warning('CreateItemAction: Skipping invalid image', [
+                \Illuminate\Support\Facades\Log::error('CreateItemAction: Invalid image skipped', [
                     'name' => $file->getClientOriginalName(),
-                    'size' => $file->getSize(),
-                    'mime' => $file->getMimeType(),
                     'error' => $e->getMessage(),
                 ]);
                 continue;
@@ -155,22 +119,12 @@ class CreateItemAction
             $path = $file->storeAs('temp', $name, $disk);
             if ($path) {
                 $tempPaths[] = $path;
-                \Illuminate\Support\Facades\Log::debug('CreateItemAction: Image stored to temp', [
-                    'original_name' => $file->getClientOriginalName(),
-                    'temp_path' => $path,
-                    'size' => $file->getSize(),
-                ]);
             } else {
                 \Illuminate\Support\Facades\Log::error('CreateItemAction: Failed to store image to temp', [
                     'original_name' => $file->getClientOriginalName(),
                 ]);
             }
         }
-
-        \Illuminate\Support\Facades\Log::info('CreateItemAction: Images stored to temp completed', [
-            'stored_count' => count($tempPaths),
-            'total_count' => count($images),
-        ]);
 
         return $tempPaths;
     }

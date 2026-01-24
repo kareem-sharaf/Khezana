@@ -9,16 +9,19 @@ use Illuminate\Support\Facades\Log;
 
 class CacheService
 {
-    private const TTL_INDEX = 60; // 1 minute (reduced for fresh content)
+    private const TTL_INDEX = 300; // 5 minutes (Performance fix #4: increased from 60s)
     private const TTL_SHOW = 600; // 10 minutes
     private const TTL_CATEGORIES = 3600; // 1 hour
     private const TTL_ATTRIBUTES = 3600; // 1 hour
 
-    public function getItemsIndexKey(array $filters, ?string $sort, int $page, string $locale, ?int $userId = null): string
+    public function getItemsIndexKey(array $filters, ?string $sort, int $page, string $locale, ?int $userId = null, ?int $perPage = null): string
     {
-        $userPart = $userId ? ":user:{$userId}" : ":guest";
-        $filterHash = md5(json_encode($filters) . $sort . $page);
-        return "items:index:{$locale}{$userPart}:page:{$page}:filters:{$filterHash}";
+        // Performance fix #9: Remove userId from cache key to prevent fragmentation
+        // User-specific data can be added in view layer
+        // Include per_page in cache key to ensure different pagination sizes are cached separately
+        $perPagePart = $perPage ? ":per_page:{$perPage}" : "";
+        $filterHash = md5(json_encode($filters) . $sort . $page . ($perPage ?? ''));
+        return "items:index:{$locale}:page:{$page}{$perPagePart}:filters:{$filterHash}";
     }
 
     public function getItemShowKey(int $itemId, ?string $slug, ?int $userId, string $locale): string
@@ -51,9 +54,10 @@ class CacheService
         return "category:{$categoryId}:attributes";
     }
 
-    public function rememberItemsIndex(callable $callback, array $filters, ?string $sort, int $page, string $locale, ?int $userId = null)
+    public function rememberItemsIndex(callable $callback, array $filters, ?string $sort, int $page, string $locale, ?int $userId = null, ?int $perPage = null)
     {
-        $key = $this->getItemsIndexKey($filters, $sort, $page, $locale, $userId);
+        // Performance fix #9: Ignore userId parameter to prevent cache fragmentation
+        $key = $this->getItemsIndexKey($filters, $sort, $page, $locale, null, $perPage);
         return $this->remember($key, self::TTL_INDEX, $callback, 'items_index');
     }
 
@@ -90,8 +94,8 @@ class CacheService
     private function remember(string $key, int $ttl, callable $callback, string $context): mixed
     {
         $startTime = microtime(true);
-        $cacheHit = Cache::has($key);
         
+        // Performance fix #10: Remove Cache::has() - Cache::remember() already checks internally
         $result = Cache::remember($key, $ttl, function () use ($callback, $key, $context, $ttl) {
             $result = $callback();
             
@@ -113,7 +117,6 @@ class CacheService
                 'key' => $key,
                 'context' => $context,
                 'duration_ms' => round($duration, 2),
-                'cache_hit' => $cacheHit,
             ]);
         }
         

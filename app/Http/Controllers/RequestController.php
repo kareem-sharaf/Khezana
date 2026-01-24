@@ -41,7 +41,7 @@ class RequestController extends Controller
     {
         $sort = $request->get('sort', 'created_at_desc');
         $page = max(1, (int) $request->get('page', 1));
-        $perPage = min(50, max(1, (int) $request->get('per_page', 12)));
+        $perPage = min(50, max(1, (int) $request->get('per_page', 10)));
 
         $query = RequestModel::where('user_id', Auth::id())
             ->with(['category', 'approvalRelation', 'itemAttributes.attribute', 'offers']);

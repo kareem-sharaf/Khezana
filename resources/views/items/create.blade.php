@@ -49,180 +49,271 @@
                     </div>
                 @endif
                 
-                <p id="draftSavedIndicator" class="khezana-form-hint" style="display:none; margin-bottom:1rem;" aria-live="polite">
+                <p id="draftSavedIndicator" class="khezana-form-hint khezana-draft-indicator" style="display:none; margin-bottom:1rem;" aria-live="polite">
+                    <span class="khezana-draft-indicator-icon">💾</span>
                     {{ __('items.messages.draft_saved') }}
                 </p>
+
+                {{-- Progress Indicator --}}
+                <div class="khezana-form-progress">
+                    <div class="khezana-form-progress-steps">
+                        <div class="khezana-form-progress-step" data-step="1">
+                            <div class="khezana-form-progress-step-number">1</div>
+                            <div class="khezana-form-progress-step-label">{{ __('items.sections.basic_info') }}</div>
+                        </div>
+                        <div class="khezana-form-progress-step" data-step="2">
+                            <div class="khezana-form-progress-step-number">2</div>
+                            <div class="khezana-form-progress-step-label">{{ __('items.sections.details') }}</div>
+                        </div>
+                        <div class="khezana-form-progress-step" data-step="3">
+                            <div class="khezana-form-progress-step-number">3</div>
+                            <div class="khezana-form-progress-step-label">{{ __('items.fields.images') }}</div>
+                        </div>
+                    </div>
+                    <div class="khezana-form-progress-bar">
+                        <div class="khezana-form-progress-bar-fill" id="progressBarFill"></div>
+                    </div>
+                </div>
+
                 <form method="POST" action="{{ route('items.store') }}" class="khezana-form" id="itemCreateForm"
                     enctype="multipart/form-data">
                     @csrf
 
-                    <div class="khezana-form-group">
-                        <label for="category_id" class="khezana-form-label">
-                            {{ __('items.fields.category') }}
-                            <span class="khezana-required">*</span>
-                        </label>
-                        @include('components.category-select', [
-                            'categories' => $categories,
-                            'name' => 'category_id',
-                            'id' => 'category_id',
-                            'selected' => old('category_id'),
-                            'required' => true,
-                            'placeholder' => __('common.ui.select_category'),
-                            'showAllOption' => false,
-                            'attributes' => true,
-                            'onchange' => 'loadCategoryAttributes(this.value)',
-                        ])
-                        <p class="khezana-form-hint">{{ __('items.hints.category') }}</p>
-                        @error('category_id')
-                            <span class="khezana-form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="khezana-form-group">
-                        <label class="khezana-form-label">
-                            {{ __('items.fields.operation_type') }}
-                            <span class="khezana-required">*</span>
-                        </label>
-                        <p class="khezana-form-hint">{{ __('items.hints.operation_type') }}</p>
-                        <div class="khezana-filter-options">
-                            <label class="khezana-filter-option">
-                                <input type="radio" name="operation_type" value="sell" required
-                                    {{ old('operation_type') === 'sell' ? 'checked' : '' }}>
-                                <span>{{ __('items.operation_types.sell') }}</span>
-                            </label>
-                            <label class="khezana-filter-option">
-                                <input type="radio" name="operation_type" value="rent" required
-                                    {{ old('operation_type') === 'rent' ? 'checked' : '' }}>
-                                <span>{{ __('items.operation_types.rent') }}</span>
-                            </label>
-                            <label class="khezana-filter-option">
-                                <input type="radio" name="operation_type" value="donate" required
-                                    {{ old('operation_type') === 'donate' ? 'checked' : '' }}>
-                                <span>{{ __('items.operation_types.donate') }}</span>
-                            </label>
-                        </div>
-                        @error('operation_type')
-                            <span class="khezana-form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="khezana-form-group">
-                        <label for="title" class="khezana-form-label">
-                            {{ __('items.fields.title') }}
-                            <span class="khezana-required">*</span>
-                        </label>
-                        <input type="text" name="title" id="title" class="khezana-form-input"
-                            value="{{ old('title') }}" placeholder="{{ __('items.placeholders.title') }}" required
-                            maxlength="255">
-                        @error('title')
-                            <span class="khezana-form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="khezana-form-group">
-                        <label for="description" class="khezana-form-label">
-                            {{ __('items.fields.description') }}
-                        </label>
-                        <p class="khezana-form-hint">{{ __('items.hints.description') }}</p>
-                        <textarea name="description" id="description" class="khezana-form-input khezana-form-textarea" rows="5"
-                            placeholder="{{ __('items.placeholders.description') }}">{{ old('description') }}</textarea>
-                        @error('description')
-                            <span class="khezana-form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Condition Group -->
-                    <div class="khezana-form-group">
-                        <label class="khezana-form-label">
-                            <span class="khezana-field-icon">🏷️</span>
-                            {{ __('items.fields.condition') }}
-                            <span class="khezana-required">*</span>
-                        </label>
-                        <p class="khezana-form-hint">{{ __('items.hints.condition') }}</p>
-                        <div class="khezana-filter-options">
-                            <label class="khezana-filter-option">
-                                <input type="radio" name="condition" value="new" required
-                                    {{ old('condition') === 'new' ? 'checked' : '' }}>
-                                <span>{{ __('items.conditions.new') }}</span>
-                                <small class="khezana-option-hint">{{ __('items.conditions.new_hint') }}</small>
-                            </label>
-                            <label class="khezana-filter-option">
-                                <input type="radio" name="condition" value="used" required
-                                    {{ old('condition') === 'used' ? 'checked' : '' }}>
-                                <span>{{ __('items.conditions.used') }}</span>
-                                <small class="khezana-option-hint">{{ __('items.conditions.used_hint') }}</small>
-                            </label>
-                        </div>
-                        @error('condition')
-                            <span class="khezana-form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="khezana-form-row">
-                        <div class="khezana-form-group">
-                            <label for="price" class="khezana-form-label">
-                                {{ __('items.fields.price') }}
-                            </label>
-                            <p class="khezana-form-hint">{{ __('items.hints.price') }}</p>
-                            <input type="number" step="0.01" name="price" id="price"
-                                class="khezana-form-input" value="{{ old('price') }}"
-                                placeholder="{{ __('items.placeholders.price') }}">
-                            @error('price')
-                                <span class="khezana-form-error">{{ $message }}</span>
-                            @enderror
+                    {{-- Section 1: Basic Information --}}
+                    <div class="khezana-form-section">
+                        <div class="khezana-form-section-header">
+                            <h2 class="khezana-form-section-title">
+                                <span class="khezana-form-section-icon">👕</span>
+                                {{ __('items.sections.basic_info') }}
+                            </h2>
+                            <p class="khezana-form-section-description">{{ __('items.sections.basic_info_desc') }}</p>
                         </div>
 
-                        <div class="khezana-form-group" id="deposit_amount_group" style="display: none;">
-                            <label for="deposit_amount" class="khezana-form-label">
-                                {{ __('items.fields.deposit_amount') }}
-                            </label>
-                            <p class="khezana-form-hint">{{ __('items.hints.deposit_amount') }}</p>
-                            <input type="number" step="0.01" name="deposit_amount" id="deposit_amount"
-                                class="khezana-form-input" value="{{ old('deposit_amount') }}"
-                                placeholder="{{ __('items.placeholders.deposit_amount') }}">
-                            @error('deposit_amount')
-                                <span class="khezana-form-error">{{ $message }}</span>
-                            @enderror
+                        <div class="khezana-form-section-content">
+                            <div class="khezana-form-group">
+                                <label for="category_id" class="khezana-form-label">
+                                    <span class="khezana-form-label-icon">👗</span>
+                                    {{ __('items.fields.category') }}
+                                    <span class="khezana-required">*</span>
+                                </label>
+                                @include('components.category-select', [
+                                    'categories' => $categories,
+                                    'name' => 'category_id',
+                                    'id' => 'category_id',
+                                    'selected' => old('category_id'),
+                                    'required' => true,
+                                    'placeholder' => __('common.ui.select_category'),
+                                    'showAllOption' => false,
+                                    'attributes' => true,
+                                    'onchange' => 'loadCategoryAttributes(this.value)',
+                                ])
+                                <p class="khezana-form-hint">{{ __('items.hints.category') }}</p>
+                                @error('category_id')
+                                    <span class="khezana-form-error">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="khezana-form-group">
+                                <label class="khezana-form-label">
+                                    <span class="khezana-form-label-icon">💼</span>
+                                    {{ __('items.fields.operation_type') }}
+                                    <span class="khezana-required">*</span>
+                                </label>
+                                <p class="khezana-form-hint">{{ __('items.hints.operation_type') }}</p>
+                                <div class="khezana-filter-options khezana-filter-options--enhanced">
+                                    <label class="khezana-filter-option khezana-filter-option--card">
+                                        <input type="radio" name="operation_type" value="sell" required
+                                            {{ old('operation_type') === 'sell' ? 'checked' : '' }}>
+                                        <div class="khezana-filter-option-content">
+                                            <span class="khezana-filter-option-icon">💵</span>
+                                            <span class="khezana-filter-option-label">{{ __('items.operation_types.sell') }}</span>
+                                        </div>
+                                    </label>
+                                    <label class="khezana-filter-option khezana-filter-option--card">
+                                        <input type="radio" name="operation_type" value="rent" required
+                                            {{ old('operation_type') === 'rent' ? 'checked' : '' }}>
+                                        <div class="khezana-filter-option-content">
+                                            <span class="khezana-filter-option-icon">👔</span>
+                                            <span class="khezana-filter-option-label">{{ __('items.operation_types.rent') }}</span>
+                                        </div>
+                                    </label>
+                                    <label class="khezana-filter-option khezana-filter-option--card">
+                                        <input type="radio" name="operation_type" value="donate" required
+                                            {{ old('operation_type') === 'donate' ? 'checked' : '' }}>
+                                        <div class="khezana-filter-option-content">
+                                            <span class="khezana-filter-option-icon">🎀</span>
+                                            <span class="khezana-filter-option-label">{{ __('items.operation_types.donate') }}</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                @error('operation_type')
+                                    <span class="khezana-form-error">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="khezana-form-group">
+                                <label for="title" class="khezana-form-label">
+                                    <span class="khezana-form-label-icon">✏️</span>
+                                    {{ __('items.fields.title') }}
+                                    <span class="khezana-required">*</span>
+                                </label>
+                                <input type="text" name="title" id="title" class="khezana-form-input khezana-form-input--enhanced"
+                                    value="{{ old('title') }}" placeholder="{{ __('items.placeholders.title') }}" required
+                                    maxlength="255">
+                                @error('title')
+                                    <span class="khezana-form-error">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="khezana-form-group">
+                                <label for="description" class="khezana-form-label">
+                                    <span class="khezana-form-label-icon">📄</span>
+                                    {{ __('items.fields.description') }}
+                                </label>
+                                <p class="khezana-form-hint">{{ __('items.hints.description') }}</p>
+                                <textarea name="description" id="description" class="khezana-form-input khezana-form-textarea khezana-form-textarea--enhanced" rows="5"
+                                    placeholder="{{ __('items.placeholders.description') }}">{{ old('description') }}</textarea>
+                                @error('description')
+                                    <span class="khezana-form-error">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
                     </div>
 
-                    <div class="khezana-form-group khezana-form-checkbox">
-                        <label class="khezana-form-label">
-                            <input type="checkbox" name="is_available" value="1"
-                                {{ old('is_available', true) ? 'checked' : '' }}>
-                            {{ __('items.fields.is_available') }}
-                        </label>
-                        <p class="khezana-form-hint">{{ __('items.hints.is_available') }}</p>
-                        @error('is_available')
-                            <span class="khezana-form-error">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div id="attributesContainer" class="khezana-attributes-container" style="display: none;">
-                        <h3 class="khezana-section-title-small">{{ __('items.fields.attributes') }}</h3>
-                        <div id="attributesFields"></div>
-                    </div>
-
-                    <div class="khezana-form-group">
-                        <label for="images" class="khezana-form-label">
-                            {{ __('items.fields.images') }}
-                        </label>
-                        <p class="khezana-form-hint">{{ __('items.hints.images') }}</p>
-                        <div id="imageDropZone" class="khezana-image-drop-zone" aria-label="{{ __('items.hints.images') }}">
-                            <input type="file" name="images[]" id="images" class="khezana-form-input"
-                                accept="image/jpeg,image/jpg,image/png" capture="environment" multiple>
-                            <span class="khezana-image-drop-zone__label">{{ __('items.hints.drop_images') }}</span>
+                    {{-- Section 2: Details --}}
+                    <div class="khezana-form-section">
+                        <div class="khezana-form-section-header">
+                            <h2 class="khezana-form-section-title">
+                                <span class="khezana-form-section-icon">🔍</span>
+                                {{ __('items.sections.details') }}
+                            </h2>
+                            <p class="khezana-form-section-description">{{ __('items.sections.details_desc') }}</p>
                         </div>
-                        @error('images')
-                            <span class="khezana-form-error">{{ $message }}</span>
-                        @enderror
-                        @error('images.*')
-                            <span class="khezana-form-error">{{ $message }}</span>
-                        @enderror
 
-                        {{-- Image Preview Container --}}
-                        <div id="imagePreviewContainer" class="khezana-image-preview-container" style="display: none;">
-                            <div id="imagePreviewGrid" class="khezana-image-preview-grid"></div>
+                        <div class="khezana-form-section-content">
+                            <div class="khezana-form-group">
+                                <label class="khezana-form-label">
+                                    <span class="khezana-form-label-icon">🏷️</span>
+                                    {{ __('items.fields.condition') }}
+                                    <span class="khezana-required">*</span>
+                                </label>
+                                <p class="khezana-form-hint">{{ __('items.hints.condition') }}</p>
+                                <div class="khezana-filter-options khezana-filter-options--enhanced">
+                                    <label class="khezana-filter-option khezana-filter-option--card">
+                                        <input type="radio" name="condition" value="new" required
+                                            {{ old('condition') === 'new' ? 'checked' : '' }}>
+                                        <div class="khezana-filter-option-content">
+                                            <span class="khezana-filter-option-icon">✨</span>
+                                            <div class="khezana-filter-option-text">
+                                                <span class="khezana-filter-option-label">{{ __('items.conditions.new') }}</span>
+                                                <small class="khezana-option-hint">{{ __('items.conditions.new_hint') }}</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    <label class="khezana-filter-option khezana-filter-option--card">
+                                        <input type="radio" name="condition" value="used" required
+                                            {{ old('condition') === 'used' ? 'checked' : '' }}>
+                                        <div class="khezana-filter-option-content">
+                                            <span class="khezana-filter-option-icon">♻️</span>
+                                            <div class="khezana-filter-option-text">
+                                                <span class="khezana-filter-option-label">{{ __('items.conditions.used') }}</span>
+                                                <small class="khezana-option-hint">{{ __('items.conditions.used_hint') }}</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                                @error('condition')
+                                    <span class="khezana-form-error">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="khezana-form-row khezana-form-row--enhanced">
+                                <div class="khezana-form-group">
+                                    <label for="price" class="khezana-form-label">
+                                        <span class="khezana-form-label-icon">💰</span>
+                                        {{ __('items.fields.price') }}
+                                    </label>
+                                    <p class="khezana-form-hint">{{ __('items.hints.price') }}</p>
+                                    <div class="khezana-form-input-wrapper">
+                                        <input type="number" step="0.01" name="price" id="price"
+                                            class="khezana-form-input khezana-form-input--enhanced" value="{{ old('price') }}"
+                                            placeholder="{{ __('items.placeholders.price') }}">
+                                        <span class="khezana-form-input-suffix">ل.س</span>
+                                    </div>
+                                    @error('price')
+                                        <span class="khezana-form-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="khezana-form-group" id="deposit_amount_group" style="display: {{ old('operation_type') === 'rent' ? 'block' : 'none' }};">
+                                    <label for="deposit_amount" class="khezana-form-label">
+                                        <span class="khezana-form-label-icon">💳</span>
+                                        {{ __('items.fields.deposit_amount') }}
+                                        <span class="khezana-required">*</span>
+                                    </label>
+                                    <p class="khezana-form-hint">{{ __('items.hints.deposit_amount') }}</p>
+                                    <div class="khezana-form-input-wrapper">
+                                        <input type="number" step="0.01" name="deposit_amount" id="deposit_amount"
+                                            class="khezana-form-input khezana-form-input--enhanced" value="{{ old('deposit_amount') }}"
+                                            placeholder="{{ __('items.placeholders.deposit_amount') }}"
+                                            {{ old('operation_type') === 'rent' ? 'required' : '' }}>
+                                        <span class="khezana-form-input-suffix">ل.س</span>
+                                    </div>
+                                    @error('deposit_amount')
+                                        <span class="khezana-form-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Section 3: Attributes --}}
+                    <div id="attributesContainer" class="khezana-form-section" style="display: none;">
+                        <div class="khezana-form-section-header">
+                            <h2 class="khezana-form-section-title">
+                                <span class="khezana-form-section-icon">🎨</span>
+                                {{ __('items.fields.attributes') }}
+                            </h2>
+                            <p class="khezana-form-section-description">{{ __('items.sections.attributes_desc') }}</p>
+                        </div>
+                        <div class="khezana-form-section-content">
+                            <div id="attributesFields"></div>
+                        </div>
+                    </div>
+
+                    {{-- Section 4: Images --}}
+                    <div class="khezana-form-section">
+                        <div class="khezana-form-section-header">
+                            <h2 class="khezana-form-section-title">
+                                <span class="khezana-form-section-icon">📷</span>
+                                {{ __('items.fields.images') }}
+                            </h2>
+                            <p class="khezana-form-section-description">{{ __('items.sections.images_desc') }}</p>
+                        </div>
+                        <div class="khezana-form-section-content">
+                            <div class="khezana-form-group">
+                                <p class="khezana-form-hint">{{ __('items.hints.images') }}</p>
+                                <div id="imageDropZone" class="khezana-image-drop-zone khezana-image-drop-zone--enhanced" aria-label="{{ __('items.hints.images') }}">
+                                    <div class="khezana-image-drop-zone-content">
+                                        <span class="khezana-image-drop-zone-icon">📸</span>
+                                        <span class="khezana-image-drop-zone__label">{{ __('items.hints.drop_images') }}</span>
+                                        <span class="khezana-image-drop-zone-hint">{{ __('items.hints.click_or_drag') }}</span>
+                                    </div>
+                                    <input type="file" name="images[]" id="images" class="khezana-form-input"
+                                        accept="image/jpeg,image/jpg,image/png" capture="environment" multiple>
+                                </div>
+                                @error('images')
+                                    <span class="khezana-form-error">{{ $message }}</span>
+                                @enderror
+                                @error('images.*')
+                                    <span class="khezana-form-error">{{ $message }}</span>
+                                @enderror
+
+                                {{-- Image Preview Container --}}
+                                <div id="imagePreviewContainer" class="khezana-image-preview-container" style="display: none;">
+                                    <div id="imagePreviewGrid" class="khezana-image-preview-grid"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -547,6 +638,68 @@
                 if (btnContinue) btnContinue.focus();
                 btnContinue.addEventListener('click', onContinue);
             });
+        })();
+
+        // Form Progress Tracker
+        (function() {
+            const form = document.getElementById('itemCreateForm');
+            const progressBarFill = document.getElementById('progressBarFill');
+            const progressSteps = document.querySelectorAll('.khezana-form-progress-step');
+            
+            function updateProgress() {
+                if (!form || !progressBarFill) return;
+                
+                const requiredFields = form.querySelectorAll('[required]');
+                const filledFields = Array.from(requiredFields).filter(field => {
+                    if (field.type === 'radio') {
+                        return form.querySelector(`[name="${field.name}"]:checked`);
+                    }
+                    if (field.type === 'checkbox') {
+                        return field.checked;
+                    }
+                    return field.value.trim() !== '';
+                });
+                
+                const progress = requiredFields.length > 0 
+                    ? (filledFields.length / requiredFields.length) * 100 
+                    : 0;
+                
+                progressBarFill.style.width = progress + '%';
+                
+                // Update step indicators
+                const sections = document.querySelectorAll('.khezana-form-section');
+                sections.forEach((section, index) => {
+                    const step = progressSteps[index];
+                    if (!step) return;
+                    
+                    const sectionFields = section.querySelectorAll('[required]');
+                    const sectionFilled = Array.from(sectionFields).filter(field => {
+                        if (field.type === 'radio') {
+                            return form.querySelector(`[name="${field.name}"]:checked`);
+                        }
+                        return field.value.trim() !== '';
+                    });
+                    
+                    const sectionProgress = sectionFields.length > 0 
+                        ? sectionFilled.length / sectionFields.length 
+                        : 0;
+                    
+                    if (sectionProgress === 1) {
+                        step.classList.add('khezana-form-progress-step--completed');
+                    } else if (sectionProgress > 0) {
+                        step.classList.add('khezana-form-progress-step--in-progress');
+                        step.classList.remove('khezana-form-progress-step--completed');
+                    } else {
+                        step.classList.remove('khezana-form-progress-step--completed', 'khezana-form-progress-step--in-progress');
+                    }
+                });
+            }
+            
+            if (form) {
+                form.addEventListener('input', updateProgress);
+                form.addEventListener('change', updateProgress);
+                updateProgress(); // Initial update
+            }
         })();
 
         // Phase 4.1: Draft auto-save to localStorage

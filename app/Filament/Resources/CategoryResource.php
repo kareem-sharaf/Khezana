@@ -62,8 +62,8 @@ class CategoryResource extends Resource
                             ->maxLength(255)
                             ->placeholder(__('categories.placeholders.name'))
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function ($state, callable $set) {
-                                if (empty($set('slug'))) {
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                if (empty($get('slug'))) {
                                     $set('slug', \Illuminate\Support\Str::slug($state));
                                 }
                             }),
@@ -76,9 +76,20 @@ class CategoryResource extends Resource
                             ->helperText(__('categories.placeholders.slug')),
                         Select::make('parent_id')
                             ->label(__('categories.fields.parent_id'))
-                            ->relationship('parent', 'name')
+                            ->options(function ($record) {
+                                $query = Category::query()->orderBy('name');
+                                
+                                // Exclude current category and its descendants when editing
+                                if ($record && $record->exists) {
+                                    $excludeIds = [$record->id];
+                                    $descendants = $record->descendants()->pluck('id')->toArray();
+                                    $excludeIds = array_merge($excludeIds, $descendants);
+                                    $query->whereNotIn('id', $excludeIds);
+                                }
+                                
+                                return $query->pluck('name', 'id');
+                            })
                             ->searchable()
-                            ->preload()
                             ->nullable()
                             ->placeholder(__('categories.placeholders.parent_id'))
                             ->helperText(__('categories.placeholders.parent_id')),

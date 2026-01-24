@@ -33,7 +33,7 @@ class RequestController extends Controller
     {
         $sort = $request->get('sort', 'created_at_desc');
         $page = max(1, (int) $request->get('page', 1));
-        $perPage = min(50, max(1, (int) $request->get('per_page', 20)));
+        $perPage = min(50, max(1, (int) $request->get('per_page', 10)));
         $locale = app()->getLocale();
 
         $requests = $this->cacheService->rememberRequestsIndex(

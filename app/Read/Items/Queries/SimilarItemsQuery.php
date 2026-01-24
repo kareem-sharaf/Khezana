@@ -16,43 +16,58 @@ class SimilarItemsQuery
     {
         $startTime = microtime(true);
 
-        // Phase 1.3: Use scope for published and available items
+        // Performance fix: Use JOINs instead of scope for better performance
         $query = Item::query()
-            ->where('id', '!=', $itemId) // Exclude current item
+            ->where('items.id', '!=', $itemId) // Exclude current item
+            ->leftJoin('approvals', function($join) {
+                $join->on('items.id', '=', 'approvals.approvable_id')
+                     ->where('approvals.approvable_type', '=', Item::class);
+            })
+            ->leftJoin('categories', 'items.category_id', '=', 'categories.id')
+            ->whereNull('items.deleted_at')
+            ->whereNull('items.archived_at')
             ->where(function ($q) use ($user) {
-                // Public items: only approved and available (using scope)
-                $q->publishedAndAvailable();
+                // Public items: approved and available (must have approval and active category)
+                $q->where(function($public) {
+                    $public->whereNotNull('approvals.id')
+                           ->where('approvals.status', '=', \App\Enums\ApprovalStatus::APPROVED->value)
+                           ->whereNotNull('categories.id')
+                           ->where('categories.is_active', true)
+                           ->where(function($avail) {
+                               $avail->where('items.availability_status', \App\Enums\ItemAvailability::AVAILABLE->value)
+                                     ->orWhere('items.is_available', true);
+                           });
+                });
 
-                // If user is authenticated, also show their own items (regardless of approval status)
+                // If user is authenticated, also show their own items
                 if ($user) {
-                    $q->orWhere(function ($own) use ($user) {
-                        $own->where('user_id', $user->id)
-                            ->whereNull('deleted_at')
-                            ->whereNull('archived_at');
-                    });
+                    $q->orWhere('items.user_id', $user->id);
                 }
             });
 
         // Filter by category if provided
         if ($categoryId) {
-            $query->where('category_id', $categoryId);
+            $query->where('items.category_id', $categoryId);
         }
 
         // Filter by operation type if provided
         if ($operationType) {
-            $query->where('operation_type', $operationType);
+            $query->where('items.operation_type', $operationType);
         }
 
         // Filter by condition if provided (optional - don't require it)
         if ($condition) {
-            $query->where('condition', $condition);
+            $query->where('items.condition', $condition);
         }
 
         // Order by most recent first
-        $query->orderBy('created_at', 'desc');
+        $query->orderBy('items.created_at', 'desc');
 
-        // Phase 1.3: Select only needed columns
-        $query->select('id', 'title', 'slug', 'description', 'condition', 'price', 'operation_type', 'availability_status', 'user_id', 'category_id', 'created_at', 'updated_at');
+        // Performance fix: Select only needed columns with table prefixes
+        $query->distinct()
+              ->select('items.id', 'items.title', 'items.slug', 'items.description', 'items.condition', 
+                      'items.price', 'items.operation_type', 'items.availability_status', 
+                      'items.user_id', 'items.category_id', 'items.created_at', 'items.updated_at');
 
         // Phase 1.3: Optimized Eager Loading - only load what's needed
         $query->with([

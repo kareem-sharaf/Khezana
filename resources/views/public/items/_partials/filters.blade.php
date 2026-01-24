@@ -13,6 +13,7 @@
 <div x-data="{ 
     filtersOpen: false,
     overlayReady: false,
+    operationType: '{{ $currentFilters['operation_type'] ?? '' }}',
     init() {
         this.$watch('filtersOpen', value => {
             if (value) {
@@ -100,22 +101,26 @@
                         <div class="khezana-segmented">
                             <label class="khezana-segmented__option">
                                 <input type="radio" name="operation_type" value=""
-                                    {{ !isset($currentFilters['operation_type']) || $currentFilters['operation_type'] === '' ? 'checked' : '' }}>
+                                    {{ !isset($currentFilters['operation_type']) || $currentFilters['operation_type'] === '' ? 'checked' : '' }}
+                                    @change="operationType = $event.target.value">
                                 <span>{{ __('common.ui.all_types') }}</span>
                             </label>
                             <label class="khezana-segmented__option">
                                 <input type="radio" name="operation_type" value="sell"
-                                    {{ isset($currentFilters['operation_type']) && $currentFilters['operation_type'] === 'sell' ? 'checked' : '' }}>
+                                    {{ isset($currentFilters['operation_type']) && $currentFilters['operation_type'] === 'sell' ? 'checked' : '' }}
+                                    @change="operationType = $event.target.value">
                                 <span>{{ __('items.operation_types.sell') }}</span>
                             </label>
                             <label class="khezana-segmented__option">
                                 <input type="radio" name="operation_type" value="rent"
-                                    {{ isset($currentFilters['operation_type']) && $currentFilters['operation_type'] === 'rent' ? 'checked' : '' }}>
+                                    {{ isset($currentFilters['operation_type']) && $currentFilters['operation_type'] === 'rent' ? 'checked' : '' }}
+                                    @change="operationType = $event.target.value">
                                 <span>{{ __('items.operation_types.rent') }}</span>
                             </label>
                             <label class="khezana-segmented__option">
                                 <input type="radio" name="operation_type" value="donate"
-                                    {{ isset($currentFilters['operation_type']) && $currentFilters['operation_type'] === 'donate' ? 'checked' : '' }}>
+                                    {{ isset($currentFilters['operation_type']) && $currentFilters['operation_type'] === 'donate' ? 'checked' : '' }}
+                                    @change="operationType = $event.target.value">
                                 <span>{{ __('items.operation_types.donate') }}</span>
                             </label>
                         </div>
@@ -193,10 +198,13 @@
                 </section>
 
                 {{-- Price: simple slider --}}
-                <section class="khezana-filter-section" x-data="{
-                    open: {{ $hasPrice ? 'true' : 'false' }},
-                    ...priceSlider({{ $priceMin }}, {{ $priceMax }})
-                }">
+                <section class="khezana-filter-section" 
+                    x-data="{
+                        open: {{ $hasPrice ? 'true' : 'false' }},
+                        ...priceSlider({{ $priceMin }}, {{ $priceMax }})
+                    }"
+                    x-show="!operationType || operationType !== 'donate'"
+                    x-transition>
                     <button type="button" class="khezana-filter-section__trigger" @click="open = !open"
                         :aria-expanded="open">
                         <span class="khezana-filter-section__label">{{ __('items.fields.price') }}</span>

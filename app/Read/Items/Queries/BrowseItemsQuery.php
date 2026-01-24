@@ -14,61 +14,133 @@ use Illuminate\Support\Facades\Log;
 
 class BrowseItemsQuery
 {
-    public function execute(array $filters = [], ?string $sort = null, int $page = 1, int $perPage = 20, ?User $user = null): LengthAwarePaginator
+    public function execute(array $filters = [], ?string $sort = null, int $page = 1, int $perPage = 10, ?User $user = null): LengthAwarePaginator
     {
         $startTime = microtime(true);
         
-        // Phase 1.3: Use scope for published and available items
+        // Performance fix #1: Use JOINs instead of whereHas for better performance
+        // Build query with proper structure for public items and user's own items
         $query = Item::query()
+            ->leftJoin('approvals', function($join) {
+                $join->on('items.id', '=', 'approvals.approvable_id')
+                     ->where('approvals.approvable_type', '=', Item::class);
+            })
+            ->leftJoin('categories', 'items.category_id', '=', 'categories.id')
+            ->whereNull('items.deleted_at')
+            ->whereNull('items.archived_at')
             ->where(function($q) use ($user) {
-                // Public items: only approved and available (using scope)
-                $q->publishedAndAvailable();
+                // Public items: approved and available (must have approval and active category)
+                $q->where(function($public) {
+                    $public->whereNotNull('approvals.id')
+                           ->where('approvals.status', '=', ApprovalStatus::APPROVED->value)
+                           ->whereNotNull('categories.id')
+                           ->where('categories.is_active', true)
+                           ->where(function($avail) {
+                               $avail->where('items.availability_status', ItemAvailability::AVAILABLE->value)
+                                     ->orWhere('items.is_available', true);
+                           });
+                });
                 
-                // If user is authenticated, also show their own items (regardless of approval status)
+                // If user is authenticated, also show their own items (approved or pending only)
                 if ($user) {
                     $q->orWhere(function($own) use ($user) {
-                        $own->where('user_id', $user->id)
-                            ->whereNull('deleted_at')
-                            ->whereNull('archived_at');
+                        $own->where('items.user_id', $user->id)
+                            ->whereNotNull('approvals.id')
+                            ->whereIn('approvals.status', [
+                                ApprovalStatus::APPROVED->value,
+                                ApprovalStatus::PENDING->value
+                            ]);
                     });
                 }
             });
 
         if (isset($filters['search']) && $filters['search']) {
-            $query->search($filters['search']);
+            // Performance fix: Use table prefix for search when joins are present
+            $term = trim($filters['search']);
+            if ($term !== '') {
+                $driver = $query->getConnection()->getDriverName();
+                if ($driver === 'mysql') {
+                    try {
+                        $query->where(function ($q) use ($term) {
+                            $q->whereRaw('MATCH(items.title, items.description) AGAINST(? IN NATURAL LANGUAGE MODE)', [$term]);
+                        });
+                    } catch (\Throwable $e) {
+                        $query->where(function ($q) use ($term) {
+                            $q->where('items.title', 'like', "%{$term}%")
+                              ->orWhere('items.description', 'like', "%{$term}%");
+                        });
+                    }
+                } else {
+                    $query->where(function ($q) use ($term) {
+                        $q->where('items.title', 'like', "%{$term}%")
+                          ->orWhere('items.description', 'like', "%{$term}%");
+                    });
+                }
+            }
         }
 
+        // Validate and apply operation_type filter
         if (isset($filters['operation_type']) && $filters['operation_type']) {
-            $query->where('operation_type', $filters['operation_type']);
+            $validTypes = ['sell', 'rent', 'donate'];
+            if (in_array($filters['operation_type'], $validTypes)) {
+                $query->where('items.operation_type', $filters['operation_type']);
+            }
         }
 
+        // Validate and apply category_id filter - already joined, just filter
         if (isset($filters['category_id']) && $filters['category_id']) {
-            $query->where('category_id', (int) $filters['category_id']);
+            $categoryId = (int) $filters['category_id'];
+            $query->where('items.category_id', $categoryId);
         }
 
+        // Validate and apply condition filter
         if (isset($filters['condition']) && $filters['condition']) {
-            $query->where('condition', $filters['condition']);
+            $validConditions = ['new', 'used'];
+            if (in_array($filters['condition'], $validConditions)) {
+                $query->where('items.condition', $filters['condition']);
+            }
         }
 
-        if (isset($filters['price_min']) && $filters['price_min']) {
-            $query->where('price', '>=', (float) $filters['price_min']);
-        }
-
-        if (isset($filters['price_max']) && $filters['price_max']) {
-            $query->where('price', '<=', (float) $filters['price_max']);
+        // Apply price filters - exclude donate items from price filtering
+        $hasPriceFilter = (isset($filters['price_min']) && $filters['price_min']) || 
+                         (isset($filters['price_max']) && $filters['price_max']);
+        
+        if ($hasPriceFilter) {
+            $query->where(function($q) use ($filters) {
+                // Always include donate items (they don't have price restrictions)
+                $q->where('items.operation_type', 'donate')
+                  ->orWhere(function($priceQ) use ($filters) {
+                      // Apply price filters only to sell and rent items
+                      $priceQ->whereIn('items.operation_type', ['sell', 'rent']);
+                      
+                      if (isset($filters['price_min']) && $filters['price_min']) {
+                          $priceQ->where('items.price', '>=', (float) $filters['price_min']);
+                      }
+                      
+                      if (isset($filters['price_max']) && $filters['price_max']) {
+                          $priceQ->where('items.price', '<=', (float) $filters['price_max']);
+                      }
+                  });
+            });
         }
 
         match($sort) {
-            'price_asc' => $query->orderBy('price', 'asc'),
-            'price_desc' => $query->orderBy('price', 'desc'),
-            'title_asc' => $query->orderBy('title', 'asc'),
-            'title_desc' => $query->orderBy('title', 'desc'),
-            'updated_at_desc' => $query->orderBy('updated_at', 'desc'),
-            default => $query->orderBy('created_at', 'desc'),
+            'price_asc' => $query->orderBy('items.price', 'asc'),
+            'price_desc' => $query->orderBy('items.price', 'desc'),
+            'title_asc' => $query->orderBy('items.title', 'asc'),
+            'title_desc' => $query->orderBy('items.title', 'desc'),
+            'updated_at_desc' => $query->orderBy('items.updated_at', 'desc'),
+            default => $query->orderBy('items.created_at', 'desc'),
         };
 
-        // Phase 1.3: Select only needed columns (already optimized)
-        $query->select('id', 'title', 'slug', 'description', 'condition', 'price', 'operation_type', 'availability_status', 'user_id', 'category_id', 'created_at', 'updated_at');
+        // Performance fix: Select only needed columns with table prefixes
+        // Use groupBy to avoid duplicate rows from joins and ensure proper pagination
+        $query->groupBy('items.id', 'items.title', 'items.slug', 'items.description', 'items.condition', 
+                       'items.price', 'items.operation_type', 'items.availability_status', 
+                       'items.user_id', 'items.category_id', 'items.created_at', 'items.updated_at')
+              ->select('items.id', 'items.title', 'items.slug', 'items.description', 'items.condition', 
+                      'items.price', 'items.operation_type', 'items.availability_status', 
+                      'items.user_id', 'items.category_id', 'items.created_at', 'items.updated_at');
 
         // Phase 1.3: Optimized Eager Loading - only load what's needed
         $query->with([
