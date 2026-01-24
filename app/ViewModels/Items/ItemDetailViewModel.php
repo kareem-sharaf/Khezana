@@ -137,14 +137,13 @@ class ItemDetailViewModel
             ? route('public.items.show', ['id' => $item->id, 'slug' => $item->slug ?? null])
             : route('items.show', $item);
 
+        // Note: breadcrumb component automatically adds "الرئيسية" (home), so we don't include it here
         $breadcrumbs = $type === 'public'
             ? [
-                ['label' => __('common.ui.home'), 'url' => route('home')],
                 ['label' => __('common.ui.items_page'), 'url' => route('public.items.index')],
                 ['label' => $item->title, 'url' => null],
             ]
             : [
-                ['label' => __('common.ui.home'), 'url' => route('home')],
                 ['label' => __('common.ui.my_items_page'), 'url' => route('items.index')],
                 ['label' => $item->title, 'url' => null],
             ];
@@ -286,7 +285,7 @@ class ItemDetailViewModel
             // Handle different attribute structures
             if (is_object($attribute)) {
                 $name = $attribute->name ?? $attribute->attribute->name ?? '';
-                
+
                 // Use formattedValue if available (already processed by AttributeReadModel)
                 // Otherwise use value and format it
                 if (isset($attribute->formattedValue) && $attribute->formattedValue !== '') {

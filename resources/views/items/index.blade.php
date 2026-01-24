@@ -5,13 +5,11 @@
 @section('content')
     <div class="khezana-listing-page">
         <div class="khezana-container">
-            @if(session('success'))
-                <x-alert 
-                    type="success" 
-                    :message="session('success')" 
-                    dismissible="true"
-                    class="khezana-mb-md" />
+            @if (session('success'))
+                <x-alert type="success" :message="session('success')" dismissible="true" class="khezana-mb-md" />
             @endif
+
+            <x-breadcrumb :items="[['label' => __('common.ui.my_items_page'), 'url' => null]]" />
 
             @include('items._partials.page-header', [
                 'items' => $items,

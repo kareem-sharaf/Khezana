@@ -5,6 +5,8 @@
 @section('content')
     <div class="khezana-listing-page">
         <div class="khezana-container">
+            <x-breadcrumb :items="[['label' => __('common.ui.my_requests_page'), 'url' => null]]" />
+
             @include('requests._partials.page-header', [
                 'requests' => $requests,
                 'showCreateButton' => true,

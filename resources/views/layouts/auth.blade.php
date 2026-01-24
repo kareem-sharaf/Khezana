@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="rtl">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,11 +19,12 @@
 
     @stack('styles')
 </head>
+
 <body class="font-sans antialiased">
     <!-- Simple Logo Link -->
     <div class="khezana-auth-header">
         <a href="{{ route('home') }}" class="khezana-auth-logo">
-            @if(file_exists(public_path('logo.svg')))
+            @if (file_exists(public_path('logo.svg')))
                 <img src="{{ asset('logo.svg') }}" alt="{{ config('app.name') }}" class="khezana-logo-img">
                 <span class="khezana-logo-text">خزانة</span>
             @elseif(file_exists(public_path('logo.png')))
@@ -41,4 +43,5 @@
 
     @stack('scripts')
 </body>
+
 </html>

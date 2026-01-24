@@ -46,18 +46,19 @@ class WarmCacheCommand extends Command
             app()->setLocale($locale);
             $this->info("Warming items index (locale: {$locale})…");
             $cache->rememberItemsIndex(
-                fn () => $browseItems->execute([], null, 1, 20, null)->through(fn ($i) => ItemReadModel::fromModel($i)),
+                fn () => $browseItems->execute([], null, 1, 9, null)->through(fn ($i) => ItemReadModel::fromModel($i)),
                 [],
                 'created_at_desc',
                 1,
                 $locale,
                 null,
+                9,
             );
             $this->line("   Items index OK");
 
             $this->info("Warming requests index (locale: {$locale})…");
             $cache->rememberRequestsIndex(
-                fn () => $browseRequests->execute([], 'created_at_desc', 1, 20)->through(fn ($r) => RequestReadModel::fromModel($r)),
+                fn () => $browseRequests->execute([], 'created_at_desc', 1, 9)->through(fn ($r) => RequestReadModel::fromModel($r)),
                 [],
                 'created_at_desc',
                 1,

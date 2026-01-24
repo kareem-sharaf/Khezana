@@ -41,6 +41,7 @@ return [
         'request_already_fulfilled' => 'الطلب تم إتمامه بالفعل',
         'request_closed' => 'الطلب مغلق',
         'duplicate_offer' => 'لديك عرض موجود بالفعل على هذا الطلب',
+        'owner_cannot_offer_self' => 'صاحب الطلب لا يمكنه تقديم عرض على طلبه',
         'cannot_accept_non_pending' => 'لا يمكن قبول عرض غير قيد الانتظار',
         'cannot_reject_non_pending' => 'لا يمكن رفض عرض غير قيد الانتظار',
         'cannot_update_final' => 'لا يمكن تحديث عرض نهائي (مقبول أو مرفوض)',

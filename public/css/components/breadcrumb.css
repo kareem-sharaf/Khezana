@@ -11,6 +11,8 @@
 .khezana-breadcrumb {
     margin-bottom: var(--khezana-spacing-lg);
     padding: var(--khezana-spacing-sm) 0;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .khezana-breadcrumb__list {
@@ -64,6 +66,34 @@
     font-size: var(--khezana-font-size-sm);
     margin: 0 var(--khezana-spacing-xs);
     opacity: 0.5;
+    user-select: none;
+}
+
+/* ============================================
+   RTL/LTR SUPPORT
+   ============================================ */
+
+/* RTL Support */
+[dir="rtl"] .khezana-breadcrumb__list {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .khezana-breadcrumb__item {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .khezana-breadcrumb__separator {
+    margin: 0 var(--khezana-spacing-xs);
+    transform: scaleX(-1);
+}
+
+/* LTR Support (explicit) */
+[dir="ltr"] .khezana-breadcrumb__list {
+    flex-direction: row;
+}
+
+[dir="ltr"] .khezana-breadcrumb__item {
+    flex-direction: row;
 }
 
 /* ============================================

@@ -5,13 +5,14 @@
     $title = $title ?? __('common.ui.my_items_page');
     $subtitle = $subtitle ?? $items->total() . ' ' . __('items.plural');
     $showCreateButton = $showCreateButton ?? true;
-    $createButtonText = $createButtonText ?? __('common.ui.add_new_item');
+    $createButtonText = $createButtonText ?? __('common.ui.add_item');
     $createButtonRoute = $createButtonRoute ?? route('items.create');
     $secondaryButton = $secondaryButton ?? null;
 @endphp
 
 <div class="khezana-page-header">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--khezana-spacing-md);">
+    <div
+        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--khezana-spacing-md);">
         <div>
             <h1 class="khezana-page-title">{{ $title }}</h1>
             <p class="khezana-page-subtitle">{{ $subtitle }}</p>

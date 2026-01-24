@@ -68,6 +68,9 @@ return [
         'login' => 'Login',
         'register' => 'Register',
         'add_item' => 'Add Item',
+        'add_request' => 'Add Request',
+        'view_items' => 'View Items',
+        'view_requests' => 'View Requests',
         'dashboard' => 'Dashboard',
         'my_items' => 'My Items',
         'my_requests' => 'My Requests',
@@ -191,6 +194,11 @@ return [
         'to' => 'To',
         'choose' => 'Choose',
         'remove_filter' => 'Remove filter',
+        'order_now_whatsapp' => 'Order Now via WhatsApp',
+        'order_now_telegram' => 'Order Now via Telegram',
+        'send_offer_whatsapp' => 'Submit Offer via WhatsApp',
+        'send_offer_telegram' => 'Submit Offer via Telegram',
+        'telegram_contact_info' => 'Or contact us via number: :number',
     ],
 
     'footer' => [

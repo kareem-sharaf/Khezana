@@ -48,7 +48,7 @@ class ItemController extends Controller
     {
         $sort = $request->get('sort', 'created_at_desc');
         $page = max(1, (int) $request->get('page', 1));
-        $perPage = min(50, max(1, (int) $request->get('per_page', 10)));
+        $perPage = min(50, max(1, (int) $request->get('per_page', 9)));
 
         // Validate price filters
         if ($request->has('price_min') && $request->has('price_max')) {

@@ -41,13 +41,13 @@ class RequestController extends Controller
     {
         $sort = $request->get('sort', 'created_at_desc');
         $page = max(1, (int) $request->get('page', 1));
-        $perPage = min(50, max(1, (int) $request->get('per_page', 10)));
+        $perPage = min(50, max(1, (int) $request->get('per_page', 9)));
 
         $query = RequestModel::where('user_id', Auth::id())
             ->with(['category', 'approvalRelation', 'itemAttributes.attribute', 'offers']);
 
         // Apply sorting
-        match($sort) {
+        match ($sort) {
             'status_asc' => $query->orderBy('status', 'asc'),
             'status_desc' => $query->orderBy('status', 'desc'),
             'title_asc' => $query->orderBy('title', 'asc'),
@@ -133,6 +133,11 @@ class RequestController extends Controller
             abort(403, __('requests.messages.cannot_edit_closed'));
         }
 
+        // Cannot edit if request is approved
+        if ($request->isApproved()) {
+            abort(403, __('requests.messages.cannot_edit_approved'));
+        }
+
         $categories = Category::with('attributes')->get();
         $request->load('itemAttributes.attribute');
 
@@ -145,6 +150,11 @@ class RequestController extends Controller
     public function update(HttpRequest $request, RequestModel $requestModel): RedirectResponse
     {
         $this->authorize('update', $requestModel);
+
+        // Cannot update if request is approved
+        if ($requestModel->isApproved()) {
+            abort(403, __('requests.messages.cannot_edit_approved'));
+        }
 
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',

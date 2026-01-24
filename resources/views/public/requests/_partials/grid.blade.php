@@ -33,7 +33,8 @@
                     <div class="khezana-request-attributes">
                         @foreach ($viewModel->displayAttributes as $attr)
                             <span class="khezana-request-attribute">
-                                <strong>{{ $attr['name'] ?? translate_attribute_name($attr['originalName'] ?? '') }}:</strong> {{ $attr['value'] }}
+                                <strong>{{ $attr['name'] ?? translate_attribute_name($attr['originalName'] ?? '') }}:</strong>
+                                {{ $attr['value'] }}
                             </span>
                         @endforeach
                     </div>
@@ -41,11 +42,6 @@
 
                 <div class="khezana-request-footer">
                     <div class="khezana-request-meta">
-                        @if ($viewModel->hasUser)
-                            <span class="khezana-request-user">
-                                {{ $viewModel->userName }}
-                            </span>
-                        @endif
                         <span class="khezana-request-date">
                             {{ __('common.ui.posted') }} {{ $viewModel->createdAtFormatted }}
                         </span>
@@ -60,4 +56,3 @@
         </a>
     @endforeach
 </div>
-

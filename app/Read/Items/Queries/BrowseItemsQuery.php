@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class BrowseItemsQuery
 {
-    public function execute(array $filters = [], ?string $sort = null, int $page = 1, int $perPage = 10, ?User $user = null): LengthAwarePaginator
+    public function execute(array $filters = [], ?string $sort = null, int $page = 1, int $perPage = 9, ?User $user = null): LengthAwarePaginator
     {
         $startTime = microtime(true);
         

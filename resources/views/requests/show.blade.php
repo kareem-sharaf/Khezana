@@ -2,13 +2,23 @@
 
 @section('title', $requestModel->title . ' - ' . config('app.name'))
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/pages/request-show.css') }}">
+@endpush
+
 @section('content')
 <div class="khezana-container khezana-request-show">
-    <div class="khezana-breadcrumb">
-        <a href="{{ route('requests.index') }}" class="khezana-link">{{ __('common.ui.my_requests_page') }}</a>
-        <span class="khezana-breadcrumb-sep">/</span>
-        <span>{{ $requestModel->title }}</span>
-    </div>
+    @if(session('success'))
+        <x-alert type="success" :message="session('success')" dismissible="true" class="khezana-mb-md" />
+    @endif
+    @if(session('error'))
+        <x-alert type="error" :message="session('error')" dismissible="true" class="khezana-mb-md" />
+    @endif
+
+    <x-breadcrumb :items="[
+        ['label' => __('common.ui.my_requests_page'), 'url' => route('requests.index')],
+        ['label' => $requestModel->title, 'url' => null]
+    ]" />
 
     <div class="khezana-card">
         <div class="khezana-card-header">
@@ -22,15 +32,15 @@
                 </span>
             </div>
             @if ($requestModel->status->value == 'open')
-                <p class="khezana-status-explanation" style="margin-top: var(--khezana-spacing-xs);">
+                <p class="khezana-status-explanation">
                     {{ __('requests.detail.status_explanation_open') }}
                 </p>
             @elseif($requestModel->status->value == 'fulfilled')
-                <p class="khezana-status-explanation" style="margin-top: var(--khezana-spacing-xs);">
+                <p class="khezana-status-explanation">
                     {{ __('requests.detail.status_explanation_fulfilled') }}
                 </p>
             @else
-                <p class="khezana-status-explanation" style="margin-top: var(--khezana-spacing-xs);">
+                <p class="khezana-status-explanation">
                     {{ __('requests.detail.status_explanation_closed') }}
                 </p>
             @endif
@@ -56,31 +66,41 @@
                 <h3 class="khezana-section-title-small">{{ __('requests.detail.next_steps_title') }}</h3>
                 <div class="khezana-next-steps-content">
                     @if ($requestModel->status->value == 'open')
-                        <div class="khezana-next-step-item">
-                            <div class="khezana-next-step-icon">✅</div>
-                            <div class="khezana-next-step-text">
-                                <p class="khezana-next-step-main">{{ __('requests.detail.next_steps_open') }}</p>
-                                <p class="khezana-next-step-hint">{{ __('requests.detail.next_steps_open_hint') }}</p>
+                        @if ($requestModel->isApproved())
+                            <div class="khezana-next-step-item">
+                                <div class="khezana-next-step-icon">✅</div>
+                                <div class="khezana-next-step-text">
+                                    <p class="khezana-next-step-main">{{ __('requests.detail.next_steps_open') }}</p>
+                                    <p class="khezana-next-step-hint">{{ __('requests.detail.next_steps_open_hint') }}</p>
+                                </div>
                             </div>
-                        </div>
-                        @if($requestModel->offers->count() == 0)
+                            @if($requestModel->offers->count() == 0)
+                                <div class="khezana-next-step-item">
+                                    <div class="khezana-next-step-icon">⏳</div>
+                                    <div class="khezana-next-step-text">
+                                        <p class="khezana-next-step-main">{{ __('requests.detail.offers_coming') }}</p>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="khezana-next-step-item">
+                                    <div class="khezana-next-step-icon">📋</div>
+                                    <div class="khezana-next-step-text">
+                                        <p class="khezana-next-step-main">{{ __('requests.detail.review_offers') }}</p>
+                                    </div>
+                                </div>
+                                <div class="khezana-next-step-item">
+                                    <div class="khezana-next-step-icon">💬</div>
+                                    <div class="khezana-next-step-text">
+                                        <p class="khezana-next-step-main">{{ __('requests.detail.contact_offerer') }}</p>
+                                    </div>
+                                </div>
+                            @endif
+                        @else
                             <div class="khezana-next-step-item">
                                 <div class="khezana-next-step-icon">⏳</div>
                                 <div class="khezana-next-step-text">
-                                    <p class="khezana-next-step-main">{{ __('requests.detail.offers_coming') }}</p>
-                                </div>
-                            </div>
-                        @else
-                            <div class="khezana-next-step-item">
-                                <div class="khezana-next-step-icon">📋</div>
-                                <div class="khezana-next-step-text">
-                                    <p class="khezana-next-step-main">{{ __('requests.detail.review_offers') }}</p>
-                                </div>
-                            </div>
-                            <div class="khezana-next-step-item">
-                                <div class="khezana-next-step-icon">💬</div>
-                                <div class="khezana-next-step-text">
-                                    <p class="khezana-next-step-main">{{ __('requests.detail.contact_offerer') }}</p>
+                                    <p class="khezana-next-step-main">{{ __('requests.detail.next_steps_pending') }}</p>
+                                    <p class="khezana-next-step-hint">{{ __('requests.detail.next_steps_pending_hint') }}</p>
                                 </div>
                             </div>
                         @endif
@@ -104,13 +124,14 @@
         </div>
 
         <div class="khezana-card-footer">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--khezana-spacing-md);">
+            <div>
                 <span class="khezana-text-muted">
                     {{ __('common.ui.published') }}: {{ $requestModel->created_at?->format('Y-m-d H:i') }}
                 </span>
+            </div>
 
-                <div style="display: flex; gap: var(--khezana-spacing-sm); flex-wrap: wrap;">
-                    @if (!$requestModel->isClosed() && !$requestModel->isFulfilled())
+            <div>
+                    @if (!$requestModel->isClosed() && !$requestModel->isFulfilled() && !$requestModel->isApproved())
                         <a href="{{ route('requests.edit', $requestModel) }}" class="khezana-btn khezana-btn-secondary">
                             {{ __('common.actions.edit') }}
                         </a>
@@ -122,10 +143,17 @@
                         $blockReason = $deletionService->getDeletionBlockReason(auth()->user(), $requestModel);
                     @endphp
 
-                    @if ($canDelete || auth()->user()->hasAnyRole(['admin', 'super_admin']))
+                    @if (!$requestModel->isApproved() && ($canDelete || auth()->user()->hasAnyRole(['admin', 'super_admin'])))
                         <button type="button"
                             class="khezana-btn khezana-btn-delete"
                             onclick="openRequestDeleteModal({{ $requestModel->id }}, '{{ addslashes($requestModel->title) }}', {{ auth()->user()->hasAnyRole(['admin', 'super_admin']) ? 'true' : 'false' }}, {{ auth()->user()->hasRole('super_admin') ? 'true' : 'false' }})">
+                            {{ __('common.actions.delete') }}
+                        </button>
+                    @elseif($requestModel->isApproved())
+                        <button type="button"
+                            class="khezana-btn khezana-btn-delete khezana-btn-disabled"
+                            disabled
+                            title="{{ __('requests.deletion.is_approved') ?? 'لا يمكن حذف الطلب بعد الموافقة عليه' }}">
                             {{ __('common.actions.delete') }}
                         </button>
                     @else

@@ -38,6 +38,11 @@ class CreateOfferAction
         // Validate operation type rules
         $this->offerService->validateOperationTypeRules($data);
 
+        // Request owner cannot offer on their own request
+        if ((int) $request->user_id === (int) $user->id) {
+            throw new \Exception(__('offers.validation.owner_cannot_offer_self'));
+        }
+
         // Ensure request can receive offers
         $this->offerService->ensureRequestCanReceiveOffers($request);
 

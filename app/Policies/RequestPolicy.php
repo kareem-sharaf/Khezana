@@ -45,11 +45,29 @@ class RequestPolicy
 
     /**
      * Determine if the user can update the request.
+     *
+     * Rules:
+     * - Regular users: Can update own requests only if NOT approved (pending, rejected)
+     * - Super admin: Can update any request
      */
     public function update(User $user, Request $request): bool
     {
-        // Only request owner can update, or super admin
-        return $user->id === $request->user_id || $user->hasRole('super_admin');
+        // Super admin can update any request
+        if ($user->hasRole('super_admin')) {
+            return true;
+        }
+
+        // User can update their own requests only if NOT approved
+        if ($user->id === $request->user_id) {
+            // Cannot update if request is approved
+            if ($request->isApproved()) {
+                return false;
+            }
+            // Can update if pending, rejected, or not yet submitted for approval
+            return true;
+        }
+
+        return false;
     }
 
     /**

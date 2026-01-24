@@ -31,6 +31,11 @@
         </div>
 
         <div id="createFormWrap" class="khezana-container khezana-create-form-wrap" hidden>
+            <x-breadcrumb :items="[
+                ['label' => __('common.ui.my_items_page'), 'url' => route('items.index')],
+                ['label' => __('items.actions.create'), 'url' => null],
+            ]" />
+
             <div class="khezana-page-header">
                 <h1 class="khezana-page-title">{{ __('items.actions.create') }}</h1>
                 <p class="khezana-page-subtitle">
@@ -39,17 +44,18 @@
             </div>
 
             <div class="khezana-form-container">
-                @if($errors->any())
+                @if ($errors->any())
                     <div class="khezana-alert khezana-alert--error khezana-mb-md">
                         <ul>
-                            @foreach($errors->all() as $error)
+                            @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
                 @endif
-                
-                <p id="draftSavedIndicator" class="khezana-form-hint khezana-draft-indicator" style="display:none; margin-bottom:1rem;" aria-live="polite">
+
+                <p id="draftSavedIndicator" class="khezana-form-hint khezana-draft-indicator"
+                    style="display:none; margin-bottom:1rem;" aria-live="polite">
                     <span class="khezana-draft-indicator-icon">💾</span>
                     {{ __('items.messages.draft_saved') }}
                 </p>
@@ -126,7 +132,8 @@
                                             {{ old('operation_type') === 'sell' ? 'checked' : '' }}>
                                         <div class="khezana-filter-option-content">
                                             <span class="khezana-filter-option-icon">💵</span>
-                                            <span class="khezana-filter-option-label">{{ __('items.operation_types.sell') }}</span>
+                                            <span
+                                                class="khezana-filter-option-label">{{ __('items.operation_types.sell') }}</span>
                                         </div>
                                     </label>
                                     <label class="khezana-filter-option khezana-filter-option--card">
@@ -134,7 +141,8 @@
                                             {{ old('operation_type') === 'rent' ? 'checked' : '' }}>
                                         <div class="khezana-filter-option-content">
                                             <span class="khezana-filter-option-icon">👔</span>
-                                            <span class="khezana-filter-option-label">{{ __('items.operation_types.rent') }}</span>
+                                            <span
+                                                class="khezana-filter-option-label">{{ __('items.operation_types.rent') }}</span>
                                         </div>
                                     </label>
                                     <label class="khezana-filter-option khezana-filter-option--card">
@@ -142,7 +150,8 @@
                                             {{ old('operation_type') === 'donate' ? 'checked' : '' }}>
                                         <div class="khezana-filter-option-content">
                                             <span class="khezana-filter-option-icon">🎀</span>
-                                            <span class="khezana-filter-option-label">{{ __('items.operation_types.donate') }}</span>
+                                            <span
+                                                class="khezana-filter-option-label">{{ __('items.operation_types.donate') }}</span>
                                         </div>
                                     </label>
                                 </div>
@@ -157,9 +166,9 @@
                                     {{ __('items.fields.title') }}
                                     <span class="khezana-required">*</span>
                                 </label>
-                                <input type="text" name="title" id="title" class="khezana-form-input khezana-form-input--enhanced"
-                                    value="{{ old('title') }}" placeholder="{{ __('items.placeholders.title') }}" required
-                                    maxlength="255">
+                                <input type="text" name="title" id="title"
+                                    class="khezana-form-input khezana-form-input--enhanced" value="{{ old('title') }}"
+                                    placeholder="{{ __('items.placeholders.title') }}" required maxlength="255">
                                 @error('title')
                                     <span class="khezana-form-error">{{ $message }}</span>
                                 @enderror
@@ -171,7 +180,8 @@
                                     {{ __('items.fields.description') }}
                                 </label>
                                 <p class="khezana-form-hint">{{ __('items.hints.description') }}</p>
-                                <textarea name="description" id="description" class="khezana-form-input khezana-form-textarea khezana-form-textarea--enhanced" rows="5"
+                                <textarea name="description" id="description"
+                                    class="khezana-form-input khezana-form-textarea khezana-form-textarea--enhanced" rows="5"
                                     placeholder="{{ __('items.placeholders.description') }}">{{ old('description') }}</textarea>
                                 @error('description')
                                     <span class="khezana-form-error">{{ $message }}</span>
@@ -205,8 +215,10 @@
                                         <div class="khezana-filter-option-content">
                                             <span class="khezana-filter-option-icon">✨</span>
                                             <div class="khezana-filter-option-text">
-                                                <span class="khezana-filter-option-label">{{ __('items.conditions.new') }}</span>
-                                                <small class="khezana-option-hint">{{ __('items.conditions.new_hint') }}</small>
+                                                <span
+                                                    class="khezana-filter-option-label">{{ __('items.conditions.new') }}</span>
+                                                <small
+                                                    class="khezana-option-hint">{{ __('items.conditions.new_hint') }}</small>
                                             </div>
                                         </div>
                                     </label>
@@ -216,8 +228,10 @@
                                         <div class="khezana-filter-option-content">
                                             <span class="khezana-filter-option-icon">♻️</span>
                                             <div class="khezana-filter-option-text">
-                                                <span class="khezana-filter-option-label">{{ __('items.conditions.used') }}</span>
-                                                <small class="khezana-option-hint">{{ __('items.conditions.used_hint') }}</small>
+                                                <span
+                                                    class="khezana-filter-option-label">{{ __('items.conditions.used') }}</span>
+                                                <small
+                                                    class="khezana-option-hint">{{ __('items.conditions.used_hint') }}</small>
                                             </div>
                                         </div>
                                     </label>
@@ -236,7 +250,8 @@
                                     <p class="khezana-form-hint">{{ __('items.hints.price') }}</p>
                                     <div class="khezana-form-input-wrapper">
                                         <input type="number" step="0.01" name="price" id="price"
-                                            class="khezana-form-input khezana-form-input--enhanced" value="{{ old('price') }}"
+                                            class="khezana-form-input khezana-form-input--enhanced"
+                                            value="{{ old('price') }}"
                                             placeholder="{{ __('items.placeholders.price') }}">
                                         <span class="khezana-form-input-suffix">ل.س</span>
                                     </div>
@@ -245,7 +260,8 @@
                                     @enderror
                                 </div>
 
-                                <div class="khezana-form-group" id="deposit_amount_group" style="display: {{ old('operation_type') === 'rent' ? 'block' : 'none' }};">
+                                <div class="khezana-form-group" id="deposit_amount_group"
+                                    style="display: {{ old('operation_type') === 'rent' ? 'block' : 'none' }};">
                                     <label for="deposit_amount" class="khezana-form-label">
                                         <span class="khezana-form-label-icon">💳</span>
                                         {{ __('items.fields.deposit_amount') }}
@@ -254,7 +270,8 @@
                                     <p class="khezana-form-hint">{{ __('items.hints.deposit_amount') }}</p>
                                     <div class="khezana-form-input-wrapper">
                                         <input type="number" step="0.01" name="deposit_amount" id="deposit_amount"
-                                            class="khezana-form-input khezana-form-input--enhanced" value="{{ old('deposit_amount') }}"
+                                            class="khezana-form-input khezana-form-input--enhanced"
+                                            value="{{ old('deposit_amount') }}"
                                             placeholder="{{ __('items.placeholders.deposit_amount') }}"
                                             {{ old('operation_type') === 'rent' ? 'required' : '' }}>
                                         <span class="khezana-form-input-suffix">ل.س</span>
@@ -293,11 +310,14 @@
                         <div class="khezana-form-section-content">
                             <div class="khezana-form-group">
                                 <p class="khezana-form-hint">{{ __('items.hints.images') }}</p>
-                                <div id="imageDropZone" class="khezana-image-drop-zone khezana-image-drop-zone--enhanced" aria-label="{{ __('items.hints.images') }}">
+                                <div id="imageDropZone" class="khezana-image-drop-zone khezana-image-drop-zone--enhanced"
+                                    aria-label="{{ __('items.hints.images') }}">
                                     <div class="khezana-image-drop-zone-content">
                                         <span class="khezana-image-drop-zone-icon">📸</span>
-                                        <span class="khezana-image-drop-zone__label">{{ __('items.hints.drop_images') }}</span>
-                                        <span class="khezana-image-drop-zone-hint">{{ __('items.hints.click_or_drag') }}</span>
+                                        <span
+                                            class="khezana-image-drop-zone__label">{{ __('items.hints.drop_images') }}</span>
+                                        <span
+                                            class="khezana-image-drop-zone-hint">{{ __('items.hints.click_or_drag') }}</span>
                                     </div>
                                     <input type="file" name="images[]" id="images" class="khezana-form-input"
                                         accept="image/jpeg,image/jpg,image/png" capture="environment" multiple>
@@ -310,7 +330,8 @@
                                 @enderror
 
                                 {{-- Image Preview Container --}}
-                                <div id="imagePreviewContainer" class="khezana-image-preview-container" style="display: none;">
+                                <div id="imagePreviewContainer" class="khezana-image-preview-container"
+                                    style="display: none;">
                                     <div id="imagePreviewGrid" class="khezana-image-preview-grid"></div>
                                 </div>
                             </div>
@@ -436,7 +457,7 @@
                         if (attribute.is_required) {
                             input.required = true;
                         }
-                        
+
                         // Add placeholder and helper for size attribute
                         if (attribute.slug === 'size') {
                             input.placeholder = '{{ __('attributes.placeholders.size') }}';
@@ -445,7 +466,7 @@
 
                     attributeDiv.appendChild(label);
                     attributeDiv.appendChild(input);
-                    
+
                     // Add helper text for size attribute after input
                     if (attribute.slug === 'size' && attribute.type === 'text') {
                         const helper = document.createElement('p');
@@ -453,7 +474,7 @@
                         helper.textContent = '{{ __('attributes.helpers.size') }}';
                         attributeDiv.appendChild(helper);
                     }
-                    
+
                     attributesFields.appendChild(attributeDiv);
                 });
             } catch (e) {
@@ -575,7 +596,9 @@
                 if (!imageInput || !files || !files.length) return;
                 const dt = new DataTransfer();
                 const existing = Array.from(imageInput.files || []);
-                existing.forEach(function(f) { dt.items.add(f); });
+                existing.forEach(function(f) {
+                    dt.items.add(f);
+                });
                 for (let i = 0; i < files.length; i++) {
                     if (files[i].type.match('image.*') && files[i].size <= 5 * 1024 * 1024) dt.items.add(files[i]);
                 }
@@ -595,12 +618,20 @@
 
                 if (dropZone) {
                     ['dragenter', 'dragover'].forEach(function(ev) {
-                        dropZone.addEventListener(ev, function(e) { e.preventDefault(); dropZone.classList.add('khezana-image-drop-zone--dragover'); });
+                        dropZone.addEventListener(ev, function(e) {
+                            e.preventDefault();
+                            dropZone.classList.add('khezana-image-drop-zone--dragover');
+                        });
                     });
                     ['dragleave', 'drop'].forEach(function(ev) {
-                        dropZone.addEventListener(ev, function(e) { e.preventDefault(); dropZone.classList.remove('khezana-image-drop-zone--dragover'); });
+                        dropZone.addEventListener(ev, function(e) {
+                            e.preventDefault();
+                            dropZone.classList.remove('khezana-image-drop-zone--dragover');
+                        });
                     });
-                    dropZone.addEventListener('drop', function(e) { addFiles(e.dataTransfer.files); });
+                    dropZone.addEventListener('drop', function(e) {
+                        addFiles(e.dataTransfer.files);
+                    });
                 }
             });
         })();
@@ -645,10 +676,10 @@
             const form = document.getElementById('itemCreateForm');
             const progressBarFill = document.getElementById('progressBarFill');
             const progressSteps = document.querySelectorAll('.khezana-form-progress-step');
-            
+
             function updateProgress() {
                 if (!form || !progressBarFill) return;
-                
+
                 const requiredFields = form.querySelectorAll('[required]');
                 const filledFields = Array.from(requiredFields).filter(field => {
                     if (field.type === 'radio') {
@@ -659,19 +690,19 @@
                     }
                     return field.value.trim() !== '';
                 });
-                
-                const progress = requiredFields.length > 0 
-                    ? (filledFields.length / requiredFields.length) * 100 
-                    : 0;
-                
+
+                const progress = requiredFields.length > 0 ?
+                    (filledFields.length / requiredFields.length) * 100 :
+                    0;
+
                 progressBarFill.style.width = progress + '%';
-                
+
                 // Update step indicators
                 const sections = document.querySelectorAll('.khezana-form-section');
                 sections.forEach((section, index) => {
                     const step = progressSteps[index];
                     if (!step) return;
-                    
+
                     const sectionFields = section.querySelectorAll('[required]');
                     const sectionFilled = Array.from(sectionFields).filter(field => {
                         if (field.type === 'radio') {
@@ -679,22 +710,23 @@
                         }
                         return field.value.trim() !== '';
                     });
-                    
-                    const sectionProgress = sectionFields.length > 0 
-                        ? sectionFilled.length / sectionFields.length 
-                        : 0;
-                    
+
+                    const sectionProgress = sectionFields.length > 0 ?
+                        sectionFilled.length / sectionFields.length :
+                        0;
+
                     if (sectionProgress === 1) {
                         step.classList.add('khezana-form-progress-step--completed');
                     } else if (sectionProgress > 0) {
                         step.classList.add('khezana-form-progress-step--in-progress');
                         step.classList.remove('khezana-form-progress-step--completed');
                     } else {
-                        step.classList.remove('khezana-form-progress-step--completed', 'khezana-form-progress-step--in-progress');
+                        step.classList.remove('khezana-form-progress-step--completed',
+                            'khezana-form-progress-step--in-progress');
                     }
                 });
             }
-            
+
             if (form) {
                 form.addEventListener('input', updateProgress);
                 form.addEventListener('change', updateProgress);
@@ -731,7 +763,12 @@
                 try {
                     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
                     const ind = document.getElementById('draftSavedIndicator');
-                    if (ind) { ind.style.display = 'block'; setTimeout(function() { ind.style.display = 'none'; }, 2000); }
+                    if (ind) {
+                        ind.style.display = 'block';
+                        setTimeout(function() {
+                            ind.style.display = 'none';
+                        }, 2000);
+                    }
                 } catch (e) {}
             }
 
@@ -745,7 +782,10 @@
                     if (!draft.category_id) return;
 
                     const cat = document.getElementById('category_id');
-                    if (cat) { cat.value = draft.category_id; loadCategoryAttributes(draft.category_id); }
+                    if (cat) {
+                        cat.value = draft.category_id;
+                        loadCategoryAttributes(draft.category_id);
+                    }
 
                     const rest = () => {
                         for (const [name, value] of Object.entries(draft)) {
@@ -753,7 +793,9 @@
                             const els = form.querySelectorAll(`[name="${name}"]`);
                             if (!els.length) continue;
                             if (els[0].type === 'radio' || els[0].type === 'checkbox') {
-                                els.forEach(function(el) { el.checked = (el.value === value); });
+                                els.forEach(function(el) {
+                                    el.checked = (el.value === value);
+                                });
                             } else {
                                 els[0].value = value || '';
                             }
@@ -777,14 +819,15 @@
                     debounceTimer = setTimeout(saveDraft, DEBOUNCE_MS);
                 });
                 form.addEventListener('submit', function() {
-                    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+                    try {
+                        localStorage.removeItem(DRAFT_KEY);
+                    } catch (e) {}
                 });
 
-                @if(!old('category_id'))
-                restoreDraft();
+                @if (!old('category_id'))
+                    restoreDraft();
                 @endif
             });
         })();
-
     </script>
 @endsection

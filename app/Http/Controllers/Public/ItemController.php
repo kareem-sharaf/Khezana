@@ -30,7 +30,7 @@ class ItemController extends Controller
     {
         $sort = $request->validated()['sort'] ?? 'created_at_desc';
         $page = max(1, (int) ($request->validated()['page'] ?? 1));
-        $perPage = min(50, max(1, (int) ($request->validated()['per_page'] ?? 10)));
+        $perPage = min(50, max(1, (int) ($request->validated()['per_page'] ?? 9)));
         $locale = app()->getLocale();
 
         // Performance fix #17: Build filters array with filtering in one step

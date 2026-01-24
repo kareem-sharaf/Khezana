@@ -41,6 +41,7 @@ return [
         'request_already_fulfilled' => 'Request is already fulfilled',
         'request_closed' => 'Request is closed',
         'duplicate_offer' => 'You already have an offer on this request',
+        'owner_cannot_offer_self' => 'Request owner cannot submit an offer on their own request',
         'cannot_accept_non_pending' => 'Cannot accept a non-pending offer',
         'cannot_reject_non_pending' => 'Cannot reject a non-pending offer',
         'cannot_update_final' => 'Cannot update a final offer (accepted or rejected)',

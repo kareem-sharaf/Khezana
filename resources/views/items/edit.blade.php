@@ -9,6 +9,12 @@
 @section('content')
     <div class="khezana-create-page">
         <div class="khezana-container">
+            <x-breadcrumb :items="[
+                ['label' => __('common.ui.my_items_page'), 'url' => route('items.index')],
+                ['label' => $item->title, 'url' => route('items.show', $item)],
+                ['label' => __('items.actions.edit'), 'url' => null],
+            ]" />
+
             <div class="khezana-page-header">
                 <h1 class="khezana-page-title">{{ __('items.actions.edit') }}</h1>
                 <p class="khezana-page-subtitle">
@@ -195,9 +201,7 @@
                                         <div class="khezana-image-preview-item">
                                             <div class="khezana-image-preview-skeleton" aria-hidden="true"></div>
                                             <img src="{{ Storage::url($image->path) }}"
-                                                alt="Image {{ $loop->index + 1 }}"
-                                                loading="lazy"
-                                                decoding="async"
+                                                alt="Image {{ $loop->index + 1 }}" loading="lazy" decoding="async"
                                                 onload="this.previousElementSibling?.classList?.add('khezana-image-preview-skeleton--hidden')"
                                                 onerror="this.previousElementSibling?.classList?.add('khezana-image-preview-skeleton--hidden')">
                                         </div>
@@ -344,7 +348,7 @@
                         if (attribute.is_required) {
                             input.required = true;
                         }
-                        
+
                         // Add placeholder for size attribute
                         if (attribute.slug === 'size') {
                             input.placeholder = '{{ __('attributes.placeholders.size') }}';
@@ -353,7 +357,7 @@
 
                     attributeDiv.appendChild(label);
                     attributeDiv.appendChild(input);
-                    
+
                     // Add helper text for size attribute after input
                     if (attribute.slug === 'size' && attribute.type === 'text') {
                         const helper = document.createElement('p');
@@ -361,7 +365,7 @@
                         helper.textContent = '{{ __('attributes.helpers.size') }}';
                         attributeDiv.appendChild(helper);
                     }
-                    
+
                     attributesFields.appendChild(attributeDiv);
                 });
             } catch (e) {

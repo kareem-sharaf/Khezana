@@ -5,6 +5,11 @@
 @section('content')
     <div class="khezana-create-page">
         <div class="khezana-container">
+            <x-breadcrumb :items="[
+                ['label' => __('common.ui.my_requests_page'), 'url' => route('requests.index')],
+                ['label' => __('requests.actions.create'), 'url' => null],
+            ]" />
+
             <!-- Page Header -->
             <div class="khezana-page-header">
                 <h1 class="khezana-page-title">{{ __('requests.actions.create') }}</h1>
@@ -134,7 +139,12 @@
             try {
                 const attributes = JSON.parse(selectedOption.getAttribute('data-attributes') || '[]');
 
-                if (attributes.length === 0) {
+                // Filter out 'condition' attribute from requests
+                const filteredAttributes = attributes.filter(attribute =>
+                    attribute.slug !== 'condition'
+                );
+
+                if (filteredAttributes.length === 0) {
                     attributesContainer.style.display = 'none';
                     attributesFields.innerHTML = '';
                     return;
@@ -143,7 +153,7 @@
                 attributesContainer.style.display = 'block';
                 attributesFields.innerHTML = '';
 
-                attributes.forEach(attribute => {
+                filteredAttributes.forEach(attribute => {
                     const attributeDiv = document.createElement('div');
                     attributeDiv.className = 'khezana-form-group';
 

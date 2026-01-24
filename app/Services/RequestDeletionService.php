@@ -30,6 +30,11 @@ class RequestDeletionService
             return false;
         }
 
+        // Cannot delete if request is approved
+        if ($request->isApproved()) {
+            return false;
+        }
+
         // Check approval status
         $approvalStatus = $request->approvalRelation?->status;
 
@@ -77,6 +82,11 @@ class RequestDeletionService
     {
         if ($user->id !== $request->user_id) {
             return __('requests.deletion.not_owner');
+        }
+
+        // Cannot delete if approved
+        if ($request->isApproved()) {
+            return __('requests.deletion.is_approved');
         }
 
         if ($this->hasAcceptedOffers($request)) {

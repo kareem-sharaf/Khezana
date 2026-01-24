@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FilterRequestsRequest;
+use App\Models\Setting;
 use App\Read\Requests\Models\RequestReadModel;
 use App\Read\Requests\Queries\BrowseRequestsQuery;
 use App\Read\Requests\Queries\ViewRequestQuery;
@@ -29,27 +31,45 @@ class RequestController extends Controller
         return view('public.requests.create-info');
     }
 
-    public function index(Request $request): View
+    public function index(FilterRequestsRequest $request): View
     {
-        $sort = $request->get('sort', 'created_at_desc');
-        $page = max(1, (int) $request->get('page', 1));
-        $perPage = min(50, max(1, (int) $request->get('per_page', 10)));
+        $sort = $request->validated()['sort'] ?? 'created_at_desc';
+        $page = max(1, (int) ($request->validated()['page'] ?? 1));
+        $perPage = min(50, max(1, (int) ($request->validated()['per_page'] ?? 9)));
         $locale = app()->getLocale();
 
+        // Build filters array
+        $filters = array_filter([
+            'category_id' => $request->validated()['category_id'] ?? null,
+            'search' => $request->validated()['search'] ?? null,
+        ], fn($value) => $value !== null && $value !== '');
+
         $requests = $this->cacheService->rememberRequestsIndex(
-            function () use ($sort, $page, $perPage) {
-                $requestsPaginator = $this->browseRequestsQuery->execute([], $sort, $page, $perPage);
+            function () use ($filters, $sort, $page, $perPage) {
+                $requestsPaginator = $this->browseRequestsQuery->execute($filters, $sort, $page, $perPage);
                 return $requestsPaginator->through(fn($request) => RequestReadModel::fromModel($request));
             },
-            [],
+            $filters,
             $sort,
             $page,
             $locale
         );
 
+        // Ensure pagination preserves all query parameters (filters, sort, etc.)
+        $requests->appends($request->query());
+
+        // Get categories for filter dropdown
+        $categories = $this->categoryCacheService->getTree();
+
+        // Calculate active filters count for badge
+        $activeFiltersCount = count($filters);
+
         return view('public.requests.index', [
             'requests' => $requests,
             'sort' => $sort,
+            'filters' => $filters,
+            'categories' => $categories,
+            'activeFiltersCount' => $activeFiltersCount,
         ]);
     }
 
@@ -76,8 +96,18 @@ class RequestController extends Controller
             return redirect()->route('public.requests.show', ['id' => $requestModel->id, 'slug' => $requestModel->slug], 301);
         }
 
+        $categories = $this->categoryCacheService->getTree();
+        $feePercent = (float) Setting::deliveryServiceFeePercent();
+        $preCreationRules = [
+            ['icon' => '💰', 'text' => __('requests.detail.offer_form.pre_creation_notice.rule_fee', ['percent' => (string) (int) $feePercent])],
+            ['icon' => '📞', 'text' => __('requests.detail.offer_form.pre_creation_notice.rule_contact')],
+        ];
+
         return view('public.requests.show', [
             'request' => $requestModel,
+            'categories' => $categories,
+            'feePercent' => $feePercent,
+            'preCreationRules' => $preCreationRules,
         ]);
     }
 
@@ -93,14 +123,18 @@ class RequestController extends Controller
             'item_id' => 'nullable|exists:items,id',
         ]);
 
-        $offer = \App\Actions\Offer\CreateOfferAction::class;
         $createOfferAction = app(\App\Actions\Offer\CreateOfferAction::class);
 
-        $offer = $createOfferAction->execute(
-            $validated,
-            $requestModel,
-            $request->user()
-        );
+        try {
+            $createOfferAction->execute(
+                $validated,
+                $requestModel,
+                $request->user()
+            );
+        } catch (\Exception $e) {
+            return redirect()->route('public.requests.show', ['id' => $requestModel->id, 'slug' => $requestModel->slug])
+                ->with('error', $e->getMessage());
+        }
 
         return redirect()->route('public.requests.show', ['id' => $requestModel->id, 'slug' => $requestModel->slug])
             ->with('success', 'تم تقديم عرضك بنجاح.');

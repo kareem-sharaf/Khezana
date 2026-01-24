@@ -350,6 +350,55 @@
     padding-inline-start: 24px;
 }
 
+/* Hierarchical category levels - tree structure */
+.khezana-filter-list__item[data-level="1"] {
+    padding-inline-start: 1.5rem;
+}
+
+.khezana-filter-list__item[data-level="2"] {
+    padding-inline-start: 3rem;
+}
+
+.khezana-filter-list__item[data-level="3"] {
+    padding-inline-start: 4.5rem;
+}
+
+.khezana-filter-list__item[data-level="4"] {
+    padding-inline-start: 6rem;
+}
+
+/* RTL support for hierarchical levels */
+[dir="rtl"] .khezana-filter-list__item[data-level="1"] {
+    padding-inline-end: 1.5rem;
+    padding-inline-start: 12px;
+}
+
+[dir="rtl"] .khezana-filter-list__item[data-level="2"] {
+    padding-inline-end: 3rem;
+    padding-inline-start: 12px;
+}
+
+[dir="rtl"] .khezana-filter-list__item[data-level="3"] {
+    padding-inline-end: 4.5rem;
+    padding-inline-start: 12px;
+}
+
+[dir="rtl"] .khezana-filter-list__item[data-level="4"] {
+    padding-inline-end: 6rem;
+    padding-inline-start: 12px;
+}
+
+.khezana-filter-list__item-icon {
+    margin-inline-start: auto;
+    opacity: 0.5;
+    transition: opacity 0.15s ease;
+    flex-shrink: 0;
+}
+
+.khezana-filter-list__item:hover .khezana-filter-list__item-icon {
+    opacity: 0.8;
+}
+
 .khezana-filter-list__item input {
     width: 16px;
     height: 16px;
@@ -636,9 +685,9 @@
         bottom: 78vh;
         pointer-events: auto;
     }
-    
+
     /* Prevent overlay from covering the filters panel */
-    .khezana-filters-overlay[x-show] + .khezana-filters {
+    .khezana-filters-overlay[x-show]+.khezana-filters {
         pointer-events: auto;
     }
 

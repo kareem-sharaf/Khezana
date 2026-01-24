@@ -38,9 +38,15 @@ class OfferController extends Controller
     /**
      * Show the form for creating a new offer
      */
-    public function create(RequestModel $request): View
+    public function create(RequestModel $request): View|RedirectResponse
     {
         $this->authorize('create', Offer::class);
+
+        if ((int) $request->user_id === (int) Auth::id()) {
+            return redirect()
+                ->route('requests.show', $request)
+                ->with('error', __('offers.validation.owner_cannot_offer_self'));
+        }
 
         // Get user's items for selection (only approved items)
         $userItems = Item::where('user_id', Auth::id())
@@ -67,11 +73,16 @@ class OfferController extends Controller
             'item_id' => 'nullable|exists:items,id',
         ]);
 
-        $offer = $this->createOfferAction->execute(
-            $validated,
-            $request,
-            Auth::user()
-        );
+        try {
+            $this->createOfferAction->execute(
+                $validated,
+                $request,
+                Auth::user()
+            );
+        } catch (\Exception $e) {
+            return redirect()->route('requests.show', $request)
+                ->with('error', $e->getMessage());
+        }
 
         return redirect()->route('requests.show', $request)
             ->with('success', __('offers.messages.created_successfully'));

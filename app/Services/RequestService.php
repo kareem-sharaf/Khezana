@@ -55,6 +55,11 @@ class RequestService
         // Get all required attributes for this category (including inherited)
         $requiredAttributes = $category->getAllRequiredAttributes();
 
+        // Filter out 'condition' attribute for requests (not shown in request form)
+        $requiredAttributes = $requiredAttributes->filter(function ($attribute) {
+            return $attribute->slug !== 'condition';
+        });
+
         // Check that all required attributes are provided
         foreach ($requiredAttributes as $attribute) {
             $slug = $attribute->slug;

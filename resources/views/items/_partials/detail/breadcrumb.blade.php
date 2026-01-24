@@ -1,14 +1,14 @@
 {{-- Breadcrumb Partial --}}
 {{-- Usage: @include('items._partials.detail.breadcrumb', ['viewModel' => $viewModel]) --}}
 
-<nav class="khezana-breadcrumb">
-    @foreach ($viewModel->breadcrumbs as $breadcrumb)
-        @if ($breadcrumb['url'])
-            <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['label'] }}</a>
-            <span>/</span>
-        @else
-            <span>{{ $breadcrumb['label'] }}</span>
-        @endif
-    @endforeach
-</nav>
+@php
+    $breadcrumbItems = [];
+    foreach ($viewModel->breadcrumbs as $breadcrumb) {
+        $breadcrumbItems[] = [
+            'label' => $breadcrumb['label'],
+            'url' => $breadcrumb['url'] ?? null,
+        ];
+    }
+@endphp
 
+<x-breadcrumb :items="$breadcrumbItems" />

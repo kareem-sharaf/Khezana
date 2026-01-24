@@ -34,6 +34,11 @@ return [
         'no_requests' => 'No requests found',
         'no_description' => 'No description',
         'cannot_edit_closed' => 'Cannot edit a closed or fulfilled request',
+        'cannot_edit_approved' => 'Cannot edit request after it has been approved',
+    ],
+
+    'deletion' => [
+        'is_approved' => 'Cannot delete: Request has been approved',
     ],
 
     'placeholders' => [
@@ -100,6 +105,8 @@ return [
         'next_steps_title' => 'What\'s Next?',
         'next_steps_open' => 'Your request is now active. Others can see it and submit their offers.',
         'next_steps_open_hint' => 'You\'ll receive notifications when new offers arrive.',
+        'next_steps_pending' => 'Your request is under review. It will be published after our team approves it.',
+        'next_steps_pending_hint' => 'Others will be able to see your request and submit offers after it\'s approved.',
         'next_steps_fulfilled' => 'Your request has been fulfilled successfully. We hope you found what you were looking for.',
         'next_steps_closed' => 'This request has been closed. It no longer accepts new offers.',
         'status_explanation_open' => 'Request is active and accepting new offers',
@@ -108,5 +115,46 @@ return [
         'offers_coming' => 'Offers will arrive soon',
         'review_offers' => 'Review offers and choose what suits you',
         'contact_offerer' => 'Contact the offer provider and agree on details',
+
+        'offer_form' => [
+            'title' => 'Submit Offer',
+            'subtitle' => 'Prepare your offer then send it via WhatsApp or Telegram to the request owner.',
+            'message_intro' => 'I want to send an offer for request #:id:',
+            'prepare_offer' => 'Prepare Offer & Send',
+            'send_via' => 'Send your offer via:',
+            'send_whatsapp' => 'Send via WhatsApp',
+            'send_telegram' => 'Send via Telegram',
+            'link_request' => 'Request link',
+            'open_link' => 'Open link',
+
+            'pre_creation_notice' => [
+                'title' => 'Important information before publishing',
+                'rule_fee' => 'A :percent% delivery/service fee is added to the offer price.',
+                'rule_contact' => 'When your offer is requested, the platform will contact you via your registered phone number.',
+                'btn_continue' => 'I understand, continue',
+                'btn_cancel' => 'Cancel',
+            ],
+            'sections' => [
+                'basic_info' => 'Basic Information',
+                'basic_info_desc' => 'Start by adding the basic information about your offer',
+                'details' => 'Details',
+                'details_desc' => 'Add important details such as condition and price',
+                'attributes_desc' => 'Add additional specifications for the selected category',
+                'images_desc' => 'Add clear photos of your offer to increase trust',
+            ],
+            'review_notice' => 'The offer will be reviewed before publishing to ensure quality and safety.',
+            'hints' => [
+                'category' => 'Choose the right category to make your offer easier to find',
+                'operation_type' => 'Choose the right method for your offer',
+                'title' => 'A clear title that attracts attention and helps with search',
+                'description' => 'The clearer the description, the better the chance of finding what suits you',
+                'condition' => 'Specify condition: new unused, or used in good condition',
+                'price' => 'A fair price increases contact opportunities',
+                'deposit_amount' => 'Deposit ensures clothes are returned in good condition',
+                'images' => 'Clear photos increase buyer confidence',
+                'drop_images' => 'Drag images here or click to select',
+                'click_or_drag' => 'Click to select or drag files here',
+            ],
+        ],
     ],
 ];

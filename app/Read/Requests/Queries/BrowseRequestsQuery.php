@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class BrowseRequestsQuery
 {
-    public function execute(array $filters = [], ?string $sort = null, int $page = 1, int $perPage = 10): LengthAwarePaginator
+    public function execute(array $filters = [], ?string $sort = null, int $page = 1, int $perPage = 9): LengthAwarePaginator
     {
         $startTime = microtime(true);
         

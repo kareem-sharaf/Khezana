@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Actions\Request;
 
 use App\Actions\Approval\SubmitForApprovalAction;
-use App\Enums\RequestStatus;
 use App\Models\Request;
 use App\Models\User;
 use App\Services\RequestService;
@@ -43,7 +42,6 @@ class CreateRequestAction
                 'category_id' => $data['category_id'],
                 'title' => $data['title'],
                 'description' => $data['description'] ?? null,
-                'status' => RequestStatus::OPEN,
             ]);
 
             // Set dynamic attributes if provided
