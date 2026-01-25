@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'title' => 'الإعلانات',
-    'singular' => 'إعلان',
-    'plural' => 'إعلانات',
+    'title' => 'الملابس',
+    'singular' => 'لباس',
+    'plural' => 'ملابس',
 
     'fields' => [
         'operation_type' => 'نوع العملية',
@@ -11,8 +11,8 @@ return [
         'deposit_amount' => 'مبلغ التأمين',
         'status' => 'الحالة',
         'message' => 'رسالة',
-        'item' => 'الإعلان',
-        'linked_item' => 'الإعلان المرتبط',
+        'item' => 'اللباس',
+        'linked_item' => 'اللباس المرتبط',
         'offer_owner' => 'صاحب العرض',
     ],
 
@@ -55,7 +55,7 @@ return [
         'price' => 'أدخل السعر',
         'deposit_amount' => 'أدخل مبلغ التأمين',
         'message' => 'أدخل رسالة (اختياري)',
-        'no_item' => 'لا يوجد إعلان مرتبط',
+        'no_item' => 'لا يوجد لباس مرتبط',
     ],
 
     'actions' => [

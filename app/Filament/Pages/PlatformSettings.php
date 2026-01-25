@@ -29,17 +29,17 @@ class PlatformSettings extends Page implements HasForms
 
     public static function getNavigationLabel(): string
     {
-        return 'Platform Settings';
+        return __('filament-dashboard.Platform Settings');
     }
 
     public function getTitle(): string
     {
-        return 'Platform Settings';
+        return __('filament-dashboard.Platform Settings');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Settings';
+        return __('filament-dashboard.Settings');
     }
 
     public ?array $data = [];
@@ -48,6 +48,10 @@ class PlatformSettings extends Page implements HasForms
     {
         $this->form->fill([
             'delivery_service_fee_percent' => (string) Setting::deliveryServiceFeePercent(),
+            'price_slider_min' => (string) Setting::priceSliderMin(),
+            'price_slider_max' => (string) Setting::priceSliderMax(),
+            'price_slider_step' => (string) Setting::priceSliderStep(),
+            'price_slider_min_gap' => (string) Setting::priceSliderMinGap(),
         ]);
     }
 
@@ -56,11 +60,11 @@ class PlatformSettings extends Page implements HasForms
         return $schema
             ->statePath('data')
             ->schema([
-                Section::make('Listing & Fees')
-                    ->description('Configure delivery/service fee shown to sellers and applied to displayed prices.')
+                Section::make(__('filament-dashboard.Listing & Fees'))
+                    ->description(__('filament-dashboard.Configure delivery/service fee shown to sellers and applied to displayed prices.'))
                     ->schema([
                         TextInput::make('delivery_service_fee_percent')
-                            ->label('Delivery / service fee (%)')
+                            ->label(__('filament-dashboard.Delivery / service fee (%)'))
                             ->numeric()
                             ->minValue(0)
                             ->maxValue(100)
@@ -68,18 +72,52 @@ class PlatformSettings extends Page implements HasForms
                             ->suffix('%')
                             ->default(10)
                             ->required()
-                            ->helperText('A fee added to the product price. Displayed price = base price + this %. Sellers see this in the pre-creation notice.'),
+                            ->helperText(__('filament-dashboard.A fee added to the product price. Displayed price = base price + this %. Sellers see this in the pre-creation notice.')),
                     ])
                     ->columns(1),
+                Section::make(__('filament-dashboard.Price Filter Settings'))
+                    ->description(__('filament-dashboard.Configure price slider range and step values for the item filters.'))
+                    ->schema([
+                        TextInput::make('price_slider_min')
+                            ->label(__('filament-dashboard.Price slider minimum value'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->default(0)
+                            ->required()
+                            ->helperText(__('filament-dashboard.Minimum price value shown in the price filter slider.')),
+                        TextInput::make('price_slider_max')
+                            ->label(__('filament-dashboard.Price slider maximum value'))
+                            ->numeric()
+                            ->minValue(1)
+                            ->required()
+                            ->helperText(__('filament-dashboard.Maximum price value shown in the price filter slider.')),
+                        TextInput::make('price_slider_step')
+                            ->label(__('filament-dashboard.Price slider step'))
+                            ->numeric()
+                            ->minValue(1)
+                            ->required()
+                            ->helperText(__('filament-dashboard.Increment step value for the price slider (e.g., 100, 500, 1000).')),
+                        TextInput::make('price_slider_min_gap')
+                            ->label(__('filament-dashboard.Price slider minimum gap'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->required()
+                            ->helperText(__('filament-dashboard.Minimum gap between minimum and maximum price values in the slider.')),
+                    ])
+                    ->columns(2),
             ]);
     }
+
 
     protected function getHeaderActions(): array
     {
         return [
             Action::make('save')
-                ->label('Save')
-                ->submit('save')
+                ->label(__('filament-dashboard.Save'))
+                ->action(function () {
+                    $this->form->validate();
+                    $this->save();
+                })
                 ->keyBindings(['mod+s']),
         ];
     }
@@ -93,13 +131,38 @@ class PlatformSettings extends Page implements HasForms
 
         Setting::set('delivery_service_fee_percent', (string) $percent);
 
+        // Price slider settings - all values must come from form data
+        $priceMin = max(0, (float) ($data['price_slider_min'] ?? Setting::priceSliderMin()));
+        $priceMax = max(1, (float) ($data['price_slider_max'] ?? Setting::priceSliderMax()));
+        $priceStep = max(1, (float) ($data['price_slider_step'] ?? Setting::priceSliderStep()));
+        $priceMinGap = max(0, (float) ($data['price_slider_min_gap'] ?? Setting::priceSliderMinGap()));
+
+        // Ensure min < max
+        if ($priceMin >= $priceMax) {
+            Notification::make()
+                ->title(__('filament-dashboard.Validation error'))
+                ->body(__('filament-dashboard.Minimum price must be less than maximum price.'))
+                ->danger()
+                ->send();
+            return;
+        }
+
+        Setting::set('price_slider_min', (string) $priceMin);
+        Setting::set('price_slider_max', (string) $priceMax);
+        Setting::set('price_slider_step', (string) $priceStep);
+        Setting::set('price_slider_min_gap', (string) $priceMinGap);
+
         Notification::make()
-            ->title('Settings saved')
+            ->title(__('filament-dashboard.Settings saved'))
             ->success()
             ->send();
 
         $this->form->fill([
             'delivery_service_fee_percent' => (string) $percent,
+            'price_slider_min' => (string) $priceMin,
+            'price_slider_max' => (string) $priceMax,
+            'price_slider_step' => (string) $priceStep,
+            'price_slider_min_gap' => (string) $priceMinGap,
         ]);
     }
 }

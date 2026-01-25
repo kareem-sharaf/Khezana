@@ -1,13 +1,26 @@
 {{-- Filters: Panel (desktop) / Bottom sheet (mobile). Apply-only, no auto-submit. --}}
 @php
+    use App\Models\Setting;
     $currentFilters = $filters ?? [];
     $categories = $categories ?? collect();
     $activeFiltersCount = $activeFiltersCount ?? 0;
     $filterRoute = request()->routeIs('items.index') ? route('items.index') : route('public.items.index');
     $hasCategory = isset($currentFilters['category_id']);
     $hasPrice = isset($currentFilters['price_min']) || isset($currentFilters['price_max']);
-    $priceMin = isset($currentFilters['price_min']) ? (int) $currentFilters['price_min'] : 0;
-    $priceMax = isset($currentFilters['price_max']) ? (int) $currentFilters['price_max'] : 1000000;
+    
+    // Get price slider settings from admin settings
+    $sliderMin = (int) Setting::priceSliderMin();
+    $sliderMax = (int) Setting::priceSliderMax();
+    $sliderStep = (int) Setting::priceSliderStep();
+    $sliderMinGap = (int) Setting::priceSliderMinGap();
+    
+    // Use current filter values or default to slider min/max
+    $priceMin = isset($currentFilters['price_min']) ? (int) $currentFilters['price_min'] : $sliderMin;
+    $priceMax = isset($currentFilters['price_max']) ? (int) $currentFilters['price_max'] : $sliderMax;
+    
+    // Ensure values are within slider range
+    $priceMin = max($sliderMin, min($sliderMax, $priceMin));
+    $priceMax = max($sliderMin, min($sliderMax, $priceMax));
 @endphp
 
 <div x-data="{ 
@@ -201,7 +214,12 @@
                 <section class="khezana-filter-section" 
                     x-data="{
                         open: {{ $hasPrice ? 'true' : 'false' }},
-                        ...priceSlider({{ $priceMin }}, {{ $priceMax }})
+                        ...priceSlider({{ $priceMin }}, {{ $priceMax }}, {
+                            min: {{ $sliderMin }},
+                            max: {{ $sliderMax }},
+                            step: {{ $sliderStep }},
+                            minGap: {{ $sliderMinGap }}
+                        })
                     }"
                     x-show="!operationType || operationType !== 'donate'"
                     x-transition>
@@ -227,13 +245,13 @@
                                         :style="'left:' + minPercent + '%;width:' + (maxPercent - minPercent) + '%'">
                                     </div>
                                 </div>
-                                <input type="range" min="0" max="1000000" step="1000"
+                                <input type="range" :min="min" :max="max" :step="step"
                                     :value="minValue" @input="updateMin($event.target.value)"
                                     @mousedown="onDragStart('min')" @mouseup="onDragEnd('min')"
                                     @touchstart="onDragStart('min')" @touchend="onDragEnd('min')"
                                     class="khezana-price-slider__input khezana-price-slider__input--min"
                                     aria-label="{{ __('common.ui.min_price') }}">
-                                <input type="range" min="0" max="1000000" step="1000"
+                                <input type="range" :min="min" :max="max" :step="step"
                                     :value="maxValue" @input="updateMax($event.target.value)"
                                     @mousedown="onDragStart('max')" @mouseup="onDragEnd('max')"
                                     @touchstart="onDragStart('max')" @touchend="onDragEnd('max')"

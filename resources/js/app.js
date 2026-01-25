@@ -5,17 +5,41 @@ import Alpine from 'alpinejs';
 window.Alpine = Alpine;
 
 // Price Slider Component - Professional Range Selection
-Alpine.data('priceSlider', (minValue = 0, maxValue = 1000000) => {
-    const min = 0;
-    const max = 1000000;
-    const minGap = 1000; // Minimum gap between min and max
+// config is provided from PHP (settings). Use config values; fallbacks only when missing.
+Alpine.data('priceSlider', (minValue, maxValue, config = {}) => {
+    const min = (config.min !== undefined && config.min !== null && !isNaN(Number(config.min))) ? Number(config.min) : 0;
+    const max = (config.max !== undefined && config.max !== null && !isNaN(Number(config.max))) ? Number(config.max) : 1000000;
+    const minGap = (config.minGap !== undefined && config.minGap !== null && !isNaN(Number(config.minGap))) ? Number(config.minGap) : 1000;
+    const step = (config.step !== undefined && config.step !== null && !isNaN(Number(config.step)) && Number(config.step) > 0) ? Number(config.step) : 1000;
 
-    let low = parseInt(minValue) || min;
-    let high = parseInt(maxValue) || max;
+    // Use values from parameters or default to min/max from config
+    let low = (minValue !== undefined && minValue !== null) ? parseInt(minValue) : min;
+    if (isNaN(low)) {
+        low = min;
+    }
+    let high = (maxValue !== undefined && maxValue !== null) ? parseInt(maxValue) : max;
+
+    if (isNaN(high)) {
+        high = max;
+    }
+
+    // Ensure values are within bounds
+    if (low < min) low = min;
+    if (high > max) high = max;
     if (low > high) {
         low = min;
         high = max;
     }
+
+    // Ensure minimum gap
+    if (high - low < minGap) {
+        if (low === min) {
+            high = Math.min(max, min + minGap);
+        } else {
+            low = Math.max(min, high - minGap);
+        }
+    }
+
     const initialMin = Math.max(min, Math.min(max, low));
     const initialMax = Math.max(initialMin + minGap, Math.min(max, high));
 
@@ -25,6 +49,7 @@ Alpine.data('priceSlider', (minValue = 0, maxValue = 1000000) => {
         min: min,
         max: max,
         minGap: minGap,
+        step: step,
         isDragging: false,
         isDraggingMin: false,
         isDraggingMax: false,
@@ -76,9 +101,8 @@ Alpine.data('priceSlider', (minValue = 0, maxValue = 1000000) => {
             const track = e.currentTarget;
             const rect = track.getBoundingClientRect();
             const percent = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-            const step = 1000;
             const raw = this.min + (this.max - this.min) * (percent / 100);
-            const value = Math.round(raw / step) * step;
+            const value = Math.round(raw / this.step) * this.step;
             const valueClamped = Math.max(this.min, Math.min(this.max, value));
             const distMin = Math.abs(this.minPercent - percent);
             const distMax = Math.abs(this.maxPercent - percent);

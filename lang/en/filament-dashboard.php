@@ -146,4 +146,24 @@ return [
 
     // Custom Labels
     'My Custom Label' => 'My Custom Label',
+
+    // Platform Settings
+    'Platform Settings' => 'Platform Settings',
+    'Listing & Fees' => 'Listing & Fees',
+    'Configure delivery/service fee shown to sellers and applied to displayed prices.' => 'Configure delivery/service fee shown to sellers and applied to displayed prices.',
+    'Delivery / service fee (%)' => 'Delivery / service fee (%)',
+    'A fee added to the product price. Displayed price = base price + this %. Sellers see this in the pre-creation notice.' => 'A fee added to the product price. Displayed price = base price + this %. Sellers see this in the pre-creation notice.',
+    'Settings saved' => 'Settings saved',
+    'Price Filter Settings' => 'Price Filter Settings',
+    'Configure price slider range and step values for the item filters.' => 'Configure price slider range and step values for the item filters.',
+    'Price slider minimum value' => 'Price slider minimum value',
+    'Minimum price value shown in the price filter slider.' => 'Minimum price value shown in the price filter slider.',
+    'Price slider maximum value' => 'Price slider maximum value',
+    'Maximum price value shown in the price filter slider.' => 'Maximum price value shown in the price filter slider.',
+    'Price slider step' => 'Price slider step',
+    'Increment step value for the price slider (e.g., 100, 500, 1000).' => 'Increment step value for the price slider (e.g., 100, 500, 1000).',
+    'Price slider minimum gap' => 'Price slider minimum gap',
+    'Minimum gap between minimum and maximum price values in the slider.' => 'Minimum gap between minimum and maximum price values in the slider.',
+    'Validation error' => 'Validation error',
+    'Minimum price must be less than maximum price.' => 'Minimum price must be less than maximum price.',
 ];

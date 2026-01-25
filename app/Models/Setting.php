@@ -54,4 +54,51 @@ class Setting extends Model
 
         return max(0, min(100, $v));
     }
+
+    /**
+     * Get price slider minimum value.
+     */
+    public static function priceSliderMin(): float
+    {
+        return max(0, (float) self::get('price_slider_min', 0));
+    }
+
+    /**
+     * Get price slider maximum value.
+     * From settings; safe fallback only when not yet configured.
+     */
+    public static function priceSliderMax(): float
+    {
+        $value = self::get('price_slider_max');
+        if ($value === null || $value === '') {
+            return 1000000.0; // fallback until admin sets it
+        }
+        return max(1, (float) $value);
+    }
+
+    /**
+     * Get price slider step value.
+     * From settings; safe fallback only when not yet configured.
+     */
+    public static function priceSliderStep(): float
+    {
+        $value = self::get('price_slider_step');
+        if ($value === null || $value === '') {
+            return 1000.0; // fallback until admin sets it
+        }
+        return max(1, (float) $value);
+    }
+
+    /**
+     * Get price slider minimum gap between min and max.
+     * From settings; safe fallback only when not yet configured.
+     */
+    public static function priceSliderMinGap(): float
+    {
+        $value = self::get('price_slider_min_gap');
+        if ($value === null || $value === '') {
+            return 1000.0; // fallback until admin sets it
+        }
+        return max(0, (float) $value);
+    }
 }

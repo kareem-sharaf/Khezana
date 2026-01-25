@@ -168,6 +168,6 @@ class ItemController extends Controller
         // TODO: Create report record
 
         return redirect()->route('public.items.show', ['id' => $item->id, 'slug' => $item->slug])
-            ->with('success', 'تم الإبلاغ عن الإعلان. شكراً لك.');
+            ->with('success', 'تم الإبلاغ عن اللباس. شكراً لك.');
     }
 }

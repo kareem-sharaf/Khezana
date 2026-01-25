@@ -1,5 +1,6 @@
 {{-- Active filter chips above results. Shown only when filters are active. --}}
 @php
+    use App\Models\Setting;
     $currentFilters = $filters ?? [];
     $categories = $categories ?? collect();
     $filterRoute = request()->routeIs('items.index') ? route('items.index') : route('public.items.index');
@@ -20,6 +21,8 @@
         }
         return $filterRoute . '?' . http_build_query(array_filter(array_merge($baseQuery, $f)));
     };
+    // Get price slider max from settings
+    $sliderMax = (int) Setting::priceSliderMax();
 @endphp
 @if (!empty($currentFilters))
     <div class="khezana-filter-chips" role="list" aria-label="{{ __('common.ui.active_filters') }}">
@@ -52,11 +55,12 @@
         @endif
         @if (
             (isset($currentFilters['price_min']) && (int) $currentFilters['price_min'] > 0) ||
-                (isset($currentFilters['price_max']) && (int) $currentFilters['price_max'] < 1000000))
+                (isset($currentFilters['price_max']) && (int) $currentFilters['price_max'] < $sliderMax))
             @php
                 $locale = app()->getLocale();
-                $min = isset($currentFilters['price_min']) ? (int) $currentFilters['price_min'] : 0;
-                $max = isset($currentFilters['price_max']) ? (int) $currentFilters['price_max'] : 1000000;
+                $sliderMin = (int) Setting::priceSliderMin();
+                $min = isset($currentFilters['price_min']) ? (int) $currentFilters['price_min'] : $sliderMin;
+                $max = isset($currentFilters['price_max']) ? (int) $currentFilters['price_max'] : $sliderMax;
                 $label =
                     \Illuminate\Support\Number::format($min, locale: $locale) .
                     ' – ' .
