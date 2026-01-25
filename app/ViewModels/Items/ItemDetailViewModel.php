@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\ViewModels\Items;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Item Detail ViewModel
@@ -211,8 +212,11 @@ class ItemDetailViewModel
                     return null;
                 }
 
-                $url = asset('storage/' . $path);
-                $urlWebp = $pathWebp ? asset('storage/' . $pathWebp) : null;
+                $url = Storage::disk($disk)->url($path);
+                $urlWebp = null;
+                if ($pathWebp && Storage::disk($disk)->exists($pathWebp)) {
+                    $urlWebp = Storage::disk($disk)->url($pathWebp);
+                }
 
                 return [
                     'path' => $path,
