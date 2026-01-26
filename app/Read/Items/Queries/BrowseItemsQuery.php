@@ -101,6 +101,12 @@ class BrowseItemsQuery
             }
         }
 
+        // Apply branch filter
+        if (isset($filters['branch_id']) && $filters['branch_id']) {
+            $branchId = (int) $filters['branch_id'];
+            $query->where('items.branch_id', $branchId);
+        }
+
         // Apply price filters - exclude donate items from price filtering
         $hasPriceFilter = (isset($filters['price_min']) && $filters['price_min']) || 
                          (isset($filters['price_max']) && $filters['price_max']);
@@ -137,15 +143,16 @@ class BrowseItemsQuery
         // Use groupBy to avoid duplicate rows from joins and ensure proper pagination
         $query->groupBy('items.id', 'items.title', 'items.slug', 'items.description', 'items.condition', 
                        'items.price', 'items.operation_type', 'items.availability_status', 
-                       'items.user_id', 'items.category_id', 'items.created_at', 'items.updated_at')
+                       'items.user_id', 'items.category_id', 'items.branch_id', 'items.created_at', 'items.updated_at')
               ->select('items.id', 'items.title', 'items.slug', 'items.description', 'items.condition', 
                       'items.price', 'items.operation_type', 'items.availability_status', 
-                      'items.user_id', 'items.category_id', 'items.created_at', 'items.updated_at');
+                      'items.user_id', 'items.category_id', 'items.branch_id', 'items.created_at', 'items.updated_at');
 
         // Phase 1.3: Optimized Eager Loading - only load what's needed
         $query->with([
             'user:id,name', // Only id and name from users table
             'category:id,name,slug', // Only id, name, slug from categories table
+            'branch:id,name,code,city', // Only id, name, code, city from branches table
             'images' => fn($q) => $q->select('id', 'item_id', 'path', 'disk', 'is_primary', 'path_webp')
                                    ->orderBy('is_primary', 'desc')
                                    ->orderBy('id', 'asc'), // Get primary first, then by ID

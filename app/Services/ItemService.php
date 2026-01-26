@@ -78,7 +78,15 @@ class ItemService
         $category = Category::with('attributes')->findOrFail($item->category_id);
         $allAttributes = $category->getAllAttributes();
 
+        // Skip 'condition' attribute validation when item condition is 'new'
+        $isNewCondition = $item->condition === 'new';
+
         foreach ($allAttributes as $attribute) {
+            // Skip 'condition' attribute for new items
+            if ($isNewCondition && $attribute->slug === 'condition') {
+                continue;
+            }
+
             if ($attribute->is_required) {
                 $slug = $attribute->slug;
                 if (!isset($attributes[$slug]) || empty($attributes[$slug])) {

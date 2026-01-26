@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Public;
 
+use App\Actions\Item\CreateItemAction;
+use App\Actions\Offer\CreateOfferAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FilterRequestsRequest;
+use App\Models\Item;
 use App\Models\Setting;
+use App\Read\Items\Models\ItemReadModel;
 use App\Read\Requests\Models\RequestReadModel;
 use App\Read\Requests\Queries\BrowseRequestsQuery;
 use App\Read\Requests\Queries\ViewRequestQuery;
@@ -14,6 +18,9 @@ use App\Services\Cache\CacheService;
 use App\Services\Cache\CategoryCacheService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class RequestController extends Controller
@@ -103,41 +110,121 @@ class RequestController extends Controller
             ['icon' => '📞', 'text' => __('requests.detail.offer_form.pre_creation_notice.rule_contact')],
         ];
 
+        // Fetch suggested items from the same category
+        $suggestedItems = collect();
+        $categoryAttributes = collect();
+        if ($requestModel->category) {
+            $suggestedItems = Item::query()
+                ->publishedAndAvailable()
+                ->where('category_id', $requestModel->category->id)
+                ->when($requestModel->user, fn($q) => $q->where('user_id', '!=', $requestModel->user->id))
+                ->with(['images', 'category'])
+                ->latest()
+                ->limit(6)
+                ->get()
+                ->map(fn($item) => ItemReadModel::fromModel($item));
+
+            // Fetch category attributes for the offer form
+            $category = \App\Models\Category::with(['attributes.values', 'parent.attributes.values'])->find($requestModel->category->id);
+            if ($category) {
+                $categoryAttributes = $category->getAllAttributes()->map(fn($attr) => [
+                    'id' => $attr->id,
+                    'name' => $attr->name,
+                    'slug' => $attr->slug,
+                    'type' => $attr->type->value,
+                    'is_required' => $attr->is_required,
+                    'values' => $attr->values->pluck('value')->toArray(),
+                ]);
+            }
+        }
+
         return view('public.requests.show', [
             'request' => $requestModel,
             'categories' => $categories,
             'feePercent' => $feePercent,
             'preCreationRules' => $preCreationRules,
+            'suggestedItems' => $suggestedItems,
+            'categoryAttributes' => $categoryAttributes,
         ]);
     }
 
     public function submitOffer(Request $request, int $id): RedirectResponse
     {
         $requestModel = \App\Models\Request::findOrFail($id);
+        $user = $request->user();
 
+        // Validate all data including item fields
         $validated = $request->validate([
+            // Item fields
+            'category_id' => 'required|exists:categories,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'condition' => 'required|in:new,used',
             'operation_type' => 'required|in:sell,rent,donate',
             'price' => 'nullable|numeric|min:0',
             'deposit_amount' => 'nullable|numeric|min:0',
+            'images' => 'nullable|array|max:5',
+            'images.*' => 'image|mimes:jpeg,jpg,png|max:5120',
+            'attributes' => 'nullable|array',
+            'attributes.*' => 'nullable|string|max:255',
+            // Offer fields
             'message' => 'nullable|string|max:1000',
-            'item_id' => 'nullable|exists:items,id',
         ]);
 
-        $createOfferAction = app(\App\Actions\Offer\CreateOfferAction::class);
-
-        try {
-            $createOfferAction->execute(
-                $validated,
-                $requestModel,
-                $request->user()
-            );
-        } catch (\Exception $e) {
+        // Ensure category_id matches the request's category
+        if ((int) $validated['category_id'] !== $requestModel->category_id) {
             return redirect()->route('public.requests.show', ['id' => $requestModel->id, 'slug' => $requestModel->slug])
-                ->with('error', $e->getMessage());
+                ->with('error', __('requests.messages.category_mismatch'));
         }
 
-        return redirect()->route('public.requests.show', ['id' => $requestModel->id, 'slug' => $requestModel->slug])
-            ->with('success', 'تم تقديم عرضك بنجاح.');
+        $createItemAction = app(CreateItemAction::class);
+        $createOfferAction = app(CreateOfferAction::class);
+
+        try {
+            // Prepare item data
+            $itemData = [
+                'category_id' => $validated['category_id'],
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
+                'condition' => $validated['condition'],
+                'operation_type' => $validated['operation_type'],
+                'price' => $validated['price'] ?? null,
+                'deposit_amount' => $validated['deposit_amount'] ?? null,
+            ];
+
+            // Get attributes if provided
+            $attributes = $validated['attributes'] ?? null;
+            
+            // Get images if provided
+            $images = $request->hasFile('images') ? $request->file('images') : null;
+
+            // Create the item (this will also submit for approval)
+            $item = $createItemAction->execute($itemData, $user, $attributes, $images);
+
+            // Create the offer linked to the item
+            $offerData = [
+                'operation_type' => $validated['operation_type'],
+                'price' => $validated['price'] ?? null,
+                'deposit_amount' => $validated['deposit_amount'] ?? null,
+                'message' => $validated['message'] ?? null,
+                'item_id' => $item->id,
+            ];
+
+            $createOfferAction->execute($offerData, $requestModel, $user);
+
+            return redirect()->route('public.requests.show', ['id' => $requestModel->id, 'slug' => $requestModel->slug])
+                ->with('success', __('requests.messages.offer_submitted'));
+
+        } catch (\Exception $e) {
+            Log::error('SubmitOffer failed', [
+                'request_id' => $id,
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return redirect()->route('public.requests.show', ['id' => $requestModel->id, 'slug' => $requestModel->slug])
+                ->with('error', __('requests.messages.offer_failed') . ': ' . $e->getMessage());
+        }
     }
 
     public function contact(Request $request, int $id): RedirectResponse

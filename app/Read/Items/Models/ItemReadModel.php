@@ -6,6 +6,7 @@ namespace App\Read\Items\Models;
 
 use App\Models\Item;
 use App\Read\Shared\Models\AttributeReadModel;
+use App\Read\Shared\Models\BranchReadModel;
 use App\Read\Shared\Models\CategoryReadModel;
 use App\Read\Shared\Models\ImageReadModel;
 use App\Read\Shared\Models\UserReadModel;
@@ -31,6 +32,7 @@ class ItemReadModel
         public readonly string $url,
         public readonly ?UserReadModel $user,
         public readonly ?CategoryReadModel $category,
+        public readonly ?BranchReadModel $branch,
         public readonly Collection $images,
         public readonly ?ImageReadModel $primaryImage,
         public readonly Collection $attributes,
@@ -43,10 +45,18 @@ class ItemReadModel
     ) {
     }
 
+    /**
+     * Check if the item is in a branch
+     */
+    public function isInBranch(): bool
+    {
+        return $this->branch !== null;
+    }
+
     public static function fromModel(Item $item): self
     {
         // Performance fix #7: Load missing relationships to prevent N+1 queries
-        $item->loadMissing(['images', 'user', 'category', 'itemAttributes.attribute']);
+        $item->loadMissing(['images', 'user', 'category', 'branch', 'itemAttributes.attribute']);
         
         $slug = $item->slug ?? Str::slug($item->title);
         $url = route('public.items.show', ['id' => $item->id, 'slug' => $slug]);
@@ -77,6 +87,7 @@ class ItemReadModel
             url: $url,
             user: $item->user ? UserReadModel::fromModel($item->user) : null,
             category: $item->category ? CategoryReadModel::fromModel($item->category) : null,
+            branch: $item->branch ? BranchReadModel::fromModel($item->branch) : null,
             images: $images,
             primaryImage: $primaryImage,
             attributes: $item->itemAttributes->map(fn($attr) => AttributeReadModel::fromModel($attr)),

@@ -109,7 +109,25 @@ class ItemCardHelper
             return null;
         }
 
-        // Use asset() for better compatibility with different hosts
-        return asset('storage/' . $path);
+        $url = asset('storage/' . $path);
+
+        // #region agent log H3
+        $logPath = base_path('.cursor/debug.log');
+        file_put_contents($logPath, json_encode([
+            'location' => 'ItemCardHelper.php:getImageUrl',
+            'message' => 'Image URL generated',
+            'hypothesisId' => 'H3',
+            'data' => [
+                'path' => $path,
+                'disk' => $disk,
+                'url' => $url,
+                'file_exists' => file_exists(storage_path('app/public/' . $path)),
+            ],
+            'timestamp' => round(microtime(true) * 1000),
+            'sessionId' => 'debug-session',
+        ]) . "\n", FILE_APPEND);
+        // #endregion
+
+        return $url;
     }
 }

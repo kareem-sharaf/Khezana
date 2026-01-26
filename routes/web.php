@@ -66,6 +66,14 @@ Route::middleware('auth')->group(function () {
         return response()->json(['token' => csrf_token()]);
     })->name('csrf.token');
     
+    // Contact attempt tracking (for Beacon API) - Items
+    Route::post('/track-contact', [\App\Http\Controllers\ContactAttemptController::class, 'track'])
+        ->name('contact.track');
+    
+    // Offer attempt tracking (for Beacon API) - Requests
+    Route::post('/track-offer-attempt', [\App\Http\Controllers\OfferAttemptController::class, 'track'])
+        ->name('offer.track');
+    
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

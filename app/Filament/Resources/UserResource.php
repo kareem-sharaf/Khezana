@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
+use App\Models\Branch;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Forms;
@@ -114,6 +115,16 @@ class UserResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required(false),
+                        Select::make('branch_id')
+                            ->label(__('branches.singular'))
+                            ->relationship('branch', 'name')
+                            ->options(Branch::active()->pluck('name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->nullable()
+                            ->placeholder(__('branches.placeholders.select_branch'))
+                            ->helperText(__('branches.hints.user_branch'))
+                            ->visible(fn() => auth()->user()?->hasRole('super_admin')),
                     ])
                     ->visible(fn() => auth()->user()?->can('manageRoles', User::class)),
 
@@ -164,6 +175,13 @@ class UserResource extends Resource
                     ->label(__('filament-dashboard.Roles'))
                     ->badge()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('branch.name')
+                    ->label(__('branches.singular'))
+                    ->badge()
+                    ->color('info')
+                    ->sortable()
+                    ->toggleable()
+                    ->placeholder('-'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -194,6 +212,12 @@ class UserResource extends Resource
                                 fn(Builder $query, $role): Builder => $query->whereHas('roles', fn($q) => $q->where('name', $role)),
                             );
                     }),
+                Tables\Filters\SelectFilter::make('branch_id')
+                    ->label(__('branches.singular'))
+                    ->relationship('branch', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->visible(fn() => auth()->user()?->hasRole('super_admin')),
             ])
             ->actions([
                 Actions\ViewAction::make(),
@@ -244,7 +268,7 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->with(['roles', 'profile']);
+            ->with(['roles', 'profile', 'branch']);
     }
 
     // canViewAny() and canCreate() removed - Filament automatically uses UserPolicy

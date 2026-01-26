@@ -1,3 +1,7 @@
+@php
+    use App\Helpers\ItemCardHelper;
+@endphp
+
 @extends('layouts.app')
 
 @section('title', $request->title . ' - ' . config('app.name'))
@@ -198,14 +202,9 @@
                     </div>
                     @endif
 
-                    <!-- Offer Form (Hidden by default; only for non-owners) - Full create-item style, send via WhatsApp/Telegram -->
+                    <!-- Offer Form (Hidden by default; only for non-owners) -->
                     @auth
                         @if (! $isOwner)
-                        @php
-                            $whatsappNumber = config('services.whatsapp.number', '+963959378002');
-                            $telegramUsername = config('services.telegram.username', 'KARMO_VSKY');
-                            $telegramContact = config('services.telegram.contact', '+963959378002');
-                        @endphp
                         <div id="offerFormWrap" style="display: none; margin-top: var(--khezana-spacing-xl);">
                             {{-- Pre-Creation Notice Modal --}}
                             <div id="offerPreCreationNotice" class="khezana-notice-overlay" role="dialog" aria-modal="true"
@@ -262,18 +261,10 @@
                                     </div>
 
                                     <form id="offerFormEl" class="khezana-form" enctype="multipart/form-data"
-                                        data-request-id="{{ $request->id }}"
-                                        data-request-url="{{ route('public.requests.show', ['id' => $request->id, 'slug' => $request->slug]) }}"
-                                        data-whatsapp-number="{{ $whatsappNumber }}"
-                                        data-telegram-username="{{ $telegramUsername }}"
-                                        data-telegram-contact="{{ $telegramContact }}"
-                                        data-msg-intro="{{ __('requests.detail.offer_form.message_intro', ['id' => $request->id]) }}"
-                                        data-op-sell="{{ __('items.operation_types.sell') }}"
-                                        data-op-rent="{{ __('items.operation_types.rent') }}"
-                                        data-op-donate="{{ __('items.operation_types.donate') }}"
-                                        data-currency="{{ __('common.ui.currency') }}"
-                                        data-per-day="{{ __('common.ui.per_day') }}"
-                                        data-free="{{ __('common.ui.free') }}">
+                                        method="POST"
+                                        action="{{ route('public.requests.offer', $request->id) }}"
+                                        data-request-id="{{ $request->id }}">
+                                        @csrf
 
                                         {{-- Section 1: Basic Information --}}
                                         <div class="khezana-form-section">
@@ -286,23 +277,19 @@
                                             </div>
                                             <div class="khezana-form-section-content">
                                                 <div class="khezana-form-group">
-                                                    <label for="offer_category_id" class="khezana-form-label">
+                                                    <label class="khezana-form-label">
                                                         <span class="khezana-form-label-icon">👗</span>
                                                         {{ __('items.fields.category') }}
-                                                        <span class="khezana-required">*</span>
                                                     </label>
-                                                    @include('components.category-select', [
-                                                        'categories' => $categories ?? collect(),
-                                                        'name' => 'category_id',
-                                                        'id' => 'offer_category_id',
-                                                        'selected' => $request->category->id ?? null,
-                                                        'required' => true,
-                                                        'placeholder' => __('common.ui.select_category'),
-                                                        'showAllOption' => false,
-                                                        'attributes' => true,
-                                                        'onchange' => 'loadOfferCategoryAttributes(this.value)',
-                                                    ])
-                                                    <p class="khezana-form-hint">{{ __('requests.detail.offer_form.hints.category') }}</p>
+                                                    {{-- Hidden field with request's category --}}
+                                                    <input type="hidden" name="category_id" value="{{ $request->category->id ?? '' }}">
+                                                    {{-- Display category name (read-only) --}}
+                                                    <input type="text"
+                                                        class="khezana-form-input"
+                                                        value="{{ $request->category->name ?? '' }}"
+                                                        disabled
+                                                        style="background-color: var(--khezana-bg-secondary); cursor: not-allowed;">
+                                                    <p class="khezana-form-hint">{{ __('requests.detail.offer_form.hints.category_locked') }}</p>
                                                 </div>
 
                                                 <div class="khezana-form-group">
@@ -483,8 +470,8 @@
                                         </div>
 
                                         <div class="khezana-form-actions">
-                                            <button type="button" id="offerPrepareBtn" class="khezana-btn khezana-btn-primary khezana-btn-large">
-                                                {{ __('requests.detail.offer_form.prepare_offer') }}
+                                            <button type="submit" id="offerSubmitBtn" class="khezana-btn khezana-btn-primary khezana-btn-large">
+                                                {{ __('requests.detail.offer_form.submit_offer') }}
                                             </button>
                                             <button type="button" onclick="hideOfferForm()" class="khezana-btn khezana-btn-secondary">
                                                 {{ __('common.actions.cancel') }}
@@ -492,29 +479,6 @@
                                         </div>
                                     </form>
                                 </div>
-                            </div>
-
-                            <div id="offerShareBox" class="khezana-item-cta" style="display: none; margin-top: var(--khezana-spacing-xl);">
-                                <h3 class="khezana-section-title-small" style="margin-bottom: var(--khezana-spacing-md);">
-                                    {{ __('requests.detail.offer_form.send_via') }}
-                                </h3>
-                                <a id="offerWhatsAppBtn" href="#" target="_blank" rel="noopener noreferrer"
-                                    class="khezana-btn khezana-btn-whatsapp khezana-btn-large khezana-btn-full">
-                                    <svg class="khezana-btn-whatsapp__icon" fill="currentColor" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                                    </svg>
-                                    <span>{{ __('common.ui.send_offer_whatsapp') }}</span>
-                                </a>
-                                <a id="offerTelegramBtn" href="#" target="_blank" rel="noopener noreferrer"
-                                    class="khezana-btn khezana-btn-telegram khezana-btn-large khezana-btn-full">
-                                    <svg class="khezana-btn-telegram__icon" fill="currentColor" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                                    </svg>
-                                    <span>{{ __('common.ui.send_offer_telegram') }}</span>
-                                </a>
-                                <p class="khezana-item-cta__contact-info">
-                                    {{ __('common.ui.telegram_contact_info', ['number' => $telegramContact]) }}
-                                </p>
                             </div>
                         </div>
                         @endif
@@ -530,6 +494,30 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Suggested Items Section -->
+            @if ($suggestedItems && $suggestedItems->count() > 0)
+                <section class="khezana-similar-items" aria-label="{{ __('requests.detail.suggested_items') }}">
+                    <div class="khezana-similar-items__header">
+                        <h2 class="khezana-similar-items__title">
+                            {{ __('requests.detail.suggested_items') }}
+                        </h2>
+                        <p class="khezana-similar-items__subtitle">
+                            {{ __('requests.detail.suggested_items_description') }}
+                        </p>
+                    </div>
+
+                    <div class="khezana-items-grid-modern" role="list">
+                        @foreach ($suggestedItems as $item)
+                            <div role="listitem">
+                                @include(
+                                    'partials.item-card',
+                                    array_merge(['item' => $item], ItemCardHelper::preparePublicItem($item)))
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
         </div>
     </div>
 
@@ -574,106 +562,106 @@
             if (form) form.hidden = true;
         }
 
-        function loadOfferCategoryAttributes(categoryId) {
-            const select = document.getElementById('offer_category_id');
-            const selectedOption = select ? select.options[select.selectedIndex] : null;
+        // Request attributes from the server (pre-filled values)
+        const requestAttributes = @json($request->attributes->mapWithKeys(fn($attr) => [$attr->name => $attr->value]));
+
+        // Category attributes definition (from controller)
+        const categoryAttributes = @json($categoryAttributes ?? []);
+
+        function loadOfferCategoryAttributes() {
             const attributesContainer = document.getElementById('offerAttributesContainer');
             const attributesFields = document.getElementById('offerAttributesFields');
 
-            if (!categoryId || !selectedOption) {
+            if (!categoryAttributes || categoryAttributes.length === 0) {
                 if (attributesContainer) attributesContainer.style.display = 'none';
                 if (attributesFields) attributesFields.innerHTML = '';
                 return;
             }
 
-            try {
-                const attributes = JSON.parse(selectedOption.getAttribute('data-attributes') || '[]');
+            if (attributesContainer) attributesContainer.style.display = 'block';
+            if (attributesFields) attributesFields.innerHTML = '';
 
-                if (attributes.length === 0) {
-                    if (attributesContainer) attributesContainer.style.display = 'none';
-                    if (attributesFields) attributesFields.innerHTML = '';
-                    return;
+            categoryAttributes.forEach(attribute => {
+                const attributeDiv = document.createElement('div');
+                attributeDiv.className = 'khezana-form-group';
+
+                const label = document.createElement('label');
+                label.className = 'khezana-form-label';
+                label.htmlFor = `offer_attributes[${attribute.slug}]`;
+                label.textContent = translateOfferAttributeName(attribute.name);
+                if (attribute.is_required) {
+                    label.innerHTML += ' <span class="khezana-required">*</span>';
                 }
 
-                if (attributesContainer) attributesContainer.style.display = 'block';
-                if (attributesFields) attributesFields.innerHTML = '';
+                // Get pre-filled value from request attributes
+                const prefilledValue = requestAttributes[attribute.name] || '';
 
-                attributes.forEach(attribute => {
-                    const attributeDiv = document.createElement('div');
-                    attributeDiv.className = 'khezana-form-group';
+                let input;
 
-                    const label = document.createElement('label');
-                    label.className = 'khezana-form-label';
-                    label.htmlFor = `offer_attributes[${attribute.slug}]`;
-                    label.textContent = translateOfferAttributeName(attribute.name);
+                if (attribute.type === 'select') {
+                    input = document.createElement('select');
+                    input.className = 'khezana-form-input khezana-form-select';
+                    input.name = `attributes[${attribute.slug}]`;
+                    input.id = `offer_attributes[${attribute.slug}]`;
                     if (attribute.is_required) {
-                        label.innerHTML += ' <span class="khezana-required">*</span>';
+                        input.required = true;
                     }
 
-                    let input;
+                    const emptyOption = document.createElement('option');
+                    emptyOption.value = '';
+                    emptyOption.textContent = '{{ __('common.ui.choose') }}';
+                    input.appendChild(emptyOption);
 
-                    if (attribute.type === 'select') {
-                        input = document.createElement('select');
-                        input.className = 'khezana-form-input khezana-form-select';
-                        input.name = `attributes[${attribute.slug}]`;
-                        input.id = `offer_attributes[${attribute.slug}]`;
-                        if (attribute.is_required) {
-                            input.required = true;
-                        }
-
-                        const emptyOption = document.createElement('option');
-                        emptyOption.value = '';
-                        emptyOption.textContent = '{{ __('common.ui.choose') }}';
-                        input.appendChild(emptyOption);
-
-                        if (attribute.values && attribute.values.length > 0) {
-                            attribute.values.forEach(value => {
-                                const option = document.createElement('option');
-                                option.value = value;
-                                option.textContent = value;
-                                input.appendChild(option);
-                            });
-                        }
-                    } else if (attribute.type === 'number') {
-                        input = document.createElement('input');
-                        input.type = 'number';
-                        input.className = 'khezana-form-input';
-                        input.name = `attributes[${attribute.slug}]`;
-                        input.id = `offer_attributes[${attribute.slug}]`;
-                        if (attribute.is_required) {
-                            input.required = true;
-                        }
-                    } else {
-                        input = document.createElement('input');
-                        input.type = 'text';
-                        input.className = 'khezana-form-input';
-                        input.name = `attributes[${attribute.slug}]`;
-                        input.id = `offer_attributes[${attribute.slug}]`;
-                        if (attribute.is_required) {
-                            input.required = true;
-                        }
-
-                        if (attribute.slug === 'size') {
-                            input.placeholder = '{{ __('attributes.placeholders.size') }}';
-                        }
+                    if (attribute.values && attribute.values.length > 0) {
+                        attribute.values.forEach(value => {
+                            const option = document.createElement('option');
+                            option.value = value;
+                            option.textContent = value;
+                            // Pre-select if matches request attribute
+                            if (value === prefilledValue) {
+                                option.selected = true;
+                            }
+                            input.appendChild(option);
+                        });
+                    }
+                } else if (attribute.type === 'number') {
+                    input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'khezana-form-input';
+                    input.name = `attributes[${attribute.slug}]`;
+                    input.id = `offer_attributes[${attribute.slug}]`;
+                    input.value = prefilledValue;
+                    if (attribute.is_required) {
+                        input.required = true;
+                    }
+                } else {
+                    input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'khezana-form-input';
+                    input.name = `attributes[${attribute.slug}]`;
+                    input.id = `offer_attributes[${attribute.slug}]`;
+                    input.value = prefilledValue;
+                    if (attribute.is_required) {
+                        input.required = true;
                     }
 
-                    attributeDiv.appendChild(label);
-                    attributeDiv.appendChild(input);
-
-                    if (attribute.slug === 'size' && attribute.type === 'text') {
-                        const helper = document.createElement('p');
-                        helper.className = 'khezana-form-hint';
-                        helper.textContent = '{{ __('attributes.helpers.size') }}';
-                        attributeDiv.appendChild(helper);
+                    if (attribute.slug === 'size') {
+                        input.placeholder = '{{ __('attributes.placeholders.size') }}';
                     }
+                }
 
-                    if (attributesFields) attributesFields.appendChild(attributeDiv);
-                });
-            } catch (e) {
-                console.error('Error loading attributes:', e);
-                if (attributesContainer) attributesContainer.style.display = 'none';
-            }
+                attributeDiv.appendChild(label);
+                attributeDiv.appendChild(input);
+
+                if (attribute.slug === 'size' && attribute.type === 'text') {
+                    const helper = document.createElement('p');
+                    helper.className = 'khezana-form-hint';
+                    helper.textContent = '{{ __('attributes.helpers.size') }}';
+                    attributeDiv.appendChild(helper);
+                }
+
+                if (attributesFields) attributesFields.appendChild(attributeDiv);
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -685,14 +673,10 @@
             const offerForm = document.getElementById('offerForm');
             const priceGroup = document.getElementById('offerPriceGroup');
             const depositGroup = document.getElementById('offerDepositGroup');
-            const prepareBtn = document.getElementById('offerPrepareBtn');
-            const shareBox = document.getElementById('offerShareBox');
-            const waBtn = document.getElementById('offerWhatsAppBtn');
-            const tgBtn = document.getElementById('offerTelegramBtn');
+            const submitBtn = document.getElementById('offerSubmitBtn');
             const progressBarFill = document.getElementById('offerProgressBarFill');
-            const categorySelect = document.getElementById('offer_category_id');
 
-            if (!form || !prepareBtn) return;
+            if (!form || !submitBtn) return;
 
             // Pre-creation notice modal
             if (noticeContinue && modal && offerForm) {
@@ -703,17 +687,11 @@
                 });
             }
 
-            // Category change - load attributes
-            if (categorySelect) {
-                categorySelect.addEventListener('change', function() {
-                    loadOfferCategoryAttributes(this.value);
-                    updateProgressBar();
-                });
-                // Load initial if category is pre-selected
-                if (categorySelect.value) {
-                    setTimeout(() => loadOfferCategoryAttributes(categorySelect.value), 100);
-                }
-            }
+            // Load attributes automatically (category is locked to request's category)
+            setTimeout(() => {
+                loadOfferCategoryAttributes();
+                updateProgressBar();
+            }, 100);
 
             // Toggle price/deposit based on operation type
             function togglePriceDeposit() {
@@ -738,11 +716,14 @@
 
             // Image upload preview
             (function() {
-                let imageInput, previewContainer, previewGrid;
+                const imageInput = document.getElementById('offerImages');
+                const previewContainer = document.getElementById('offerImagePreviewContainer');
+                const previewGrid = document.getElementById('offerImagePreviewGrid');
+                const dropZone = document.getElementById('offerImageDropZone');
+
+                if (!imageInput || !previewContainer || !previewGrid) return;
 
                 function updatePreview() {
-                    if (!imageInput || !previewContainer || !previewGrid) return;
-
                     const files = Array.from(imageInput.files);
                     previewGrid.innerHTML = '';
 
@@ -787,40 +768,36 @@
                     updatePreview();
                 }
 
-                document.addEventListener('DOMContentLoaded', function() {
-                    imageInput = document.getElementById('offerImages');
-                    previewContainer = document.getElementById('offerImagePreviewContainer');
-                    previewGrid = document.getElementById('offerImagePreviewGrid');
-                    const dropZone = document.getElementById('offerImageDropZone');
+                imageInput.addEventListener('change', updatePreview);
 
-                    if (!imageInput || !previewContainer || !previewGrid) return;
-
-                    imageInput.addEventListener('change', updatePreview);
-
-                    if (dropZone) {
-                        dropZone.addEventListener('click', () => imageInput.click());
-                        dropZone.addEventListener('dragover', (e) => {
-                            e.preventDefault();
-                            dropZone.classList.add('khezana-image-drop-zone--dragover');
-                        });
-                        dropZone.addEventListener('dragleave', () => {
-                            dropZone.classList.remove('khezana-image-drop-zone--dragover');
-                        });
-                        dropZone.addEventListener('drop', (e) => {
-                            e.preventDefault();
-                            dropZone.classList.remove('khezana-image-drop-zone--dragover');
-                            if (e.dataTransfer.files.length) {
-                                const dt = new DataTransfer();
-                                Array.from(imageInput.files).forEach(f => dt.items.add(f));
-                                Array.from(e.dataTransfer.files).forEach(f => {
-                                    if (f.type.match('image.*') && f.size <= 5 * 1024 * 1024) dt.items.add(f);
-                                });
-                                imageInput.files = dt.files;
-                                updatePreview();
-                            }
-                        });
-                    }
-                });
+                if (dropZone) {
+                    dropZone.addEventListener('click', (e) => {
+                        // Prevent double trigger when clicking directly on the input
+                        if (e.target !== imageInput) {
+                            imageInput.click();
+                        }
+                    });
+                    dropZone.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        dropZone.classList.add('khezana-image-drop-zone--dragover');
+                    });
+                    dropZone.addEventListener('dragleave', () => {
+                        dropZone.classList.remove('khezana-image-drop-zone--dragover');
+                    });
+                    dropZone.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        dropZone.classList.remove('khezana-image-drop-zone--dragover');
+                        if (e.dataTransfer.files.length) {
+                            const dt = new DataTransfer();
+                            Array.from(imageInput.files).forEach(f => dt.items.add(f));
+                            Array.from(e.dataTransfer.files).forEach(f => {
+                                if (f.type.match('image.*') && f.size <= 5 * 1024 * 1024) dt.items.add(f);
+                            });
+                            imageInput.files = dt.files;
+                            updatePreview();
+                        }
+                    });
+                }
             })();
 
             // Progress bar update
@@ -833,116 +810,10 @@
                 progressBarFill.style.width = progress + '%';
             }
 
-            // Build message from all form fields
-            function buildMessage() {
-                const requestId = form.dataset.requestId || '';
-                const op = form.querySelector('input[name="operation_type"]:checked');
-                const opSell = form.dataset.opSell || 'sell';
-                const opRent = form.dataset.opRent || 'rent';
-                const opDonate = form.dataset.opDonate || 'donate';
-                const currency = form.dataset.currency || '';
-                const perDay = form.dataset.perDay || '';
-                const free = form.dataset.free || 'free';
-
-                let opLabel = opSell;
-                if (op && op.value === 'rent') opLabel = opRent;
-                else if (op && op.value === 'donate') opLabel = opDonate;
-
-                const categorySelect = document.getElementById('offer_category_id');
-                const categoryName = categorySelect && categorySelect.options[categorySelect.selectedIndex]
-                    ? categorySelect.options[categorySelect.selectedIndex].text.trim().replace(/└─\s*/, '')
-                    : '';
-                const titleVal = (form.querySelector('[name="title"]')?.value || '').trim();
-                const descVal = (form.querySelector('[name="description"]')?.value || '').trim();
-                const condition = form.querySelector('input[name="condition"]:checked');
-                const conditionLabel = condition ? (condition.value === 'new' ? '{{ __('items.conditions.new') }}' : '{{ __('items.conditions.used') }}') : '';
-                const priceVal = (form.querySelector('[name="price"]')?.value || '').trim();
-                const depositVal = (form.querySelector('[name="deposit_amount"]')?.value || '').trim();
-                const imageInput = document.getElementById('offerImages');
-                const hasImages = imageInput && imageInput.files && imageInput.files.length > 0;
-                const imageCount = hasImages ? imageInput.files.length : 0;
-
-                // Collect attributes
-                const attributeInputs = form.querySelectorAll('[name^="attributes["]');
-                const attributes = [];
-                attributeInputs.forEach(input => {
-                    if (input.value && input.value.trim()) {
-                        const label = input.previousElementSibling?.textContent?.replace(/\s*\*?\s*$/, '') || input.name;
-                        attributes.push(label + ': ' + input.value.trim());
-                    }
-                });
-
-                // Build a friendly message
-                let lines = [];
-                lines.push('مرحباً 👋');
-                lines.push('');
-                lines.push('أود تقديم عرض على الطلب رقم #' + requestId);
-                lines.push('');
-                lines.push('📋 تفاصيل العرض:');
-                lines.push('');
-
-                if (titleVal) {
-                    lines.push('📌 ' + titleVal);
-                    lines.push('');
-                }
-
-                if (categoryName) {
-                    lines.push('👗 الفئة: ' + categoryName);
-                }
-
-                if (op) {
-                    lines.push('💼 نوع العملية: ' + opLabel);
-                }
-
-                if (descVal) {
-                    lines.push('');
-                    lines.push('📄 الوصف:');
-                    lines.push(descVal);
-                }
-
-                if (conditionLabel) {
-                    lines.push('');
-                    lines.push('🏷️ الحالة: ' + conditionLabel);
-                }
-
-                if (op && op.value === 'sell' && priceVal) {
-                    lines.push('💰 السعر: ' + priceVal + ' ' + currency);
-                } else if (op && op.value === 'rent') {
-                    if (priceVal) lines.push('💰 السعر: ' + priceVal + ' ' + currency + ' ' + perDay);
-                    if (depositVal) lines.push('💳 مبلغ التأمين: ' + depositVal + ' ' + currency);
-                } else if (op && op.value === 'donate') {
-                    lines.push('🎁 السعر: ' + free);
-                }
-
-                if (attributes.length > 0) {
-                    lines.push('');
-                    lines.push('🎨 المواصفات:');
-                    attributes.forEach(attr => lines.push('  • ' + attr));
-                }
-
-                if (hasImages) {
-                    lines.push('');
-                    lines.push('📷 الصور:');
-                    lines.push('يوجد ' + imageCount + ' صورة لهذا العرض');
-                    lines.push('(يرجى إرفاق الصور عند إرسال الرسالة)');
-                }
-
-                lines.push('');
-                lines.push('شكراً لوقتك 🙏');
-                lines.push('');
-
-                return lines.join('\n');
-            }
-
             function validateOffer() {
-                const category = document.getElementById('offer_category_id');
                 const op = form.querySelector('input[name="operation_type"]:checked');
                 const title = form.querySelector('[name="title"]');
                 const condition = form.querySelector('input[name="condition"]:checked');
-                if (!category || !category.value) {
-                    if (category) category.focus();
-                    return false;
-                }
                 if (!op) return false;
                 if (!title || !title.value.trim()) {
                     if (title) title.focus();
@@ -956,23 +827,17 @@
                 return true;
             }
 
-            prepareBtn.addEventListener('click', function() {
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
                 if (!validateOffer()) {
-                    alert('يرجى ملء جميع الحقول المطلوبة');
-                    return;
+                    e.preventDefault();
+                    alert('{{ __('requests.detail.offer_form.validation_error') }}');
+                    return false;
                 }
-                const text = buildMessage();
-                const encoded = encodeURIComponent(text);
-                const waNumber = (form.dataset.whatsappNumber || '').replace(/\D/g, '');
-                const tgUsername = (form.dataset.telegramUsername || '').replace(/^@/, '');
 
-                if (waBtn && waNumber) waBtn.href = 'https://wa.me/' + waNumber + '?text=' + encoded;
-                if (tgBtn && tgUsername) tgBtn.href = 'https://t.me/' + tgUsername + '?text=' + encoded;
-
-                if (shareBox) {
-                    shareBox.style.display = 'block';
-                    shareBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
+                // Disable submit button to prevent double submission
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="khezana-spinner"></span> {{ __('common.ui.submitting') }}';
             });
 
             // Update progress on scroll/section visibility

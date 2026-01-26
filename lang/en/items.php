@@ -131,4 +131,10 @@ return [
 
     'similar_items' => 'Similar Listings',
     'similar_items_description' => 'Other listings you might be interested in',
+
+    // Branch related
+    'branch' => 'Branch',
+    'available_at_branch' => 'Available at',
+    'no_branch' => 'With seller',
+    'branch_hint' => 'Select the branch if the item is available at one of our branches',
 ];

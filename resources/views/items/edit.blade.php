@@ -275,7 +275,14 @@
             }
 
             try {
-                const attributes = JSON.parse(selectedOption.getAttribute('data-attributes') || '[]');
+                let attributes = JSON.parse(selectedOption.getAttribute('data-attributes') || '[]');
+
+                // Filter out 'condition' attribute when item condition is 'new'
+                const conditionRadio = document.querySelector('input[name="condition"]:checked');
+                const isNewCondition = conditionRadio && conditionRadio.value === 'new';
+                if (isNewCondition) {
+                    attributes = attributes.filter(attr => attr.slug !== 'condition');
+                }
 
                 if (attributes.length === 0) {
                     attributesContainer.style.display = 'none';
@@ -416,6 +423,17 @@
 
             // Check initial state based on current item operation type
             toggleDepositAmountField();
+
+            // Add event listeners to condition radios to reload attributes
+            const conditionRadios = document.querySelectorAll('input[name="condition"]');
+            conditionRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const catId = document.getElementById('category_id').value;
+                    if (catId) {
+                        loadCategoryAttributes(catId);
+                    }
+                });
+            });
         });
 
         // Image upload preview

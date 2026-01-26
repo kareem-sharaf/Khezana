@@ -7,6 +7,7 @@ return [
         'user_management' => 'إدارة المستخدمين',
         'moderation' => 'المراقبة والموافقة',
         'settings' => 'الإعدادات',
+        'administration' => 'الإدارة',
     ],
 
     // Common Actions

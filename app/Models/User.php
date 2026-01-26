@@ -4,12 +4,15 @@ namespace App\Models;
 
 // Khezana Project - User Model
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
@@ -26,6 +29,7 @@ class User extends Authenticatable
         'password',
         'status',
         'phone_verified_at',
+        'branch_id',
     ];
 
     /**
@@ -61,6 +65,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the branch this user belongs to.
+     */
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    /**
      * Get all admin action logs for this user (as admin).
      */
     public function adminActionLogs()
@@ -90,5 +102,13 @@ class User extends Authenticatable
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
+    }
+
+    /**
+     * Determine if the user can access the Filament admin panel.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasAnyRole(['admin', 'super_admin']);
     }
 }

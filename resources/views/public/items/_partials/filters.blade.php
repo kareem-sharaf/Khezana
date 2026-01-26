@@ -1,11 +1,14 @@
 {{-- Filters: Panel (desktop) / Bottom sheet (mobile). Apply-only, no auto-submit. --}}
 @php
     use App\Models\Setting;
+    use App\Models\Branch;
     $currentFilters = $filters ?? [];
     $categories = $categories ?? collect();
+    $branches = Branch::active()->orderBy('name')->get();
     $activeFiltersCount = $activeFiltersCount ?? 0;
     $filterRoute = request()->routeIs('items.index') ? route('items.index') : route('public.items.index');
     $hasCategory = isset($currentFilters['category_id']);
+    $hasBranch = isset($currentFilters['branch_id']);
     $hasPrice = isset($currentFilters['price_min']) || isset($currentFilters['price_max']);
     
     // Get price slider settings from admin settings
@@ -89,7 +92,7 @@
             @click.stop
             @mousedown.stop
             @touchstart.stop>
-            @foreach (request()->except(['search', 'category_id', 'condition', 'price_min', 'price_max', 'operation_type', 'page']) as $paramKey => $paramVal)
+            @foreach (request()->except(['search', 'category_id', 'condition', 'price_min', 'price_max', 'operation_type', 'branch_id', 'page']) as $paramKey => $paramVal)
                 @if (is_array($paramVal))
                     @foreach ($paramVal as $v)
                         <input type="hidden" name="{{ $paramKey }}[]" value="{{ $v }}">
@@ -209,6 +212,37 @@
                         </div>
                     </div>
                 </section>
+
+                {{-- Branch: dropdown --}}
+                @if ($branches->count() > 0)
+                <section class="khezana-filter-section" x-data="{ open: {{ $hasBranch ? 'true' : 'false' }} }">
+                    <button type="button" class="khezana-filter-section__trigger" @click="open = !open"
+                        :aria-expanded="open">
+                        <span class="khezana-filter-section__label">📍 {{ __('items.branch') }}</span>
+                        <svg class="khezana-filter-section__chevron" :class="{ 'is-open': open }" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="khezana-filter-section__body" x-show="open" x-transition.duration.200ms>
+                        <div class="khezana-filter-list">
+                            <label class="khezana-filter-list__item">
+                                <input type="radio" name="branch_id" value=""
+                                    {{ !isset($currentFilters['branch_id']) || $currentFilters['branch_id'] === '' ? 'checked' : '' }}>
+                                <span>{{ __('common.ui.all_branches') }}</span>
+                            </label>
+                            @foreach ($branches as $branch)
+                                <label class="khezana-filter-list__item">
+                                    <input type="radio" name="branch_id" value="{{ $branch->id }}"
+                                        {{ isset($currentFilters['branch_id']) && (int) $currentFilters['branch_id'] === $branch->id ? 'checked' : '' }}>
+                                    <span>{{ $branch->name }} - {{ $branch->city }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
+                @endif
 
                 {{-- Price: simple slider --}}
                 <section class="khezana-filter-section" 

@@ -182,6 +182,12 @@ return [
     'similar_items' => 'ملابس مشابهة',
     'similar_items_description' => 'ملابس أخرى قد تهمك',
 
+    // Branch related
+    'branch' => 'الفرع',
+    'available_at_branch' => 'متوفر في',
+    'no_branch' => 'لدى البائع',
+    'branch_hint' => 'اختر الفرع إذا كان المنتج متوفراً في أحد فروعنا',
+
     'email' => [
         'contact_subject' => 'رسالة حول لباسك: :title',
         'contact_greeting' => 'مرحباً :name',

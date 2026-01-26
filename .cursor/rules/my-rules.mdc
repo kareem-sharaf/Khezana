@@ -1,0 +1,8 @@
+---
+description: 
+alwaysApply: true
+---
+
+- Always execute code instead of only explaining
+- Ask before destructive changes
+- Explain changes briefly after execution

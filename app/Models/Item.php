@@ -33,6 +33,7 @@ class Item extends Model implements Approvable
 
     protected $fillable = [
         'user_id',
+        'branch_id',
         'category_id',
         'operation_type',
         'title',
@@ -63,6 +64,22 @@ class Item extends Model implements Approvable
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the branch where this item is located
+     */
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    /**
+     * Check if the item is in a branch
+     */
+    public function isInBranch(): bool
+    {
+        return $this->branch_id !== null;
     }
 
     /**

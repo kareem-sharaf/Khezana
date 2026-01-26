@@ -78,6 +78,7 @@ return [
         'logout' => 'تسجيل الخروج',
         'search' => 'بحث',
         'close' => 'إغلاق',
+        'submitting' => 'جاري الإرسال...',
         'required' => 'مطلوب',
         'breadcrumb' => 'مسار التنقل',
         'pagination_navigation' => 'تنقل الصفحات',
@@ -90,6 +91,7 @@ return [
         'showing_results' => 'عرض :from إلى :to من :total نتيجة',
         'all' => 'الكل',
         'all_categories' => 'جميع الفئات',
+        'all_branches' => 'جميع الفروع',
         'all_conditions' => 'جميع الحالات',
         'all_types' => 'جميع الأنواع',
         'select_governorate' => 'اختر المحافظة',
@@ -207,6 +209,10 @@ return [
         'to' => 'إلى',
         'choose' => 'اختر',
         'remove_filter' => 'إزالة الفلتر',
+        'this_is_your_item' => 'هذا اللباس ملكك',
+        'login_to_contact' => 'سجّل دخولك للتواصل مع البائع',
+        'no_account' => 'ليس لديك حساب؟',
+        'register_now' => 'سجّل الآن',
     ],
 
     'footer' => [

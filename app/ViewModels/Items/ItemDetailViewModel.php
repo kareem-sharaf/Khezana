@@ -66,6 +66,7 @@ class ItemDetailViewModel
         public readonly string $deleteUrl,
         public readonly string $submitForApprovalUrl,
         public readonly ?string $userName = null,
+        public readonly ?object $branch = null,
     ) {}
 
     /**
@@ -273,6 +274,7 @@ class ItemDetailViewModel
             deleteUrl: $type === 'user' ? route('items.destroy', $item) : '#',
             submitForApprovalUrl: $type === 'user' ? route('items.submit-for-approval', $item) : '#',
             userName: $userName,
+            branch: $type === 'public' ? ($item->branch ?? null) : ($item->branch ?? null),
         );
     }
 

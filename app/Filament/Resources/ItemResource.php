@@ -7,6 +7,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ItemResource\Pages;
 use App\Enums\ApprovalStatus;
 use App\Enums\OperationType;
+use App\Models\Branch;
 use App\Models\Item;
 use Filament\Actions;
 use Filament\Schemas\Components\Section;
@@ -98,6 +99,25 @@ class ItemResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required(),
+                        Select::make('branch_id')
+                            ->label(__('branches.singular'))
+                            ->options(function () {
+                                $user = auth()->user();
+                                // Super admin sees all active branches
+                                if ($user?->hasRole('super_admin')) {
+                                    return Branch::active()->pluck('name', 'id');
+                                }
+                                // Admin sees only their branch
+                                if ($user?->branch_id) {
+                                    return Branch::where('id', $user->branch_id)->pluck('name', 'id');
+                                }
+                                // No branch assigned, show all active
+                                return Branch::active()->pluck('name', 'id');
+                            })
+                            ->searchable()
+                            ->nullable()
+                            ->placeholder(__('items.no_branch'))
+                            ->helperText(__('items.branch_hint')),
                         Select::make('operation_type')
                             ->label(__('filament-dashboard.Operation Type'))
                             ->options(OperationType::getOptions())
@@ -139,6 +159,14 @@ class ItemResource extends Resource
                     ->sortable()
                     ->badge()
                     ->color('info'),
+                Tables\Columns\TextColumn::make('branch.name')
+                    ->label(__('branches.singular'))
+                    ->searchable()
+                    ->sortable()
+                    ->badge()
+                    ->color('success')
+                    ->placeholder('-')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('operation_type')
                     ->label(__('filament-dashboard.Operation Type'))
                     ->badge()
@@ -175,6 +203,19 @@ class ItemResource extends Resource
                     ->relationship('category', 'name')
                     ->searchable()
                     ->preload(),
+                Tables\Filters\SelectFilter::make('branch_id')
+                    ->label(__('branches.singular'))
+                    ->options(function () {
+                        $user = auth()->user();
+                        if ($user?->hasRole('super_admin')) {
+                            return Branch::active()->pluck('name', 'id');
+                        }
+                        if ($user?->branch_id) {
+                            return Branch::where('id', $user->branch_id)->pluck('name', 'id');
+                        }
+                        return Branch::active()->pluck('name', 'id');
+                    })
+                    ->searchable(),
                 Tables\Filters\TernaryFilter::make('is_available')
                     ->label(__('filament-dashboard.Available'))
                     ->placeholder(__('filament-dashboard.All'))
@@ -285,8 +326,16 @@ class ItemResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->with(['user', 'category', 'images', 'approvalRelation']);
+        $query = parent::getEloquentQuery()
+            ->with(['user', 'category', 'images', 'approvalRelation', 'branch']);
+
+        // Admin can only see items in their branch (if they have one)
+        $user = auth()->user();
+        if ($user && !$user->hasRole('super_admin') && $user->branch_id) {
+            $query->where('branch_id', $user->branch_id);
+        }
+
+        return $query;
         // Note: Soft deleted items are hidden by default (SoftDeletes global scope)
         // Admins can see them by filtering or using a custom query if needed
     }

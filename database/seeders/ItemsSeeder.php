@@ -6,6 +6,7 @@ use App\Enums\ApprovalStatus;
 use App\Enums\ItemAvailability;
 use App\Enums\OperationType;
 use App\Models\Approval;
+use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\ItemImage;
@@ -24,7 +25,7 @@ class ItemsSeeder extends Seeder
         $user = User::firstOrCreate(
             ['email' => 'user@khezana.com'],
             [
-                'name' => 'Regular User',
+                'name' => 'مستخدم عادي',
                 'password' => bcrypt('password'),
                 'status' => 'active',
             ]
@@ -38,9 +39,13 @@ class ItemsSeeder extends Seeder
             return;
         }
 
-        // Sample clothing items data
+        // Get branches
+        $branches = Branch::active()->get();
+        $branchIds = $branches->pluck('id')->toArray();
+
+        // Sample clothing items data with real Damascus locations
         $itemsData = [
-            // Men's Clothing
+            // Men's Clothing - In Branches
             [
                 'title' => 'بدلة رجالية أنيقة باللون الأزرق',
                 'description' => 'بدلة رجالية أنيقة باللون الأزرق الداكن، مناسبة للمناسبات الرسمية. المقاس 50، بحالة ممتازة.',
@@ -49,6 +54,7 @@ class ItemsSeeder extends Seeder
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'men-suits',
+                'branch_code' => 'MZE', // فرع المزة
             ],
             [
                 'title' => 'قميص رجالي أبيض كلاسيكي',
@@ -56,8 +62,9 @@ class ItemsSeeder extends Seeder
                 'operation_type' => OperationType::SELL,
                 'price' => 25000,
                 'condition' => 'new',
-                'governorate' => 'aleppo',
+                'governorate' => 'damascus',
                 'category_slug' => 'men-shirts',
+                'branch_code' => 'SHL', // فرع الشعلان
             ],
             [
                 'title' => 'حذاء رجالي جلد أسود',
@@ -65,8 +72,9 @@ class ItemsSeeder extends Seeder
                 'operation_type' => OperationType::SELL,
                 'price' => 80000,
                 'condition' => 'used',
-                'governorate' => 'homs',
+                'governorate' => 'damascus',
                 'category_slug' => 'men-shoes',
+                'branch_code' => 'MLK', // فرع المالكي
             ],
             [
                 'title' => 'جاكيت رجالي شتوي',
@@ -75,10 +83,11 @@ class ItemsSeeder extends Seeder
                 'price' => 15000,
                 'deposit_amount' => 30000,
                 'condition' => 'used',
-                'governorate' => 'latakia',
+                'governorate' => 'damascus',
                 'category_slug' => 'men',
+                'branch_code' => 'BTM', // فرع باب توما
             ],
-            // Women's Clothing
+            // Women's Clothing - Some in branches, some with sellers
             [
                 'title' => 'فستان نسائي أنيق باللون الأحمر',
                 'description' => 'فستان نسائي أنيق باللون الأحمر، مناسب للمناسبات والاحتفالات. المقاس M، بحالة ممتازة.',
@@ -87,6 +96,7 @@ class ItemsSeeder extends Seeder
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'women-dresses',
+                'branch_code' => 'MZE', // فرع المزة
             ],
             [
                 'title' => 'عباءة سوداء تقليدية',
@@ -94,8 +104,9 @@ class ItemsSeeder extends Seeder
                 'operation_type' => OperationType::SELL,
                 'price' => 100000,
                 'condition' => 'used',
-                'governorate' => 'aleppo',
+                'governorate' => 'damascus',
                 'category_slug' => 'women-abayas',
+                'branch_code' => null, // لدى البائع
             ],
             [
                 'title' => 'حذاء نسائي كعب عالي',
@@ -103,8 +114,9 @@ class ItemsSeeder extends Seeder
                 'operation_type' => OperationType::SELL,
                 'price' => 60000,
                 'condition' => 'new',
-                'governorate' => 'homs',
+                'governorate' => 'damascus',
                 'category_slug' => 'women-shoes',
+                'branch_code' => 'SHL', // فرع الشعلان
             ],
             [
                 'title' => 'بلوزة نسائية بيضاء',
@@ -113,10 +125,11 @@ class ItemsSeeder extends Seeder
                 'price' => 10000,
                 'deposit_amount' => 20000,
                 'condition' => 'new',
-                'governorate' => 'tartus',
+                'governorate' => 'damascus',
                 'category_slug' => 'women',
+                'branch_code' => null, // لدى البائع
             ],
-            // Kids Clothing
+            // Kids Clothing - Mix
             [
                 'title' => 'قميص أولاد أزرق',
                 'description' => 'قميص أولاد أزرق أنيق من القطن. المقاس 10 سنوات، مناسب للمدرسة واليومي.',
@@ -125,6 +138,7 @@ class ItemsSeeder extends Seeder
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'kids-boys',
+                'branch_code' => 'JRM', // فرع جرمانا
             ],
             [
                 'title' => 'فستان بنات وردي',
@@ -132,8 +146,9 @@ class ItemsSeeder extends Seeder
                 'operation_type' => OperationType::SELL,
                 'price' => 20000,
                 'condition' => 'used',
-                'governorate' => 'aleppo',
+                'governorate' => 'damascus',
                 'category_slug' => 'kids-girls',
+                'branch_code' => 'BTM', // فرع باب توما
             ],
             [
                 'title' => 'جينز أولاد أزرق',
@@ -141,8 +156,9 @@ class ItemsSeeder extends Seeder
                 'operation_type' => OperationType::DONATE,
                 'price' => null,
                 'condition' => 'used',
-                'governorate' => 'homs',
+                'governorate' => 'damascus',
                 'category_slug' => 'kids-boys',
+                'branch_code' => null, // لدى البائع - تبرع
             ],
             [
                 'title' => 'حذاء أطفال رياضي',
@@ -150,15 +166,46 @@ class ItemsSeeder extends Seeder
                 'operation_type' => OperationType::SELL,
                 'price' => 30000,
                 'condition' => 'used',
-                'governorate' => 'latakia',
+                'governorate' => 'damascus',
                 'category_slug' => 'kids',
+                'branch_code' => 'MLK', // فرع المالكي
+            ],
+            // Additional items
+            [
+                'title' => 'معطف رجالي صوف رمادي',
+                'description' => 'معطف رجالي من الصوف الطبيعي باللون الرمادي. المقاس L، مثالي للشتاء.',
+                'operation_type' => OperationType::SELL,
+                'price' => 200000,
+                'condition' => 'new',
+                'governorate' => 'damascus',
+                'category_slug' => 'men',
+                'branch_code' => 'MZE',
+            ],
+            [
+                'title' => 'تنورة نسائية سوداء',
+                'description' => 'تنورة نسائية سوداء أنيقة، مناسبة للعمل. المقاس M.',
+                'operation_type' => OperationType::SELL,
+                'price' => 35000,
+                'condition' => 'used',
+                'governorate' => 'damascus',
+                'category_slug' => 'women',
+                'branch_code' => 'SHL',
+            ],
+            [
+                'title' => 'بيجاما أطفال قطنية',
+                'description' => 'بيجاما أطفال قطنية ناعمة ومريحة. المقاس 6 سنوات.',
+                'operation_type' => OperationType::DONATE,
+                'price' => null,
+                'condition' => 'used',
+                'governorate' => 'damascus',
+                'category_slug' => 'kids',
+                'branch_code' => null,
             ],
         ];
 
         // Use the same image path for all items
-        // Using the existing image - same image for all products
         $imagePath = 'items/wardrobe-background.jpg';
-        $imagePath2 = 'items/wardrobe-background-2.jpg'; // Second image (same file, different path reference)
+        $imagePath2 = 'items/wardrobe-background-2.jpg';
 
         // Create items
         foreach ($itemsData as $index => $itemData) {
@@ -170,12 +217,20 @@ class ItemsSeeder extends Seeder
                 continue;
             }
 
+            // Get branch by code
+            $branchId = null;
+            if (!empty($itemData['branch_code'])) {
+                $branch = Branch::where('code', $itemData['branch_code'])->first();
+                $branchId = $branch?->id;
+            }
+
             $item = Item::create([
                 'user_id' => $user->id,
+                'branch_id' => $branchId,
                 'category_id' => $category->id,
                 'operation_type' => $itemData['operation_type'],
                 'title' => $itemData['title'],
-                'slug' => Str::slug($itemData['title']) . '-' . ($index + 1),
+                'slug' => Str::slug($itemData['title']) . '-' . Str::random(6),
                 'description' => $itemData['description'],
                 'governorate' => $itemData['governorate'],
                 'condition' => $itemData['condition'],
@@ -185,8 +240,7 @@ class ItemsSeeder extends Seeder
                 'availability_status' => ItemAvailability::AVAILABLE,
             ]);
 
-            // Create at least 2 images for each item (using the same image path)
-            // First image (primary)
+            // Create at least 2 images for each item
             ItemImage::create([
                 'item_id' => $item->id,
                 'path' => $imagePath,
@@ -195,7 +249,6 @@ class ItemsSeeder extends Seeder
                 'is_primary' => true,
             ]);
 
-            // Second image
             ItemImage::create([
                 'item_id' => $item->id,
                 'path' => $imagePath2,
@@ -221,12 +274,13 @@ class ItemsSeeder extends Seeder
                 'approvable_id' => $item->id,
                 'status' => ApprovalStatus::APPROVED,
                 'submitted_by' => $user->id,
-                'reviewed_by' => $user->id, // For seeder, use the same user
+                'reviewed_by' => $user->id,
                 'reviewed_at' => now(),
                 'resubmission_count' => 0,
             ]);
 
-            $this->command->info("Created item: {$item->title}");
+            $branchName = $branchId ? Branch::find($branchId)->name : 'لدى البائع';
+            $this->command->info("Created item: {$item->title} - {$branchName}");
         }
 
         $this->command->info('Items seeded successfully!');

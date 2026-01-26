@@ -35,6 +35,9 @@ return [
         'no_description' => 'No description',
         'cannot_edit_closed' => 'Cannot edit a closed or fulfilled request',
         'cannot_edit_approved' => 'Cannot edit request after it has been approved',
+        'offer_submitted' => 'Your offer has been submitted successfully! It will be reviewed before publishing.',
+        'offer_failed' => 'An error occurred while submitting your offer',
+        'category_mismatch' => 'Offer category must match the request category',
     ],
 
     'deletion' => [
@@ -102,6 +105,8 @@ return [
     ],
 
     'detail' => [
+        'suggested_items' => 'Suggested Items',
+        'suggested_items_description' => 'Items from the same category that may match your request',
         'next_steps_title' => 'What\'s Next?',
         'next_steps_open' => 'Your request is now active. Others can see it and submit their offers.',
         'next_steps_open_hint' => 'You\'ll receive notifications when new offers arrive.',
@@ -118,9 +123,11 @@ return [
 
         'offer_form' => [
             'title' => 'Submit Offer',
-            'subtitle' => 'Prepare your offer then send it via WhatsApp or Telegram to the request owner.',
+            'subtitle' => 'Fill in the details below to submit your offer for this request.',
             'message_intro' => 'I want to send an offer for request #:id:',
             'prepare_offer' => 'Prepare Offer & Send',
+            'submit_offer' => 'Submit Offer',
+            'validation_error' => 'Please fill in all required fields',
             'send_via' => 'Send your offer via:',
             'send_whatsapp' => 'Send via WhatsApp',
             'send_telegram' => 'Send via Telegram',
@@ -145,6 +152,7 @@ return [
             'review_notice' => 'The offer will be reviewed before publishing to ensure quality and safety.',
             'hints' => [
                 'category' => 'Choose the right category to make your offer easier to find',
+                'category_locked' => 'Category is automatically set based on the request',
                 'operation_type' => 'Choose the right method for your offer',
                 'title' => 'A clear title that attracts attention and helps with search',
                 'description' => 'The clearer the description, the better the chance of finding what suits you',

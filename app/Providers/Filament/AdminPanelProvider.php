@@ -54,10 +54,10 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 Localization::class,
-                EnsureUserHasRole::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
+                EnsureUserHasRole::class,
             ]);
     }
 }

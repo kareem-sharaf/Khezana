@@ -8,6 +8,13 @@
     </div>
 @endif
 
+@if ($viewModel->branch)
+    <div class="khezana-item-meta khezana-item-branch">
+        <span class="khezana-meta-label">📍 {{ __('items.available_at_branch') }}:</span>
+        <span class="khezana-meta-value">{{ $viewModel->branch->name }} - {{ $viewModel->branch->city }}</span>
+    </div>
+@endif
+
 @if ($viewModel->conditionLabel)
     <div class="khezana-item-meta">
         <span class="khezana-meta-label">🏷️ {{ __('items.fields.condition') }}:</span>

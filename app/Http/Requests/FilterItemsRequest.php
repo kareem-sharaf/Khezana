@@ -20,6 +20,7 @@ class FilterItemsRequest extends BaseFormRequest
         return [
             'operation_type' => ['nullable', Rule::in(['sell', 'rent', 'donate'])],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'branch_id' => ['nullable', 'integer', 'exists:branches,id'],
             'condition' => ['nullable', Rule::in(['new', 'used'])],
             'price_min' => ['nullable', 'numeric', 'min:0'],
             'price_max' => ['nullable', 'numeric', 'min:0', 'gte:price_min'],
