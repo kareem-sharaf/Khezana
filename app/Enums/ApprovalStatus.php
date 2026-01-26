@@ -10,6 +10,7 @@ enum ApprovalStatus: string
     case APPROVED = 'approved';
     case REJECTED = 'rejected';
     case ARCHIVED = 'archived';
+    case VERIFICATION_REQUIRED = 'verification_required';
 
     /**
      * Get all status values as array
@@ -25,10 +26,11 @@ enum ApprovalStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::PENDING => 'Pending',
-            self::APPROVED => 'Approved',
-            self::REJECTED => 'Rejected',
-            self::ARCHIVED => 'Archived',
+            self::PENDING => __('approvals.statuses.pending'),
+            self::APPROVED => __('approvals.statuses.approved'),
+            self::REJECTED => __('approvals.statuses.rejected'),
+            self::ARCHIVED => __('approvals.statuses.archived'),
+            self::VERIFICATION_REQUIRED => __('approvals.statuses.verification_required'),
         };
     }
 
@@ -42,6 +44,7 @@ enum ApprovalStatus: string
             self::APPROVED => 'success',
             self::REJECTED => 'danger',
             self::ARCHIVED => 'gray',
+            self::VERIFICATION_REQUIRED => 'info',
         };
     }
 
@@ -75,6 +78,14 @@ enum ApprovalStatus: string
     public function isArchived(): bool
     {
         return $this === self::ARCHIVED;
+    }
+
+    /**
+     * Check if status requires verification at branch
+     */
+    public function isVerificationRequired(): bool
+    {
+        return $this === self::VERIFICATION_REQUIRED;
     }
 
     /**

@@ -54,6 +54,12 @@ class ItemCardHelper
             ? ($item->images->where('is_primary', true)->first() ?? $item->images->first())
             : null;
 
+        // Get approval status
+        $approvalStatus = $item->approvalRelation?->status;
+        $approvalStatusValue = $approvalStatus?->value ?? null;
+        $approvalStatusLabel = $approvalStatus?->label() ?? null;
+        $approvalStatusColor = $approvalStatus?->color() ?? null;
+
         $data = [
             'itemId' => $item->id,
             'variant' => $overrides['variant'] ?? 'user',
@@ -71,6 +77,11 @@ class ItemCardHelper
             'createdAt' => null, // User items don't show created date in card
             'showMeta' => $overrides['showMeta'] ?? true,
             'showImagePreview' => $overrides['showImagePreview'] ?? true,
+            'approvalStatus' => $approvalStatusValue,
+            'approvalStatusLabel' => $approvalStatusLabel,
+            'approvalStatusColor' => $approvalStatusColor,
+            'isVerificationRequired' => $approvalStatusValue === 'verification_required',
+            'verificationMessage' => $item->approvalRelation?->rejection_reason ?? null,
         ];
 
         $viewModel = ItemCardViewModel::fromArray(array_merge($data, $overrides));

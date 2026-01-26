@@ -121,6 +121,36 @@
         @endif
     </div>
 
+    {{-- Approval Status Section (for user items) --}}
+    @if ($variant === 'user' && isset($approvalStatus))
+        <div class="khezana-item-card__status">
+            @if ($approvalStatus === 'verification_required')
+                <div class="khezana-item-card__status-badge khezana-item-card__status-badge--verification">
+                    <span class="khezana-item-card__status-icon">🔍</span>
+                    <span class="khezana-item-card__status-text">{{ __('approvals.statuses.verification_required') }}</span>
+                </div>
+                <p class="khezana-item-card__status-message">
+                    {{ __('approvals.messages.verification_user_notice') }}
+                </p>
+            @elseif ($approvalStatus === 'pending')
+                <div class="khezana-item-card__status-badge khezana-item-card__status-badge--pending">
+                    <span class="khezana-item-card__status-icon">⏳</span>
+                    <span class="khezana-item-card__status-text">{{ __('approvals.statuses.pending') }}</span>
+                </div>
+            @elseif ($approvalStatus === 'rejected')
+                <div class="khezana-item-card__status-badge khezana-item-card__status-badge--rejected">
+                    <span class="khezana-item-card__status-icon">❌</span>
+                    <span class="khezana-item-card__status-text">{{ __('approvals.statuses.rejected') }}</span>
+                </div>
+            @elseif ($approvalStatus === 'approved')
+                <div class="khezana-item-card__status-badge khezana-item-card__status-badge--approved">
+                    <span class="khezana-item-card__status-icon">✅</span>
+                    <span class="khezana-item-card__status-text">{{ __('approvals.statuses.approved') }}</span>
+                </div>
+            @endif
+        </div>
+    @endif
+
     {{-- Actions Section (Reserved for future features) --}}
     @if ($variant === 'user')
         <div class="khezana-item-card__actions" aria-label="{{ __('common.ui.item_actions') }}">
@@ -128,3 +158,54 @@
         </div>
     @endif
 </article>
+
+@once
+@push('styles')
+<style>
+.khezana-item-card__status {
+    padding: var(--khezana-spacing-sm, 0.5rem);
+    border-top: 1px solid var(--khezana-border-light, #eee);
+}
+
+.khezana-item-card__status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--khezana-spacing-xs, 0.25rem);
+    padding: var(--khezana-spacing-xs, 0.25rem) var(--khezana-spacing-sm, 0.5rem);
+    border-radius: var(--khezana-radius-sm, 4px);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.khezana-item-card__status-badge--pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.khezana-item-card__status-badge--approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.khezana-item-card__status-badge--rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.khezana-item-card__status-badge--verification {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.khezana-item-card__status-icon {
+    font-size: 1rem;
+}
+
+.khezana-item-card__status-message {
+    margin-top: var(--khezana-spacing-xs, 0.25rem);
+    font-size: 0.8rem;
+    color: var(--khezana-text-muted, #6c757d);
+}
+</style>
+@endpush
+@endonce

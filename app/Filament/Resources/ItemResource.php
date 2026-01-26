@@ -227,6 +227,7 @@ class ItemResource extends Resource
                         ApprovalStatus::PENDING->value => ApprovalStatus::PENDING->label(),
                         ApprovalStatus::APPROVED->value => ApprovalStatus::APPROVED->label(),
                         ApprovalStatus::REJECTED->value => ApprovalStatus::REJECTED->label(),
+                        ApprovalStatus::VERIFICATION_REQUIRED->value => ApprovalStatus::VERIFICATION_REQUIRED->label(),
                         ApprovalStatus::ARCHIVED->value => ApprovalStatus::ARCHIVED->label(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -242,6 +243,71 @@ class ItemResource extends Resource
                 Actions\ViewAction::make(),
                 Actions\EditAction::make()
                     ->visible(fn (Item $record) => auth()->user()?->can('update', $record)),
+                Actions\Action::make('request_verification')
+                    ->label(__('approvals.actions.request_verification'))
+                    ->icon('heroicon-o-building-storefront')
+                    ->color('info')
+                    ->requiresConfirmation()
+                    ->modalHeading(__('approvals.actions.request_verification'))
+                    ->modalDescription(__('approvals.messages.verification_required'))
+                    ->form([
+                        Textarea::make('message')
+                            ->label(__('approvals.fields.verification_message'))
+                            ->default(__('approvals.messages.verification_required'))
+                            ->rows(3),
+                    ])
+                    ->action(function (Item $record, array $data) {
+                        $record->approvalRelation->update([
+                            'status' => ApprovalStatus::VERIFICATION_REQUIRED,
+                            'rejection_reason' => $data['message'] ?? __('approvals.messages.verification_required'),
+                        ]);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title(__('approvals.messages.verification_requested'))
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (Item $record) => 
+                        $record->approvalRelation?->status === ApprovalStatus::PENDING &&
+                        auth()->user()?->hasAnyRole(['admin', 'super_admin'])
+                    ),
+                Actions\Action::make('approve_with_branch')
+                    ->label(__('approvals.actions.approve'))
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading(__('approvals.actions.approve'))
+                    ->form([
+                        Select::make('branch_id')
+                            ->label(__('branches.singular'))
+                            ->options(Branch::active()->pluck('name', 'id'))
+                            ->nullable()
+                            ->placeholder(__('items.no_branch'))
+                            ->helperText(__('items.branch_hint')),
+                    ])
+                    ->action(function (Item $record, array $data) {
+                        // Update branch if selected
+                        if (!empty($data['branch_id'])) {
+                            $record->update(['branch_id' => $data['branch_id']]);
+                        }
+
+                        // Approve the item
+                        $record->approvalRelation->update([
+                            'status' => ApprovalStatus::APPROVED,
+                            'reviewed_by' => auth()->id(),
+                            'reviewed_at' => now(),
+                            'rejection_reason' => null,
+                        ]);
+
+                        \Filament\Notifications\Notification::make()
+                            ->title(__('approvals.messages.approved'))
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (Item $record) => 
+                        in_array($record->approvalRelation?->status, [ApprovalStatus::PENDING, ApprovalStatus::VERIFICATION_REQUIRED]) &&
+                        auth()->user()?->hasAnyRole(['admin', 'super_admin'])
+                    ),
                 Actions\DeleteAction::make()
                     ->label(__('filament-dashboard.Delete'))
                     ->requiresConfirmation()

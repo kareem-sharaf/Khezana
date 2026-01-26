@@ -83,6 +83,22 @@ class Item extends Model implements Approvable
     }
 
     /**
+     * Check if the item is with the seller (not in a branch)
+     */
+    public function isWithSeller(): bool
+    {
+        return $this->branch_id === null;
+    }
+
+    /**
+     * Check if the item requires verification at a branch
+     */
+    public function isVerificationRequired(): bool
+    {
+        return $this->approvalRelation?->status === \App\Enums\ApprovalStatus::VERIFICATION_REQUIRED;
+    }
+
+    /**
      * Get all images for this item
      */
     public function images(): HasMany

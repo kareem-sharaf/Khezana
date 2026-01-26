@@ -35,6 +35,16 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Platform Contact Information
+    |--------------------------------------------------------------------------
+    |
+    | Contact details for the platform. Used when customers want to inquire
+    | about items that are with sellers (not in branches).
+    |
+    */
+
     'whatsapp' => [
         'number' => env('WHATSAPP_NUMBER', '+963959378002'),
     ],
@@ -42,6 +52,13 @@ return [
     'telegram' => [
         'username' => env('TELEGRAM_USERNAME', 'KARMO_VSKY'),
         'contact' => env('TELEGRAM_CONTACT', '+963959378002'),
+    ],
+
+    'platform' => [
+        'whatsapp' => env('PLATFORM_WHATSAPP', '+963959378002'),
+        'telegram_username' => env('PLATFORM_TELEGRAM_USERNAME', 'khezana_support'),
+        'phone' => env('PLATFORM_PHONE', '+963959378002'),
+        'email' => env('PLATFORM_EMAIL', 'support@khezana.com'),
     ],
 
 ];

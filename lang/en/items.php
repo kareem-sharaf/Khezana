@@ -137,4 +137,12 @@ return [
     'available_at_branch' => 'Available at',
     'no_branch' => 'With seller',
     'branch_hint' => 'Select the branch if the item is available at one of our branches',
+    'get_directions' => 'Get Directions',
+    'branch_address' => 'Address',
+
+    // Platform contact (for items with seller)
+    'contact_platform_for_item' => 'To inquire about this item, contact us',
+    'contact_platform_message' => 'Hello, I am interested in the item: :title - Link: :url',
+    'contact_whatsapp' => 'Contact us via WhatsApp',
+    'contact_telegram' => 'Contact us via Telegram',
 ];

@@ -187,6 +187,14 @@ return [
     'available_at_branch' => 'متوفر في',
     'no_branch' => 'لدى البائع',
     'branch_hint' => 'اختر الفرع إذا كان المنتج متوفراً في أحد فروعنا',
+    'get_directions' => 'احصل على الاتجاهات',
+    'branch_address' => 'العنوان',
+
+    // Platform contact (for items with seller)
+    'contact_platform_for_item' => 'للاستفسار عن هذا المنتج، تواصل معنا',
+    'contact_platform_message' => 'مرحباً، أنا مهتم بالمنتج: :title - رابط: :url',
+    'contact_whatsapp' => 'تواصل معنا عبر واتساب',
+    'contact_telegram' => 'تواصل معنا عبر تلغرام',
 
     'email' => [
         'contact_subject' => 'رسالة حول لباسك: :title',
