@@ -192,6 +192,7 @@ return [
 
     // Platform contact (for items with seller)
     'contact_platform_for_item' => 'للاستفسار عن هذا المنتج، تواصل معنا',
+    'interested_in_item' => 'مرحباً، أنا مهتم بالمنتج',
     'contact_platform_message' => 'مرحباً، أنا مهتم بالمنتج: :title - رابط: :url',
     'contact_whatsapp' => 'تواصل معنا عبر واتساب',
     'contact_telegram' => 'تواصل معنا عبر تلغرام',

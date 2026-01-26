@@ -22,7 +22,7 @@ return [
         'approved' => 'موافق عليه',
         'rejected' => 'مرفوض',
         'archived' => 'مؤرشف',
-        'verification_required' => 'بانتظار التحقق',
+        'verification_required' => 'بانتظار التحقق في الفرع',
     ],
     
     // Legacy key for backwards compatibility
@@ -31,7 +31,7 @@ return [
         'approved' => 'موافق عليه',
         'rejected' => 'مرفوض',
         'archived' => 'مؤرشف',
-        'verification_required' => 'بانتظار التحقق',
+        'verification_required' => 'بانتظار التحقق في الفرع',
     ],
     
     'actions' => [

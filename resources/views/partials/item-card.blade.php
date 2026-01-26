@@ -193,8 +193,8 @@
 }
 
 .khezana-item-card__status-badge--verification {
-    background-color: #cce5ff;
-    color: #004085;
+    background-color: #fff3cd;
+    color: #856404;
 }
 
 .khezana-item-card__status-icon {

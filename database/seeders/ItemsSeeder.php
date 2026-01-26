@@ -25,7 +25,7 @@ class ItemsSeeder extends Seeder
         $user = User::firstOrCreate(
             ['email' => 'user@khezana.com'],
             [
-                'name' => 'مستخدم عادي',
+                'name' => 'Ù…Ø³ØªØ®Ø¯Ù… Ø¹Ø§Ø¯ÙŠ',
                 'password' => bcrypt('password'),
                 'status' => 'active',
             ]
@@ -47,133 +47,139 @@ class ItemsSeeder extends Seeder
         $itemsData = [
             // Men's Clothing - In Branches
             [
-                'title' => 'بدلة رجالية أنيقة باللون الأزرق',
-                'description' => 'بدلة رجالية أنيقة باللون الأزرق الداكن، مناسبة للمناسبات الرسمية. المقاس 50، بحالة ممتازة.',
+                'title' => 'Ø¨Ø¯Ù„Ø© Ø±Ø¬Ø§Ù„ÙŠØ© Ø£Ù†ÙŠÙ‚Ø© Ø¨Ø§Ù„Ù„ÙˆÙ† Ø§Ù„Ø£Ø²Ø±Ù‚',
+                'description' => 'Ø¨Ø¯Ù„Ø© Ø±Ø¬Ø§Ù„ÙŠØ© Ø£Ù†ÙŠÙ‚Ø© Ø¨Ø§Ù„Ù„ÙˆÙ† Ø§Ù„Ø£Ø²Ø±Ù‚ Ø§Ù„Ø¯Ø§ÙƒÙ†ØŒ Ù…Ù†Ø§Ø³Ø¨Ø© Ù„Ù„Ù…Ù†Ø§Ø³Ø¨Ø§Øª Ø§Ù„Ø±Ø³Ù…ÙŠØ©. Ø§Ù„Ù…Ù‚Ø§Ø³ 50ØŒ Ø¨Ø­Ø§Ù„Ø© Ù…Ù…ØªØ§Ø²Ø©.',
                 'operation_type' => OperationType::SELL,
                 'price' => 150000,
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'men-suits',
-                'branch_code' => 'MZE', // فرع المزة
+                'branch_code' => 'MZE', // ÙØ±Ø¹ Ø§Ù„Ù…Ø²Ø©
             ],
             [
-                'title' => 'قميص رجالي أبيض كلاسيكي',
-                'description' => 'قميص رجالي أبيض كلاسيكي من القطن عالي الجودة. المقاس L، مناسب للعمل والمناسبات.',
+                'title' => 'Ù‚Ù…ÙŠØµ Ø±Ø¬Ø§Ù„ÙŠ Ø£Ø¨ÙŠØ¶ ÙƒÙ„Ø§Ø³ÙŠÙƒÙŠ',
+                'description' => 'Ù‚Ù…ÙŠØµ Ø±Ø¬Ø§Ù„ÙŠ Ø£Ø¨ÙŠØ¶ ÙƒÙ„Ø§Ø³ÙŠÙƒÙŠ Ù…Ù† Ø§Ù„Ù‚Ø·Ù† Ø¹Ø§Ù„ÙŠ Ø§Ù„Ø¬ÙˆØ¯Ø©. Ø§Ù„Ù…Ù‚Ø§Ø³ LØŒ Ù…Ù†Ø§Ø³Ø¨ Ù„Ù„Ø¹Ù…Ù„ ÙˆØ§Ù„Ù…Ù†Ø§Ø³Ø¨Ø§Øª.',
                 'operation_type' => OperationType::SELL,
                 'price' => 25000,
                 'condition' => 'new',
                 'governorate' => 'damascus',
                 'category_slug' => 'men-shirts',
-                'branch_code' => 'SHL', // فرع الشعلان
+                'branch_code' => 'SHL', // ÙØ±Ø¹ Ø§Ù„Ø´Ø¹Ù„Ø§Ù†
             ],
             [
-                'title' => 'حذاء رجالي جلد أسود',
-                'description' => 'حذاء رجالي جلد أسود أنيق، مناسب للعمل والمناسبات الرسمية. المقاس 42، بحالة جيدة جداً.',
+                'title' => 'Ø­Ø°Ø§Ø¡ Ø±Ø¬Ø§Ù„ÙŠ Ø¬Ù„Ø¯ Ø£Ø³ÙˆØ¯',
+                'description' => 'Ø­Ø°Ø§Ø¡ Ø±Ø¬Ø§Ù„ÙŠ Ø¬Ù„Ø¯ Ø£Ø³ÙˆØ¯ Ø£Ù†ÙŠÙ‚ØŒ Ù…Ù†Ø§Ø³Ø¨ Ù„Ù„Ø¹Ù…Ù„ ÙˆØ§Ù„Ù…Ù†Ø§Ø³Ø¨Ø§Øª Ø§Ù„Ø±Ø³Ù…ÙŠØ©. Ø§Ù„Ù…Ù‚Ø§Ø³ 42ØŒ Ø¨Ø­Ø§Ù„Ø© Ø¬ÙŠØ¯Ø© Ø¬Ø¯Ø§Ù‹.',
                 'operation_type' => OperationType::SELL,
                 'price' => 80000,
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'men-shoes',
-                'branch_code' => 'MLK', // فرع المالكي
+                'branch_code' => 'MLK', // ÙØ±Ø¹ Ø§Ù„Ù…Ø§Ù„ÙƒÙŠ
             ],
             [
-                'title' => 'جاكيت رجالي شتوي',
-                'description' => 'جاكيت رجالي شتوي دافئ، من الصوف الطبيعي. المقاس XL، مناسب للطقس البارد.',
+                'title' => 'Ø¬Ø§ÙƒÙŠØª Ø±Ø¬Ø§Ù„ÙŠ Ø´ØªÙˆÙŠ',
+                'description' => 'Ø¬Ø§ÙƒÙŠØª Ø±Ø¬Ø§Ù„ÙŠ Ø´ØªÙˆÙŠ Ø¯Ø§ÙØ¦ØŒ Ù…Ù† Ø§Ù„ØµÙˆÙ Ø§Ù„Ø·Ø¨ÙŠØ¹ÙŠ. Ø§Ù„Ù…Ù‚Ø§Ø³ XLØŒ Ù…Ù†Ø§Ø³Ø¨ Ù„Ù„Ø·Ù‚Ø³ Ø§Ù„Ø¨Ø§Ø±Ø¯.',
                 'operation_type' => OperationType::RENT,
                 'price' => 15000,
                 'deposit_amount' => 30000,
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'men',
-                'branch_code' => 'BTM', // فرع باب توما
+                'branch_code' => 'BTM', // ÙØ±Ø¹ Ø¨Ø§Ø¨ ØªÙˆÙ…Ø§
             ],
             // Women's Clothing - Some in branches, some with sellers
             [
-                'title' => 'فستان نسائي أنيق باللون الأحمر',
-                'description' => 'فستان نسائي أنيق باللون الأحمر، مناسب للمناسبات والاحتفالات. المقاس M، بحالة ممتازة.',
+                'title' => 'ÙØ³ØªØ§Ù† Ù†Ø³Ø§Ø¦ÙŠ Ø£Ù†ÙŠÙ‚ Ø¨Ø§Ù„Ù„ÙˆÙ† Ø§Ù„Ø£Ø­Ù…Ø±',
+                'description' => 'ÙØ³ØªØ§Ù† Ù†Ø³Ø§Ø¦ÙŠ Ø£Ù†ÙŠÙ‚ Ø¨Ø§Ù„Ù„ÙˆÙ† Ø§Ù„Ø£Ø­Ù…Ø±ØŒ Ù…Ù†Ø§Ø³Ø¨ Ù„Ù„Ù…Ù†Ø§Ø³Ø¨Ø§Øª ÙˆØ§Ù„Ø§Ø­ØªÙØ§Ù„Ø§Øª. Ø§Ù„Ù…Ù‚Ø§Ø³ MØŒ Ø¨Ø­Ø§Ù„Ø© Ù…Ù…ØªØ§Ø²Ø©.',
                 'operation_type' => OperationType::SELL,
                 'price' => 120000,
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'women-dresses',
-                'branch_code' => 'MZE', // فرع المزة
+                'branch_code' => 'MZE', // ÙØ±Ø¹ Ø§Ù„Ù…Ø²Ø©
             ],
             [
-                'title' => 'عباءة سوداء تقليدية',
-                'description' => 'عباءة سوداء تقليدية أنيقة، من القماش عالي الجودة. المقاس كبير، بحالة جيدة جداً.',
+                'title' => 'Ø¹Ø¨Ø§Ø¡Ø© Ø³ÙˆØ¯Ø§Ø¡ ØªÙ‚Ù„ÙŠØ¯ÙŠØ©',
+                'description' => 'Ø¹Ø¨Ø§Ø¡Ø© Ø³ÙˆØ¯Ø§Ø¡ ØªÙ‚Ù„ÙŠØ¯ÙŠØ© Ø£Ù†ÙŠÙ‚Ø©ØŒ Ù…Ù† Ø§Ù„Ù‚Ù…Ø§Ø´ Ø¹Ø§Ù„ÙŠ Ø§Ù„Ø¬ÙˆØ¯Ø©. Ø§Ù„Ù…Ù‚Ø§Ø³ ÙƒØ¨ÙŠØ±ØŒ Ø¨Ø­Ø§Ù„Ø© Ø¬ÙŠØ¯Ø© Ø¬Ø¯Ø§Ù‹.',
                 'operation_type' => OperationType::SELL,
                 'price' => 100000,
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'women-abayas',
-                'branch_code' => null, // لدى البائع
+                'branch_code' => null, // Ù„Ø¯Ù‰ Ø§Ù„Ø¨Ø§Ø¦Ø¹
+                'approval_status' => ApprovalStatus::VERIFICATION_REQUIRED,
+                'verification_message' => __('approvals.messages.verification_required'),
             ],
             [
-                'title' => 'حذاء نسائي كعب عالي',
-                'description' => 'حذاء نسائي كعب عالي أنيق باللون الأسود. المقاس 38، مناسب للمناسبات.',
+                'title' => 'Ø­Ø°Ø§Ø¡ Ù†Ø³Ø§Ø¦ÙŠ ÙƒØ¹Ø¨ Ø¹Ø§Ù„ÙŠ',
+                'description' => 'Ø­Ø°Ø§Ø¡ Ù†Ø³Ø§Ø¦ÙŠ ÙƒØ¹Ø¨ Ø¹Ø§Ù„ÙŠ Ø£Ù†ÙŠÙ‚ Ø¨Ø§Ù„Ù„ÙˆÙ† Ø§Ù„Ø£Ø³ÙˆØ¯. Ø§Ù„Ù…Ù‚Ø§Ø³ 38ØŒ Ù…Ù†Ø§Ø³Ø¨ Ù„Ù„Ù…Ù†Ø§Ø³Ø¨Ø§Øª.',
                 'operation_type' => OperationType::SELL,
                 'price' => 60000,
                 'condition' => 'new',
                 'governorate' => 'damascus',
                 'category_slug' => 'women-shoes',
-                'branch_code' => 'SHL', // فرع الشعلان
+                'branch_code' => 'SHL', // ÙØ±Ø¹ Ø§Ù„Ø´Ø¹Ù„Ø§Ù†
             ],
             [
-                'title' => 'بلوزة نسائية بيضاء',
-                'description' => 'بلوزة نسائية بيضاء أنيقة من القطن. المقاس S، مناسبة للعمل واليومي.',
+                'title' => 'Ø¨Ù„ÙˆØ²Ø© Ù†Ø³Ø§Ø¦ÙŠØ© Ø¨ÙŠØ¶Ø§Ø¡',
+                'description' => 'Ø¨Ù„ÙˆØ²Ø© Ù†Ø³Ø§Ø¦ÙŠØ© Ø¨ÙŠØ¶Ø§Ø¡ Ø£Ù†ÙŠÙ‚Ø© Ù…Ù† Ø§Ù„Ù‚Ø·Ù†. Ø§Ù„Ù…Ù‚Ø§Ø³ SØŒ Ù…Ù†Ø§Ø³Ø¨Ø© Ù„Ù„Ø¹Ù…Ù„ ÙˆØ§Ù„ÙŠÙˆÙ…ÙŠ.',
                 'operation_type' => OperationType::RENT,
                 'price' => 10000,
                 'deposit_amount' => 20000,
                 'condition' => 'new',
                 'governorate' => 'damascus',
                 'category_slug' => 'women',
-                'branch_code' => null, // لدى البائع
+                'branch_code' => null, // Ù„Ø¯Ù‰ Ø§Ù„Ø¨Ø§Ø¦Ø¹
+                'approval_status' => ApprovalStatus::VERIFICATION_REQUIRED,
+                'verification_message' => __('approvals.messages.verification_required'),
             ],
             // Kids Clothing - Mix
             [
-                'title' => 'قميص أولاد أزرق',
-                'description' => 'قميص أولاد أزرق أنيق من القطن. المقاس 10 سنوات، مناسب للمدرسة واليومي.',
+                'title' => 'Ù‚Ù…ÙŠØµ Ø£ÙˆÙ„Ø§Ø¯ Ø£Ø²Ø±Ù‚',
+                'description' => 'Ù‚Ù…ÙŠØµ Ø£ÙˆÙ„Ø§Ø¯ Ø£Ø²Ø±Ù‚ Ø£Ù†ÙŠÙ‚ Ù…Ù† Ø§Ù„Ù‚Ø·Ù†. Ø§Ù„Ù…Ù‚Ø§Ø³ 10 Ø³Ù†ÙˆØ§ØªØŒ Ù…Ù†Ø§Ø³Ø¨ Ù„Ù„Ù…Ø¯Ø±Ø³Ø© ÙˆØ§Ù„ÙŠÙˆÙ…ÙŠ.',
                 'operation_type' => OperationType::SELL,
                 'price' => 15000,
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'kids-boys',
-                'branch_code' => 'JRM', // فرع جرمانا
+                'branch_code' => 'JRM', // ÙØ±Ø¹ Ø¬Ø±Ù…Ø§Ù†Ø§
             ],
             [
-                'title' => 'فستان بنات وردي',
-                'description' => 'فستان بنات وردي جميل، مناسب للمناسبات. المقاس 8 سنوات، بحالة ممتازة.',
+                'title' => 'ÙØ³ØªØ§Ù† Ø¨Ù†Ø§Øª ÙˆØ±Ø¯ÙŠ',
+                'description' => 'ÙØ³ØªØ§Ù† Ø¨Ù†Ø§Øª ÙˆØ±Ø¯ÙŠ Ø¬Ù…ÙŠÙ„ØŒ Ù…Ù†Ø§Ø³Ø¨ Ù„Ù„Ù…Ù†Ø§Ø³Ø¨Ø§Øª. Ø§Ù„Ù…Ù‚Ø§Ø³ 8 Ø³Ù†ÙˆØ§ØªØŒ Ø¨Ø­Ø§Ù„Ø© Ù…Ù…ØªØ§Ø²Ø©.',
                 'operation_type' => OperationType::SELL,
                 'price' => 20000,
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'kids-girls',
-                'branch_code' => 'BTM', // فرع باب توما
+                'branch_code' => 'BTM', // ÙØ±Ø¹ Ø¨Ø§Ø¨ ØªÙˆÙ…Ø§
             ],
             [
-                'title' => 'جينز أولاد أزرق',
-                'description' => 'بنطلون جينز أولاد أزرق كلاسيكي. المقاس 12 سنة، مقاوم للبلى.',
+                'title' => 'Ø¬ÙŠÙ†Ø² Ø£ÙˆÙ„Ø§Ø¯ Ø£Ø²Ø±Ù‚',
+                'description' => 'Ø¨Ù†Ø·Ù„ÙˆÙ† Ø¬ÙŠÙ†Ø² Ø£ÙˆÙ„Ø§Ø¯ Ø£Ø²Ø±Ù‚ ÙƒÙ„Ø§Ø³ÙŠÙƒÙŠ. Ø§Ù„Ù…Ù‚Ø§Ø³ 12 Ø³Ù†Ø©ØŒ Ù…Ù‚Ø§ÙˆÙ… Ù„Ù„Ø¨Ù„Ù‰.',
                 'operation_type' => OperationType::DONATE,
                 'price' => null,
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'kids-boys',
-                'branch_code' => null, // لدى البائع - تبرع
+                'branch_code' => null, // Ù„Ø¯Ù‰ Ø§Ù„Ø¨Ø§Ø¦Ø¹ - ØªØ¨Ø±Ø¹
+                'approval_status' => ApprovalStatus::VERIFICATION_REQUIRED,
+                'verification_message' => __('approvals.messages.verification_required'),
             ],
             [
-                'title' => 'حذاء أطفال رياضي',
-                'description' => 'حذاء أطفال رياضي مريح، مناسب للعب والرياضة. المقاس 30، بحالة جيدة.',
+                'title' => 'Ø­Ø°Ø§Ø¡ Ø£Ø·ÙØ§Ù„ Ø±ÙŠØ§Ø¶ÙŠ',
+                'description' => 'Ø­Ø°Ø§Ø¡ Ø£Ø·ÙØ§Ù„ Ø±ÙŠØ§Ø¶ÙŠ Ù…Ø±ÙŠØ­ØŒ Ù…Ù†Ø§Ø³Ø¨ Ù„Ù„Ø¹Ø¨ ÙˆØ§Ù„Ø±ÙŠØ§Ø¶Ø©. Ø§Ù„Ù…Ù‚Ø§Ø³ 30ØŒ Ø¨Ø­Ø§Ù„Ø© Ø¬ÙŠØ¯Ø©.',
                 'operation_type' => OperationType::SELL,
                 'price' => 30000,
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'kids',
-                'branch_code' => 'MLK', // فرع المالكي
+                'branch_code' => 'MLK', // ÙØ±Ø¹ Ø§Ù„Ù…Ø§Ù„ÙƒÙŠ
             ],
             // Additional items
             [
-                'title' => 'معطف رجالي صوف رمادي',
-                'description' => 'معطف رجالي من الصوف الطبيعي باللون الرمادي. المقاس L، مثالي للشتاء.',
+                'title' => 'Ù…Ø¹Ø·Ù Ø±Ø¬Ø§Ù„ÙŠ ØµÙˆÙ Ø±Ù…Ø§Ø¯ÙŠ',
+                'description' => 'Ù…Ø¹Ø·Ù Ø±Ø¬Ø§Ù„ÙŠ Ù…Ù† Ø§Ù„ØµÙˆÙ Ø§Ù„Ø·Ø¨ÙŠØ¹ÙŠ Ø¨Ø§Ù„Ù„ÙˆÙ† Ø§Ù„Ø±Ù…Ø§Ø¯ÙŠ. Ø§Ù„Ù…Ù‚Ø§Ø³ LØŒ Ù…Ø«Ø§Ù„ÙŠ Ù„Ù„Ø´ØªØ§Ø¡.',
                 'operation_type' => OperationType::SELL,
                 'price' => 200000,
                 'condition' => 'new',
@@ -182,8 +188,8 @@ class ItemsSeeder extends Seeder
                 'branch_code' => 'MZE',
             ],
             [
-                'title' => 'تنورة نسائية سوداء',
-                'description' => 'تنورة نسائية سوداء أنيقة، مناسبة للعمل. المقاس M.',
+                'title' => 'ØªÙ†ÙˆØ±Ø© Ù†Ø³Ø§Ø¦ÙŠØ© Ø³ÙˆØ¯Ø§Ø¡',
+                'description' => 'ØªÙ†ÙˆØ±Ø© Ù†Ø³Ø§Ø¦ÙŠØ© Ø³ÙˆØ¯Ø§Ø¡ Ø£Ù†ÙŠÙ‚Ø©ØŒ Ù…Ù†Ø§Ø³Ø¨Ø© Ù„Ù„Ø¹Ù…Ù„. Ø§Ù„Ù…Ù‚Ø§Ø³ M.',
                 'operation_type' => OperationType::SELL,
                 'price' => 35000,
                 'condition' => 'used',
@@ -192,14 +198,16 @@ class ItemsSeeder extends Seeder
                 'branch_code' => 'SHL',
             ],
             [
-                'title' => 'بيجاما أطفال قطنية',
-                'description' => 'بيجاما أطفال قطنية ناعمة ومريحة. المقاس 6 سنوات.',
+                'title' => 'Ø¨ÙŠØ¬Ø§Ù…Ø§ Ø£Ø·ÙØ§Ù„ Ù‚Ø·Ù†ÙŠØ©',
+                'description' => 'Ø¨ÙŠØ¬Ø§Ù…Ø§ Ø£Ø·ÙØ§Ù„ Ù‚Ø·Ù†ÙŠØ© Ù†Ø§Ø¹Ù…Ø© ÙˆÙ…Ø±ÙŠØ­Ø©. Ø§Ù„Ù…Ù‚Ø§Ø³ 6 Ø³Ù†ÙˆØ§Øª.',
                 'operation_type' => OperationType::DONATE,
                 'price' => null,
                 'condition' => 'used',
                 'governorate' => 'damascus',
                 'category_slug' => 'kids',
                 'branch_code' => null,
+                'approval_status' => ApprovalStatus::VERIFICATION_REQUIRED,
+                'verification_message' => __('approvals.messages.verification_required'),
             ],
         ];
 
@@ -267,22 +275,36 @@ class ItemsSeeder extends Seeder
                     'is_primary' => false,
                 ]);
             }
-
-            // Create approved approval record for the item
-            Approval::create([
+            // Create approval record for the item
+            $approvalStatus = $itemData['approval_status'] ?? ApprovalStatus::APPROVED;
+            $approvalPayload = [
                 'approvable_type' => Item::class,
                 'approvable_id' => $item->id,
-                'status' => ApprovalStatus::APPROVED,
+                'status' => $approvalStatus,
                 'submitted_by' => $user->id,
-                'reviewed_by' => $user->id,
-                'reviewed_at' => now(),
                 'resubmission_count' => 0,
-            ]);
+            ];
 
-            $branchName = $branchId ? Branch::find($branchId)->name : 'لدى البائع';
+            if ($approvalStatus === ApprovalStatus::APPROVED) {
+                $approvalPayload['reviewed_by'] = $user->id;
+                $approvalPayload['reviewed_at'] = now();
+                $approvalPayload['rejection_reason'] = null;
+            }
+
+            if ($approvalStatus === ApprovalStatus::VERIFICATION_REQUIRED) {
+                $approvalPayload['reviewed_by'] = $user->id;
+                $approvalPayload['reviewed_at'] = now();
+                $approvalPayload['rejection_reason'] = $itemData['verification_message']
+                    ?? __('approvals.messages.verification_required');
+            }
+
+            Approval::create($approvalPayload);
+
+            $branchName = $branchId ? Branch::find($branchId)->name : 'Ù„Ø¯Ù‰ Ø§Ù„Ø¨Ø§Ø¦Ø¹';
             $this->command->info("Created item: {$item->title} - {$branchName}");
         }
 
         $this->command->info('Items seeded successfully!');
     }
 }
+

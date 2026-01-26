@@ -246,7 +246,7 @@ class ItemResource extends Resource
                 Actions\Action::make('request_verification')
                     ->label(__('approvals.actions.request_verification'))
                     ->icon('heroicon-o-building-storefront')
-                    ->color('info')
+                    ->color('warning')
                     ->requiresConfirmation()
                     ->modalHeading(__('approvals.actions.request_verification'))
                     ->modalDescription(__('approvals.messages.verification_required'))

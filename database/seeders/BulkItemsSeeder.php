@@ -6,6 +6,7 @@ use App\Enums\ApprovalStatus;
 use App\Enums\ItemAvailability;
 use App\Enums\OperationType;
 use App\Models\Approval;
+use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\ItemImage;
@@ -39,6 +40,10 @@ class BulkItemsSeeder extends Seeder
             $this->command->error('No active categories found. Please run CategoriesSeeder first.');
             return;
         }
+
+        // Get all active branches
+        $branches = Branch::active()->get();
+        $branchIds = $branches->pluck('id')->all();
         
         // Governorates list
         $governorates = [
@@ -101,6 +106,22 @@ class BulkItemsSeeder extends Seeder
                 $condition = $conditions[array_rand($conditions)];
                 $title = $titles[array_rand($titles)] . ' ' . ($processed + $i + 1);
                 $description = $descriptions[array_rand($descriptions)];
+
+                // Approval status distribution
+                $statusRoll = rand(1, 100);
+                if ($statusRoll <= 10) {
+                    $approvalStatus = ApprovalStatus::VERIFICATION_REQUIRED;
+                } elseif ($statusRoll <= 85) {
+                    $approvalStatus = ApprovalStatus::APPROVED;
+                } else {
+                    $approvalStatus = ApprovalStatus::PENDING;
+                }
+
+                // Assign branch for non-verification items (admin sets branch later for verification)
+                $branchId = null;
+                if ($approvalStatus !== ApprovalStatus::VERIFICATION_REQUIRED && !empty($branchIds) && rand(0, 1) === 1) {
+                    $branchId = $branchIds[array_rand($branchIds)];
+                }
                 
                 // Generate price based on operation type
                 $price = null;
@@ -118,6 +139,7 @@ class BulkItemsSeeder extends Seeder
                 
                 $itemsData[] = [
                     'user_id' => $user->id,
+                    'branch_id' => $branchId,
                     'category_id' => $category->id,
                     'operation_type' => $operationType->value,
                     'title' => $title,
@@ -129,6 +151,7 @@ class BulkItemsSeeder extends Seeder
                     'deposit_amount' => $depositAmount,
                     'is_available' => true,
                     'availability_status' => ItemAvailability::AVAILABLE->value,
+                    'approval_status' => $approvalStatus->value,
                     'created_at' => now()->subDays(rand(0, 365))->format('Y-m-d H:i:s'),
                     'updated_at' => now()->format('Y-m-d H:i:s'),
                 ];
@@ -150,17 +173,29 @@ class BulkItemsSeeder extends Seeder
                 $itemData = $itemsData[$index];
                 
                 // Create approval
-                $approvalsData[] = [
+                $approvalPayload = [
                     'approvable_type' => Item::class,
                     'approvable_id' => $item->id,
-                    'status' => ApprovalStatus::APPROVED->value,
+                    'status' => $itemData['approval_status'] ?? ApprovalStatus::APPROVED->value,
                     'submitted_by' => $itemData['user_id'],
-                    'reviewed_by' => $itemData['user_id'],
-                    'reviewed_at' => now()->format('Y-m-d H:i:s'),
                     'resubmission_count' => 0,
                     'created_at' => now()->format('Y-m-d H:i:s'),
                     'updated_at' => now()->format('Y-m-d H:i:s'),
                 ];
+
+                if (($approvalPayload['status'] ?? null) === ApprovalStatus::APPROVED->value) {
+                    $approvalPayload['reviewed_by'] = $itemData['user_id'];
+                    $approvalPayload['reviewed_at'] = now()->format('Y-m-d H:i:s');
+                    $approvalPayload['rejection_reason'] = null;
+                }
+
+                if (($approvalPayload['status'] ?? null) === ApprovalStatus::VERIFICATION_REQUIRED->value) {
+                    $approvalPayload['reviewed_by'] = $itemData['user_id'];
+                    $approvalPayload['reviewed_at'] = now()->format('Y-m-d H:i:s');
+                    $approvalPayload['rejection_reason'] = __('approvals.messages.verification_required');
+                }
+
+                $approvalsData[] = $approvalPayload;
                 
                 // Create images (1-3 images per item)
                 $numImages = rand(1, 3);

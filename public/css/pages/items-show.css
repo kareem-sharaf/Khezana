@@ -522,6 +522,11 @@
     color: #6b7280;
 }
 
+.khezana-approval-badge-verification {
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+}
+
 /* Similar Items Section */
 .khezana-similar-items {
     margin-top: var(--khezana-spacing-2xl);

@@ -39,6 +39,11 @@ class ItemCardViewModel
         public readonly string $operationTypeBadgeClass,
         public readonly ?string $conditionLabel,
         public readonly array $previewImages,
+        public readonly ?string $approvalStatus = null,
+        public readonly ?string $approvalStatusLabel = null,
+        public readonly ?string $approvalStatusColor = null,
+        public readonly bool $isVerificationRequired = false,
+        public readonly ?string $verificationMessage = null,
     ) {}
 
     /**
@@ -96,6 +101,11 @@ class ItemCardViewModel
                     'url' => $img->path ? asset('storage/' . $img->path) : null,
                 ])->filter(fn($img) => $img['path'] !== null)->toArray()
                 : [],
+            approvalStatus: $data['approvalStatus'] ?? null,
+            approvalStatusLabel: $data['approvalStatusLabel'] ?? null,
+            approvalStatusColor: $data['approvalStatusColor'] ?? null,
+            isVerificationRequired: $data['isVerificationRequired'] ?? false,
+            verificationMessage: $data['verificationMessage'] ?? null,
         );
     }
 
@@ -131,6 +141,11 @@ class ItemCardViewModel
             'operationTypeBadgeClass' => $this->operationTypeBadgeClass,
             'conditionLabel' => $this->conditionLabel,
             'previewImages' => $this->previewImages,
+            'approvalStatus' => $this->approvalStatus,
+            'approvalStatusLabel' => $this->approvalStatusLabel,
+            'approvalStatusColor' => $this->approvalStatusColor,
+            'isVerificationRequired' => $this->isVerificationRequired,
+            'verificationMessage' => $this->verificationMessage,
             'getImageUrl' => $this->getImageUrl(),
             'getAdditionalImagesCount' => $this->getAdditionalImagesCount(),
         ];

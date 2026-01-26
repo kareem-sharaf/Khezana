@@ -1,4 +1,4 @@
-{{-- Public Item CTA Partial --}}
+﻿{{-- Public Item CTA Partial --}}
 {{-- Usage: @include('public.items._partials.detail.cta', ['viewModel' => $viewModel]) --}}
 
 @php
@@ -24,7 +24,7 @@
     $platformTelegram = config('services.platform.telegram_username', 'khezana_support');
     
     // Build message with item details
-    $itemUrl = route('public.items.show', ['id' => $viewModel->itemId, 'slug' => $viewModel->url]);
+    $itemUrl = $viewModel->url;
     $contactMessage = __('items.contact_platform_message', [
         'title' => $viewModel->title,
         'url' => $itemUrl,
@@ -44,50 +44,10 @@
 
 <div class="khezana-item-cta">
     @if ($isInBranch && $branch)
-        {{-- Item is in a branch - Show branch info --}}
-        <div class="khezana-branch-info">
-            <div class="khezana-branch-info__header">
-                <span class="khezana-branch-info__icon">📍</span>
-                <span class="khezana-branch-info__label">{{ __('items.available_at_branch') }}</span>
-            </div>
-            
-            <div class="khezana-branch-info__details">
-                <div class="khezana-branch-info__name">
-                    <strong>{{ $branch->name }}</strong>
-                </div>
-                
-                @if ($branch->city)
-                    <div class="khezana-branch-info__city">
-                        <span class="khezana-branch-info__detail-icon">🏙️</span>
-                        {{ $branch->city }}
-                    </div>
-                @endif
-                
-                @if ($branch->address)
-                    <div class="khezana-branch-info__address">
-                        <span class="khezana-branch-info__detail-icon">📮</span>
-                        {{ $branch->address }}
-                    </div>
-                @endif
-                
-                @if ($branch->phone)
-                    <div class="khezana-branch-info__phone">
-                        <span class="khezana-branch-info__detail-icon">📞</span>
-                        <a href="tel:{{ $branch->phone }}" dir="ltr">{{ $branch->phone }}</a>
-                    </div>
-                @endif
-            </div>
-            
-            @if ($mapsUrl)
-                <a href="{{ $mapsUrl }}" 
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   class="khezana-btn khezana-btn-secondary khezana-btn-large khezana-btn-full">
-                    <span class="khezana-btn__icon">🗺️</span>
-                    {{ __('items.get_directions') }}
-                </a>
-            @endif
-        </div>
+        @include('public.items._partials.detail.info', [
+            'branch' => $branch,
+            'mapsUrl' => $mapsUrl,
+        ])
     @else
         {{-- Item is with seller - Show platform contact --}}
         @auth
@@ -248,3 +208,5 @@
     color: var(--khezana-text-secondary, #666);
 }
 </style>
+
+

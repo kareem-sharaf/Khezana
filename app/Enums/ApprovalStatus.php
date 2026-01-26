@@ -44,7 +44,7 @@ enum ApprovalStatus: string
             self::APPROVED => 'success',
             self::REJECTED => 'danger',
             self::ARCHIVED => 'gray',
-            self::VERIFICATION_REQUIRED => 'info',
+            self::VERIFICATION_REQUIRED => 'warning',
         };
     }
 

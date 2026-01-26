@@ -142,6 +142,7 @@ return [
 
     // Platform contact (for items with seller)
     'contact_platform_for_item' => 'To inquire about this item, contact us',
+    'interested_in_item' => 'Hello, I am interested in the item',
     'contact_platform_message' => 'Hello, I am interested in the item: :title - Link: :url',
     'contact_whatsapp' => 'Contact us via WhatsApp',
     'contact_telegram' => 'Contact us via Telegram',

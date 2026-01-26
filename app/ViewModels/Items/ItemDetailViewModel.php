@@ -54,6 +54,7 @@ class ItemDetailViewModel
         public readonly bool $isPending,
         public readonly bool $isApproved,
         public readonly bool $isRejected,
+        public readonly bool $isVerificationRequired,
         public readonly ?string $rejectionReason,
         public readonly string $createdAtFormatted,
         public readonly string $updatedAtFormatted,
@@ -132,6 +133,7 @@ class ItemDetailViewModel
             'pending' => 'khezana-approval-badge-pending',
             'rejected' => 'khezana-approval-badge-rejected',
             'archived' => 'khezana-approval-badge-archived',
+            'verification_required' => 'khezana-approval-badge-verification',
             default => null,
         };
 
@@ -258,6 +260,7 @@ class ItemDetailViewModel
             isPending: $isPending,
             isApproved: $isApproved,
             isRejected: $approvalStatus === 'rejected',
+            isVerificationRequired: $approvalStatus === 'verification_required',
             rejectionReason: $approvalRelation?->rejection_reason ?? null,
             createdAtFormatted: $type === 'public'
                 ? ($item->createdAtFormatted ?? '')
