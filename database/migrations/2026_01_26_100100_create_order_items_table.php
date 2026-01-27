@@ -44,11 +44,11 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // الفهارس
+            // Indexes
             $table->index('order_id');
             $table->index('item_id');
 
-            // منع تكرار نفس العنصر في نفس الطلب
+            // Prevent duplicates
             $table->unique(['order_id', 'item_id']);
         });
     }

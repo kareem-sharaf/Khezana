@@ -110,11 +110,18 @@ class UserResource extends Resource
                     ->schema([
                         Select::make('roles')
                             ->label(__('filament-dashboard.Roles'))
+                            ->options([
+                                'super_admin' => 'مدير عام',
+                                'admin' => 'موظف إدارة',
+                                'seller' => 'بائع',
+                                'user' => 'مستخدم عادي',
+                            ])
                             ->multiple()
-                            ->relationship('roles', 'name')
                             ->searchable()
                             ->preload()
-                            ->required(false),
+                            ->required(false)
+                            ->live()
+                            ->afterStateUpdated(fn($state) => $state), // Refresh form
                         Select::make('branch_id')
                             ->label(__('branches.singular'))
                             ->relationship('branch', 'name')
@@ -122,23 +129,19 @@ class UserResource extends Resource
                             ->searchable()
                             ->preload()
                             ->nullable()
-                            ->placeholder(__('branches.placeholders.select_branch'))
-                            ->helperText(__('branches.hints.user_branch'))
-                            ->visible(fn() => auth()->user()?->hasRole('super_admin')),
+                            ->placeholder('اختر فرع')
+                            ->helperText('البائع يجب أن يكون مرتبطاً بفرع واحد فقط')
+                            // Show only when 'seller' role is selected
+                            ->visible(function (callable $get) {
+                                $roles = $get('roles') ?? [];
+                                return in_array('seller', (array)$roles) && auth()->user()?->can('manage_roles', User::class);
+                            })
+                            ->required(function (callable $get) {
+                                $roles = $get('roles') ?? [];
+                                return in_array('seller', (array)$roles);
+                            }),
                     ])
-                    ->visible(fn() => auth()->user()?->can('manageRoles', User::class)),
-
-                Section::make(__('filament-dashboard.Profile Information'))
-                    ->schema([
-                        TextInput::make('profile.city')
-                            ->maxLength(255),
-                        Textarea::make('profile.address')
-                            ->rows(3),
-                        TextInput::make('profile.avatar')
-                            ->maxLength(255),
-                    ])
-                    ->relationship('profile')
-                    ->columns(1),
+                    ->visible(fn() => auth()->user()?->can('manage_roles', User::class)),
             ]);
     }
 
@@ -268,7 +271,7 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->with(['roles', 'profile', 'branch']);
+            ->with(['roles', 'branch']);
     }
 
     // canViewAny() and canCreate() removed - Filament automatically uses UserPolicy

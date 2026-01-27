@@ -34,9 +34,8 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // الفهارس
+            // Additional indexes
             $table->index('order_id');
-            $table->index('status');
         });
     }
 

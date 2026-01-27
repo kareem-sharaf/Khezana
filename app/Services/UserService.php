@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\DTOs\UserDTO;
-use App\DTOs\UserProfileDTO;
 use App\Events\UserCreated;
 use App\Events\UserUpdated;
 use App\Events\UserDeleted;
@@ -18,16 +17,68 @@ class UserService extends BaseService
 {
     public function __construct(
         private UserRepository $userRepository,
-        private UserProfileRepository $profileRepository,
-    ) {
+    ) {}
+
+    /**
+     * Validate roles - only ONE role per user
+     */
+    private function validateRoles(array $roles): void
+    {
+        if (count($roles) !== 1) {
+            throw new \InvalidArgumentException('User must have exactly one role.');
+        }
+
+        $validRoles = ['super_admin', 'admin', 'seller', 'user'];
+        foreach ($roles as $role) {
+            if (!in_array($role, $validRoles)) {
+                throw new \InvalidArgumentException("Invalid role: {$role}");
+            }
+        }
+    }
+
+    /**
+     * Validate branch_id based on roles.
+     * - seller MUST have branch_id
+     * - admin/super_admin MUST NOT have branch_id
+     * - user MUST NOT have branch_id
+     */
+    private function validateBranchForRoles(?int $branchId, array $roles): void
+    {
+        $isSeller = in_array('seller', $roles);
+        $isAdmin = in_array('admin', $roles) || in_array('super_admin', $roles);
+        $isUser = in_array('user', $roles);
+
+        // Seller must have branch_id
+        if ($isSeller && empty($branchId)) {
+            throw new \InvalidArgumentException('Seller must have a branch assigned.');
+        }
+
+        // Admin/Super Admin cannot have branch_id
+        if (($isAdmin || $isUser) && !empty($branchId)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '%s cannot have a branch assigned.',
+                    $isAdmin ? 'Admin' : 'User'
+                )
+            );
+        }
     }
 
     /**
      * Create a new user.
      */
-    public function create(UserDTO $dto, ?array $profileData = null, ?array $roles = null): User
+    public function create(UserDTO $dto, ?array $roles = null): User
     {
-        return DB::transaction(function () use ($dto, $profileData, $roles) {
+        return DB::transaction(function () use ($dto, $roles) {
+            // Determine roles (default to 'user')
+            $rolesToAssign = $roles && !empty($roles) ? $roles : ['user'];
+
+            // Validate roles - only ONE role per user
+            $this->validateRoles($rolesToAssign);
+
+            // Validate branch_id based on roles
+            $this->validateBranchForRoles($dto->branch_id, $rolesToAssign);
+
             // Hash password if provided
             if ($dto->password) {
                 $dto->password = Hash::make($dto->password);
@@ -36,43 +87,41 @@ class UserService extends BaseService
             // Create user
             $user = $this->userRepository->createFromDTO($dto);
 
-            // Assign roles if provided
-            if ($roles && !empty($roles)) {
-                $user->syncRoles($roles);
-            } else {
-                // Assign default role
-                $user->assignRole('user');
-            }
-
-            // Create profile if data provided
-            if ($profileData) {
-                $profileDto = UserProfileDTO::fromArray(array_merge($profileData, ['user_id' => $user->id]));
-                $this->profileRepository->createOrUpdateFromDTO($profileDto);
-            }
+            // Assign roles
+            $user->syncRoles($rolesToAssign);
 
             // Dispatch event
             event(new UserCreated($user));
 
-            return $user->load(['roles', 'profile']);
+            return $user->load(['roles']);
         });
     }
 
     /**
      * Update user.
      */
-    public function update(int $userId, UserDTO $dto, ?array $profileData = null): User
+    public function update(int $userId, UserDTO $dto, ?array $newRoles = null): User
     {
-        return DB::transaction(function () use ($userId, $dto, $profileData) {
+        return DB::transaction(function () use ($userId, $dto, $newRoles) {
             $user = $this->userRepository->find($userId);
 
             if (!$user) {
                 throw new \Exception("User not found");
             }
 
-            // Protect super admin from modification
+            // Protect super admin from modification by others
             if ($user->isSuperAdmin() && auth()->id() !== $user->id) {
                 throw new \Exception("Cannot modify super admin user");
             }
+
+            // Get current roles if not updating them
+            $rolesToUse = $newRoles !== null ? $newRoles : $user->roles->pluck('name')->toArray();
+
+            // Validate roles - only ONE role per user
+            $this->validateRoles($rolesToUse);
+
+            // Validate branch_id based on roles
+            $this->validateBranchForRoles($dto->branch_id, $rolesToUse);
 
             // Hash password if provided
             if ($dto->password) {
@@ -85,16 +134,15 @@ class UserService extends BaseService
             // Update user
             $updatedUser = $this->userRepository->updateFromDTO($userId, $dto);
 
-            // Update profile if data provided
-            if ($profileData) {
-                $profileDto = UserProfileDTO::fromArray(array_merge($profileData, ['user_id' => $userId]));
-                $this->profileRepository->createOrUpdateFromDTO($profileDto);
+            // Update roles if provided
+            if ($newRoles !== null) {
+                $updatedUser->syncRoles($newRoles);
             }
 
             // Dispatch event
             event(new UserUpdated($updatedUser));
 
-            return $updatedUser->load(['roles', 'profile']);
+            return $updatedUser->load(['roles', 'branch']);
         });
     }
 
@@ -149,7 +197,7 @@ class UserService extends BaseService
      */
     public function getWithRelations(int $userId): ?User
     {
-        return $this->userRepository->find($userId)?->load(['roles', 'permissions', 'profile']);
+        return $this->userRepository->find($userId)?->load(['roles', 'permissions']);
     }
 
     /**

@@ -12,16 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // إضافة نوع المستخدم إذا لم يكن موجوداً
-            if (!Schema::hasColumn('users', 'user_type')) {
-                $table->enum('user_type', [
-                    'CUSTOMER',      // عميل
-                    'SELLER',        // بائع
-                    'STORE_STAFF',   // موظف متجر
-                    'INSPECTOR',     // فاحص
-                    'COURIER',       // مندوب توصيل
-                    'ADMIN'          // مسؤول
-                ])->default('CUSTOMER')->after('email');
+            // Remove user_type column as it's replaced by Spatie Permission roles
+            if (Schema::hasColumn('users', 'user_type')) {
+                $table->dropColumn('user_type');
             }
         });
     }
@@ -31,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('user_type');
-        });
+        // Can't restore user_type - use roles instead
     }
 };

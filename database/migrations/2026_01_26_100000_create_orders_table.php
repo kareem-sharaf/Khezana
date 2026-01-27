@@ -63,9 +63,8 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // الفهارس
+            // Additional indexes
             $table->index('customer_id');
-            $table->index('status');
             $table->index('pickup_code');
             $table->index('order_number');
         });

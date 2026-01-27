@@ -57,14 +57,6 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * Get the user's profile.
-     */
-    public function profile()
-    {
-        return $this->hasOne(UserProfile::class);
-    }
-
-    /**
      * Get the branch this user belongs to.
      */
     public function branch(): BelongsTo
@@ -97,11 +89,65 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Check if user is a seller.
+     */
+    public function isSeller(): bool
+    {
+        return $this->hasRole('seller');
+    }
+
+    /**
+     * Check if user is an admin (includes super admin).
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasAnyRole(['admin', 'super_admin']);
+    }
+
+    /**
+     * Check if user is a regular user.
+     */
+    public function isRegularUser(): bool
+    {
+        return $this->hasRole('user');
+    }
+
+    /**
      * Scope to filter active users.
      */
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
+    }
+
+    /**
+     * Scope to filter sellers.
+     */
+    public function scopeSellers($query)
+    {
+        return $query->whereHas('roles', function ($q) {
+            $q->where('name', 'seller');
+        });
+    }
+
+    /**
+     * Scope to filter admins (super_admin and admin).
+     */
+    public function scopeAdmins($query)
+    {
+        return $query->whereHas('roles', function ($q) {
+            $q->whereIn('name', ['admin', 'super_admin']);
+        });
+    }
+
+    /**
+     * Scope to filter regular users.
+     */
+    public function scopeRegularUsers($query)
+    {
+        return $query->whereHas('roles', function ($q) {
+            $q->where('name', 'user');
+        });
     }
 
     /**

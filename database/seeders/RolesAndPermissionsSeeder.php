@@ -10,82 +10,193 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * Creates 4 roles: super_admin, admin, seller, user
+     * Each role has specific permissions based on responsibilities.
+     *
+     * Roles are independent and should not be checked with hasRole() in policies.
+     * Always use can() to check permissions instead.
      */
     public function run(): void
     {
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create Permissions
-        $permissions = [
-            // User Management
-            'manage_users',
+        // ========== Create Permissions ==========
+
+        // User Management Permissions
+        $userPermissions = [
             'view_users',
             'create_users',
             'update_users',
             'delete_users',
-
-            // Product Management
-            'approve_products',
-            'manage_products',
-            'view_products',
-
-            // Request Management
-            'approve_requests',
-            'manage_requests',
-            'view_requests',
-
-            // Reports
-            'view_reports',
-            'export_reports',
-
-            // System
-            'manage_roles',
-            'manage_permissions',
-            'manage_settings',
-
-            // Categories & Attributes
-            'manage_categories',
-            'manage_attributes',
+            'manage_roles', // For managing user roles
         ];
 
-        foreach ($permissions as $permission) {
+        // Product Management Permissions
+        $productPermissions = [
+            'view_products',
+            'create_products',
+            'update_own_products',
+            'update_all_products',
+            'delete_own_products',
+            'delete_all_products',
+            'publish_products',
+            'approve_products',
+            'reject_products',
+        ];
+
+        // Request Management Permissions
+        $requestPermissions = [
+            'view_requests',
+            'create_requests',
+            'update_own_requests',
+            'manage_requests',
+            'approve_requests',
+            'reject_requests',
+        ];
+
+        // Order Management Permissions
+        $orderPermissions = [
+            'view_own_orders',
+            'view_all_orders',
+            'update_order_status',
+            'cancel_orders',
+        ];
+
+        // Offer Management Permissions
+        $offerPermissions = [
+            'view_offers',
+            'create_offers',
+            'update_own_offers',
+            'cancel_own_offers',
+            'respond_to_offers',
+        ];
+
+        // System/Admin Permissions
+        $systemPermissions = [
+            'manage_branches',
+            'manage_categories',
+            'manage_attributes',
+            'manage_permissions',
+            'manage_settings',
+            'view_reports',
+            'export_reports',
+        ];
+
+        // Combine all permissions
+        $allPermissions = array_merge(
+            $userPermissions,
+            $productPermissions,
+            $requestPermissions,
+            $orderPermissions,
+            $offerPermissions,
+            $systemPermissions
+        );
+
+        // Create all permissions
+        foreach ($allPermissions as $permission) {
             Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
-        // Create Roles
+        // ========== Create Roles ==========
+
         $superAdminRole = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
         $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $sellerRole = Role::firstOrCreate(['name' => 'seller', 'guard_name' => 'web']);
         $userRole = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
-        $deliveryAgentRole = Role::firstOrCreate(['name' => 'delivery_agent', 'guard_name' => 'web']);
 
-        // Assign all permissions to super_admin
-        $superAdminRole->givePermissionTo(Permission::all());
+        // ========== Assign Permissions to Roles ==========
 
-        // Assign permissions to admin
-        $adminRole->givePermissionTo([
-            'manage_users',
+        // SUPER_ADMIN: All permissions
+        $superAdminRole->syncPermissions(Permission::all());
+
+        // ADMIN: Manage users, products, requests, orders, and view reports
+        $adminRole->syncPermissions([
+            // User Management
             'view_users',
             'create_users',
             'update_users',
             'delete_users',
-            'approve_products',
-            'manage_products',
+            'manage_roles',
+
+            // Product Management
             'view_products',
-            'approve_requests',
-            'manage_requests',
+            'approve_products',
+            'reject_products',
+            'update_all_products',
+            'delete_all_products',
+
+            // Request Management
             'view_requests',
-            'view_reports',
-            'export_reports',
+            'manage_requests',
+            'approve_requests',
+            'reject_requests',
+
+            // Order Management
+            'view_all_orders',
+            'update_order_status',
+            'cancel_orders',
+
+            // System
+            'manage_branches',
             'manage_categories',
             'manage_attributes',
+            'view_reports',
+            'export_reports',
         ]);
 
-        // Assign permissions to delivery_agent
-        $deliveryAgentRole->givePermissionTo([
+        // SELLER: Manage own products and view orders
+        $sellerRole->syncPermissions([
+            // Product Management - own only
+            'view_products',
+            'create_products',
+            'update_own_products',
+            'delete_own_products',
+            'publish_products',
+
+            // Request Management
             'view_requests',
+            'create_requests',
+
+            // Order Management - own only
+            'view_own_orders',
+
+            // Offer Management
+            'view_offers',
+            'create_offers',
+            'update_own_offers',
+            'cancel_own_offers',
+            'respond_to_offers',
         ]);
 
-        // User role has no special permissions (default permissions only)
+        // USER: View products, create requests, and manage own orders
+        $userRole->syncPermissions([
+            // Product Management - view only
+            'view_products',
+
+            // Request Management - own only
+            'view_requests',
+            'create_requests',
+            'update_own_requests',
+
+            // Order Management - own only
+            'view_own_orders',
+
+            // Offer Management
+            'view_offers',
+            'respond_to_offers',
+        ]);
+
+        $this->command->info('Roles and Permissions seeded successfully.');
+        $this->command->table(
+            ['Role', 'Permissions Count'],
+            [
+                ['super_admin', $superAdminRole->permissions()->count()],
+                ['admin', $adminRole->permissions()->count()],
+                ['seller', $sellerRole->permissions()->count()],
+                ['user', $userRole->permissions()->count()],
+            ]
+        );
     }
 }

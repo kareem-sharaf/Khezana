@@ -27,93 +27,107 @@ class DatabaseSeeder extends Seeder
             RequestsSeeder::class,    // Add requests seeder
         ]);
 
-        // Get branches for admin assignment
+        // Get branches for seller assignment
         $branches = Branch::active()->get();
         $branchIds = $branches->pluck('id')->toArray();
 
-        // Create a super admin user (if not exists) - NO branch
+        // ========== Create Super Admin (no branch) ==========
         $superAdmin = User::firstOrCreate(
             ['email' => 'superadmin@khezana.com'],
             [
                 'name' => 'المدير العام',
                 'password' => bcrypt('password'),
                 'status' => 'active',
-                'branch_id' => null, // Super admin not tied to branch
+                'branch_id' => null, // ✅ Super admin must NOT have branch
             ]
         );
         if (!$superAdmin->hasRole('super_admin')) {
             $superAdmin->assignRole('super_admin');
         }
 
-        // Create admin users for each branch
-        $adminBranches = [
-            ['email' => 'admin.mazzeh@khezana.com', 'name' => 'أحمد - مدير فرع المزة', 'branch_code' => 'MZE'],
-            ['email' => 'admin.shaalan@khezana.com', 'name' => 'محمد - مدير فرع الشعلان', 'branch_code' => 'SHL'],
-            ['email' => 'admin.malki@khezana.com', 'name' => 'خالد - مدير فرع المالكي', 'branch_code' => 'MLK'],
-            ['email' => 'admin.babtoma@khezana.com', 'name' => 'عمر - مدير فرع باب توما', 'branch_code' => 'BTM'],
-            ['email' => 'admin.jaramana@khezana.com', 'name' => 'ياسر - مدير فرع جرمانا', 'branch_code' => 'JRM'],
-        ];
-
-        foreach ($adminBranches as $adminData) {
-            $branch = Branch::where('code', $adminData['branch_code'])->first();
-            
-            $admin = User::firstOrCreate(
-                ['email' => $adminData['email']],
-                [
-                    'name' => $adminData['name'],
-                    'password' => bcrypt('password'),
-                    'status' => 'active',
-                    'branch_id' => $branch?->id,
-                ]
-            );
-            
-            if (!$admin->hasRole('admin')) {
-                $admin->assignRole('admin');
-            }
-            
-            // Update branch_id if user already exists
-            if ($branch && $admin->branch_id !== $branch->id) {
-                $admin->update(['branch_id' => $branch->id]);
-            }
-        }
-
-        // Create a general admin (not tied to specific branch)
-        $admin = User::firstOrCreate(
+        // ========== Create General Admin (no branch) ==========
+        $adminGeneral = User::firstOrCreate(
             ['email' => 'admin@khezana.com'],
             [
                 'name' => 'مدير عام',
                 'password' => bcrypt('password'),
                 'status' => 'active',
-                'branch_id' => null,
+                'branch_id' => null, // ✅ Admin must NOT have branch
             ]
         );
-        if (!$admin->hasRole('admin')) {
-            $admin->assignRole('admin');
+        if (!$adminGeneral->hasRole('admin')) {
+            $adminGeneral->assignRole('admin');
         }
 
-        // Create a regular user (if not exists)
-        $user = User::firstOrCreate(
+        // ========== Create Sellers for each branch ==========
+        $sellerBranches = [
+            ['email' => 'seller.mazzeh@khezana.com', 'name' => 'أحمد - بائع فرع المزة', 'branch_code' => 'MZE'],
+            ['email' => 'seller.shaalan@khezana.com', 'name' => 'محمد - بائع فرع الشعلان', 'branch_code' => 'SHL'],
+            ['email' => 'seller.malki@khezana.com', 'name' => 'خالد - بائع فرع المالكي', 'branch_code' => 'MLK'],
+            ['email' => 'seller.babtoma@khezana.com', 'name' => 'عمر - بائع فرع باب توما', 'branch_code' => 'BTM'],
+            ['email' => 'seller.jaramana@khezana.com', 'name' => 'ياسر - بائع فرع جرمانا', 'branch_code' => 'JRM'],
+        ];
+
+        foreach ($sellerBranches as $sellerData) {
+            $branch = Branch::where('code', $sellerData['branch_code'])->first();
+
+            if (!$branch) {
+                $this->command->warn("Branch {$sellerData['branch_code']} not found, skipping seller creation");
+                continue;
+            }
+
+            $seller = User::firstOrCreate(
+                ['email' => $sellerData['email']],
+                [
+                    'name' => $sellerData['name'],
+                    'password' => bcrypt('password'),
+                    'status' => 'active',
+                    'branch_id' => $branch->id, // ✅ Seller MUST have branch
+                ]
+            );
+
+            if (!$seller->hasRole('seller')) {
+                $seller->assignRole('seller');
+            }
+
+            // Ensure branch_id is set correctly
+            if ($seller->branch_id !== $branch->id) {
+                $seller->update(['branch_id' => $branch->id]);
+            }
+        }
+
+        // ========== Create Regular User (no branch) ==========
+        $regularUser = User::firstOrCreate(
             ['email' => 'user@khezana.com'],
             [
                 'name' => 'مستخدم عادي',
                 'password' => bcrypt('password'),
                 'status' => 'active',
+                'branch_id' => null, // ✅ Regular user must NOT have branch
             ]
         );
-        if (!$user->hasRole('user')) {
-            $user->assignRole('user');
+        if (!$regularUser->hasRole('user')) {
+            $regularUser->assignRole('user');
         }
 
+        // ========== Display Login Credentials ==========
         $this->command->info('');
-        $this->command->info('=== Login Credentials ===');
-        $this->command->info('Super Admin: superadmin@khezana.com / password');
-        $this->command->info('Admin (General): admin@khezana.com / password');
-        $this->command->info('Admin (المزة): admin.mazzeh@khezana.com / password');
-        $this->command->info('Admin (الشعلان): admin.shaalan@khezana.com / password');
-        $this->command->info('Admin (المالكي): admin.malki@khezana.com / password');
-        $this->command->info('Admin (باب توما): admin.babtoma@khezana.com / password');
-        $this->command->info('Admin (جرمانا): admin.jaramana@khezana.com / password');
-        $this->command->info('User: user@khezana.com / password');
-        $this->command->info('========================');
+        $this->command->info('═══════════════════════════════════════════');
+        $this->command->info('          Login Credentials');
+        $this->command->info('═══════════════════════════════════════════');
+        $this->command->table(
+            ['Role', 'Email', 'Password'],
+            [
+                ['Super Admin', 'superadmin@khezana.com', 'password'],
+                ['Admin (General)', 'admin@khezana.com', 'password'],
+                ['Seller (المزة)', 'seller.mazzeh@khezana.com', 'password'],
+                ['Seller (الشعلان)', 'seller.shaalan@khezana.com', 'password'],
+                ['Seller (المالكي)', 'seller.malki@khezana.com', 'password'],
+                ['Seller (باب توما)', 'seller.babtoma@khezana.com', 'password'],
+                ['Seller (جرمانا)', 'seller.jaramana@khezana.com', 'password'],
+                ['Regular User', 'user@khezana.com', 'password'],
+            ]
+        );
+        $this->command->info('═══════════════════════════════════════════');
     }
 }
